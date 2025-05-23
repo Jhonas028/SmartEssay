@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/baseline_home_filled_24"/>
+
+    <item android:id="@+id/room"
+        android:title="Room"
+        android:icon="@drawable/room"/>
+
+    <item android:id="@+id/camera"
+        android:title="Camera"
+        android:icon="@drawable/baseline_camera_24"/>
+
+    <item android:id="@+id/checked"
+        android:title="Checked"
+        android:icon="@drawable/submitted"/>
+
+</menu>

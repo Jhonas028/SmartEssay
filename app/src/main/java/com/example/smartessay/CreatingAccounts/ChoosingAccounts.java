@@ -1,5 +1,6 @@
 package com.example.smartessay.CreatingAccounts;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -22,6 +23,11 @@ public class ChoosingAccounts extends AppCompatActivity {
 
         stuBTN = findViewById(R.id.stuBTN);
         educBTN = findViewById(R.id.educBTN);
+
+        //proceed to student activity
+        stuBTN.setOnClickListener(v -> {startActivity(new Intent(getApplicationContext(), CreateStudentAcc.class));});
+        //proceed to teacher activity
+        educBTN.setOnClickListener(v -> {startActivity(new Intent(getApplicationContext(), CreateTeacherAcc.class));});
 
 
     }
