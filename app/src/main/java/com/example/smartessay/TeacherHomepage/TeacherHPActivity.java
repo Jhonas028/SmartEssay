@@ -40,7 +40,9 @@ public class TeacherHPActivity extends AppCompatActivity {
             if (selectedFragment != null) {
                 loadFragments(selectedFragment);
                 return true;}
+
             return false;
+
         });
 
     }

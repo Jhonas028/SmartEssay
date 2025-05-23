@@ -9,9 +9,12 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/botnav"
-        android:layout_width="336dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@android:color/white"
+        android:background="@drawable/round_botnav"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
