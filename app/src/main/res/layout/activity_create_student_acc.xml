@@ -20,12 +20,11 @@
         app:srcCompat="@drawable/smart_essaylogo" />
 
     <LinearLayout
-        android:layout_width="257dp"
+        android:layout_width="276dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="192dp"
+        android:layout_marginTop="196dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.64"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -156,13 +155,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/round_all_yellow_button"
-            android:text="Sign Up" />
+            android:text="Sign Up"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -184,9 +184,7 @@
                 android:textColor="@color/white"
                 android:textSize="20dp"
                 android:textStyle="bold" />
-
         </LinearLayout>
-
 
 
     </LinearLayout>
