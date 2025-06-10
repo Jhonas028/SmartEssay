@@ -51,6 +51,7 @@
             app:hintTextColor="@color/white_hint_selector">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
@@ -69,6 +70,7 @@
             app:hintTextColor="@color/white_hint_selector">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/fnameTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
@@ -87,6 +89,7 @@
             app:hintTextColor="@color/white_hint_selector">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/lnameTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
@@ -105,6 +108,7 @@
             app:hintTextColor="@color/white_hint_selector">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/snumTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
@@ -124,6 +128,7 @@
             app:hintTextColor="@color/white_hint_selector">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
@@ -142,6 +147,7 @@
             app:hintTextColor="@color/white_hint_selector">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/conpassTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
@@ -150,7 +156,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button"
+            android:id="@+id/signupBTN"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

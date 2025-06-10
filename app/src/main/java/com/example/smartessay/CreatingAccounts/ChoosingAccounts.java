@@ -25,10 +25,20 @@ public class ChoosingAccounts extends AppCompatActivity {
         educBTN = findViewById(R.id.educBTN);
 
         //proceed to student activity
-        stuBTN.setOnClickListener(v -> {startActivity(new Intent(getApplicationContext(), CreateStudentAcc.class));});
-        //proceed to teacher activity
-        educBTN.setOnClickListener(v -> {startActivity(new Intent(getApplicationContext(), CreateTeacherAcc.class));});
+        stuBTN.setOnClickListener(v -> {
+                Intent intent = new Intent(ChoosingAccounts.this, CreateStudentAcc.class);
+                intent.putExtra("account", "student");
+                startActivity(intent);
+        }
 
+        );
+
+        //proceed to teacher activity
+        educBTN.setOnClickListener(v -> {
+            Intent intent = new Intent(ChoosingAccounts.this, CreateTeacherAcc.class);
+            intent.putExtra("account", "educator");
+            startActivity(intent);
+        });
 
     }
 }

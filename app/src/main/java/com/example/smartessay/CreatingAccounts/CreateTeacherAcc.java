@@ -1,6 +1,7 @@
 package com.example.smartessay.CreatingAccounts;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,5 +19,7 @@ public class CreateTeacherAcc extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_teacher_acc);
 
+        String account = getIntent().getStringExtra("account");
+        Log.i("myTag","account name: " + account);
     }
 }
