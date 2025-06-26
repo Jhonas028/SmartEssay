@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="50dp"
-            android:paddingBottom="60dp"
+            android:paddingBottom="300dp"
             android:orientation="vertical">
 
             <LinearLayout

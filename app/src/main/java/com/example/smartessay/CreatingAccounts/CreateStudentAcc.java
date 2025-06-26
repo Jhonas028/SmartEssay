@@ -14,9 +14,14 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smartessay.API.EmailAPI;
+import com.example.smartessay.API.MailGunEmail;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.textfield.TextInputLayout;
+
+import org.json.JSONException;
+
 
 public class CreateStudentAcc extends AppCompatActivity {
 
@@ -25,6 +30,7 @@ public class CreateStudentAcc extends AppCompatActivity {
     TextInputLayout emailTV,fnameTV,lnameTV,snumTV,passTV,conpassTV;
     String email,fname,lname,stuNum,pass,confPass;
     TextView logInTV;
+    OTPverification otp;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,9 +72,24 @@ public class CreateStudentAcc extends AppCompatActivity {
         logInTV.setOnClickListener(view ->{startActivity(new Intent(CreateStudentAcc.this, MainActivity.class));finish();});
 
         signupBTN.setOnClickListener(v -> {
+
             //validation for email
             if(validateInputs()){
-                Toast.makeText(getApplicationContext(),"Signed-in",Toast.LENGTH_SHORT).show();
+
+                //generate OTP
+                String myOTP = otp.generateOTP();
+                Log.i("myOTP",myOTP);
+                //user email
+                email = emailET.getText().toString().trim();
+
+                //call EmailAPI from API folder
+                try {
+                    EmailAPI.sendOtpEmail(myOTP, email);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+                Toast.makeText(getApplicationContext(),"Sign-in",Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(),"Sign-in failed",Toast.LENGTH_SHORT).show();
             }
@@ -88,11 +109,11 @@ public class CreateStudentAcc extends AppCompatActivity {
 
         boolean isValid = true;
 
-        isValid &= setError(emailTV, email.isEmpty() || !email.matches("^[a-z]+\\.\\d{6}@sanpablo\\.sti\\.edu\\.ph$"), "Enter a valid STI San Pablo email.");
+        isValid &= setError(emailTV, email.isEmpty() || !email.matches("^[a-z]+\\.\\d{1,10}@sanpablo\\.sti\\.edu\\.ph$"), "Enter a valid STI San Pablo email.");
         isValid &= setError(fnameTV, fname.isEmpty(), "First name is required.");
         isValid &= setError(lnameTV, lname.isEmpty(), "Last name is required.");
         isValid &= setError(snumTV, stuNum.isEmpty() || !stuNum.matches("^\\d{10}$"), "Must be exactly 10 digits.");
-        isValid &= setError(passTV, pass.isEmpty() || pass.length() < 6, "Password must be at least 6 characters.");
+        isValid &= setError(passTV, pass.isEmpty() || !isValidPassword(pass), "Please input valid password.");
 
         if (confPass.isEmpty()) {
             conpassTV.setHelperText("Confirm password is required.");
@@ -126,6 +147,9 @@ public class CreateStudentAcc extends AppCompatActivity {
                 layout.setHelperText(null);
             }
         });
+    }
+    public boolean isValidPassword(String password){
+        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,15}$");
     }
 
 
