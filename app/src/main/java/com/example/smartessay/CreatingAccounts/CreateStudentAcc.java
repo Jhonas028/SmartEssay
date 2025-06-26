@@ -88,6 +88,7 @@ public class CreateStudentAcc extends AppCompatActivity {
                 //proceed to OTPverication page if all inputs are valid
                 Intent intent = new Intent(CreateStudentAcc.this, OTPverifyStudent.class);
                 intent.putExtra("otp_code_student",myOTP);
+                intent.putExtra("email_student",email);
                 startActivity(intent);
 
 
@@ -115,7 +116,7 @@ public class CreateStudentAcc extends AppCompatActivity {
         isValid &= setError(fnameTV, fname.isEmpty(), "First name is required.");
         isValid &= setError(lnameTV, lname.isEmpty(), "Last name is required.");
         isValid &= setError(snumTV, stuNum.isEmpty() || !stuNum.matches("^\\d{10}$"), "Must be exactly 10 digits.");
-        isValid &= setError(passTV, pass.isEmpty() || !isValidPassword(pass), "Please input valid password.");
+        isValid &= setError(passTV, pass.isEmpty() || !isValidPassword(pass), "Password must be 8–15 characters long, and include letters, numbers, and special characters.");
 
         if (confPass.isEmpty()) {
             conpassTV.setHelperText("Confirm password is required.");
@@ -151,7 +152,8 @@ public class CreateStudentAcc extends AppCompatActivity {
         });
     }
     public boolean isValidPassword(String password){
-        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,15}$");
+        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&.*])[A-Za-z\\d!@#$%^&.*]{8,15}$");
+
     }
 
 
