@@ -2,10 +2,7 @@ package com.example.smartessay.CreatingAccounts;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,13 +11,9 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.smartessay.API.EmailAPI;
-import com.example.smartessay.API.MailGunEmail;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.textfield.TextInputLayout;
-
-import org.json.JSONException;
 
 
 public class CreateStudentAcc extends AppCompatActivity {
@@ -30,7 +23,7 @@ public class CreateStudentAcc extends AppCompatActivity {
     TextInputLayout emailTV,fnameTV,lnameTV,snumTV,passTV,conpassTV;
     String email,fname,lname,stuNum,pass,confPass;
     TextView logInTV;
-    OTPverification otp;
+    OTPgenerator otp;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,12 +75,21 @@ public class CreateStudentAcc extends AppCompatActivity {
                 //user email
                 email = emailET.getText().toString().trim();
 
-                //call EmailAPI from API folder
+                /*
+                ***** Just comment this to save API usage *****
+                *
+                //call EmailAPI from API folder, this time the OTP already emailed the user
                 try {
                     EmailAPI.sendOtpEmail(myOTP, email);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
-                }
+                } */
+
+                //proceed to OTPverication page if all inputs are valid
+                Intent intent = new Intent(CreateStudentAcc.this, OTPverifyStudent.class);
+                intent.putExtra("otp_code_student",myOTP);
+                startActivity(intent);
+
 
                 Toast.makeText(getApplicationContext(),"Sign-in",Toast.LENGTH_SHORT).show();
             } else {

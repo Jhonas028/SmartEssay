@@ -15,6 +15,12 @@
         android:theme="@style/Theme.SmartEssay"
         tools:targetApi="31">
         <activity
+            android:name=".StudentHomepage.StudentHPActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreatingAccounts.OTPverifyStudent"
+            android:exported="false" />
+        <activity
             android:name=".TeacherHomepage.TeacherHPActivity"
             android:exported="false" />
         <activity

@@ -2,7 +2,7 @@ package com.example.smartessay.CreatingAccounts;
 
 import java.util.Random;
 
-public class OTPverification {
+public class OTPgenerator {
 
     public static String generateOTP() {
         Random random = new Random();
