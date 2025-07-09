@@ -14,6 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 
 public class CreateStudentAcc extends AppCompatActivity {
@@ -67,44 +71,49 @@ public class CreateStudentAcc extends AppCompatActivity {
 
         signupBTN.setOnClickListener(v -> {
 
-            //validation for email
-            if(validateInputs()){
-
-                //generate OTP
+            if(true){
+                otp = new OTPgenerator(); // Make sure it's initialized
                 String myOTP = otp.generateOTP();
-                Log.i("myOTP",myOTP);
-                //user email
-                email = emailET.getText().toString().trim();
-                String fullname = fnameET.getText().toString().trim() + lnameET.getText().toString().trim();
-                stuNum = snumET.getText().toString().trim();
-                pass = passET.getText().toString().trim();
+                String email = emailET.getText().toString().trim();
+                String fullname = fnameET.getText().toString().trim() + " " + lnameET.getText().toString().trim();
+                String stuNum = snumET.getText().toString().trim();
+                String pass = passET.getText().toString().trim();
 
-                /*
-                ***** Just comment this to save API usage *****
-                *
-                //call EmailAPI from API folder, this time the OTP already emailed the user
-                try {
-                    EmailAPI.sendOtpEmail(myOTP, email);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e); /
-                } */
+                // 🔐 Save to pending_verification
+                DatabaseReference pendingRef = FirebaseDatabase.getInstance()
+                        .getReference("pending_verification")
+                        .child(stuNum);
 
-                //proceed to OTPverication page if all inputs are valid
-                Intent intent = new Intent(CreateStudentAcc.this, OTPverifyStudent.class);
-                intent.putExtra("account",account);
-                intent.putExtra("email_student",email);
-                intent.putExtra("otp_code_student",myOTP);
-                intent.putExtra("fullname",fullname);
-                intent.putExtra("studentNumber",stuNum);
-                intent.putExtra("password",pass);
-                startActivity(intent);
+                HashMap<String, Object> pendingData = new HashMap<>();
+                pendingData.put("email", email);
+                pendingData.put("fullname", fullname);
+                pendingData.put("password", pass); // Optional: hash this
+                pendingData.put("otp", myOTP);
+                pendingData.put("timestamp", System.currentTimeMillis());
 
-
-                Toast.makeText(getApplicationContext(),"Sign-in",Toast.LENGTH_SHORT).show();
-
-            } else {
+                pendingRef.setValue(pendingData)
+                        .addOnSuccessListener(aVoid -> {
+                            // 🔁 Proceed to OTP page after saving
+                            Intent intent = new Intent(CreateStudentAcc.this, OTPverifyStudent.class);
+                            intent.putExtra("account", account);
+                            intent.putExtra("email_student", email);
+                            intent.putExtra("otp_code_student", myOTP);
+                            intent.putExtra("fullname", fullname);
+                            intent.putExtra("studentNumber", stuNum);
+                            intent.putExtra("password", pass);
+                            startActivity(intent);
+                            Toast.makeText(getApplicationContext(), "OTP sent. Please verify.", Toast.LENGTH_SHORT).show();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(getApplicationContext(), "Failed to start verification.", Toast.LENGTH_SHORT).show();
+                            Log.e("FirebaseError", e.getMessage());
+                        });
+            }
+            else {
                 Toast.makeText(getApplicationContext(),"Sign-in failed",Toast.LENGTH_SHORT).show();
             }
+
+
         });
 
 

@@ -16,39 +16,41 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.smartessay.API.EmailAPI;
 import com.example.smartessay.R;
 import com.example.smartessay.StudentHomepage.StudentHPActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-import org.json.JSONException;
-
+import java.util.HashMap;
 import java.util.Locale;
 
 public class OTPverifyStudent extends AppCompatActivity {
 
-    // Input fields for 6-digit OTP
     EditText code1, code2, code3, code4, code5, code6;
-
-    // UI elements for timer and resend functionality
     TextView textTimer, testResendOTP;
     Button buttonVerify;
-
-    // OTP generator class
     OTPgenerator otpGenerator;
 
-    // Boolean flag to track if the OTP is still valid
     private boolean isOtpValid = true;
-
-    // The OTP that was originally generated or resent
     private String currentOtp = "";
+    private String studentNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this); // Enables full-screen layout
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_otpverification);
 
-        // Find all views by their IDs
+        // Get data from previous screen
+        String account = getIntent().getStringExtra("account");
+        studentNumber = getIntent().getStringExtra("studentNumber");
+        currentOtp = getIntent().getStringExtra("otp_code_student");
+
+        // Initialize OTP Generator
+        otpGenerator = new OTPgenerator();
+
+        // Find views
         code1 = findViewById(R.id.inputCode1);
         code2 = findViewById(R.id.inputCode2);
         code3 = findViewById(R.id.inputCode3);
@@ -59,19 +61,7 @@ public class OTPverifyStudent extends AppCompatActivity {
         textTimer = findViewById(R.id.textTimer);
         testResendOTP = findViewById(R.id.testResendOTP);
 
-        // Initialize the OTP generator and get the OTP from intent
-
-        otpGenerator = new OTPgenerator();
-
-        //these are the informations need to store in database
-        String account = getIntent().getStringExtra("account");
-        String email = getIntent().getStringExtra("email_student");
-        currentOtp = getIntent().getStringExtra("otp_code_student");
-        String fullname = getIntent().getStringExtra("fullname");
-        String studentNumber = getIntent().getStringExtra("studentNumber");
-        String password = getIntent().getStringExtra("password");
-
-        // Add TextWatchers to handle input navigation and backspacing
+        // Setup OTP field focus
         code1.addTextChangedListener(new OTPTextWatcher(code1, code2, null));
         code2.addTextChangedListener(new OTPTextWatcher(code2, code3, code1));
         code3.addTextChangedListener(new OTPTextWatcher(code3, code4, code2));
@@ -79,51 +69,74 @@ public class OTPverifyStudent extends AppCompatActivity {
         code5.addTextChangedListener(new OTPTextWatcher(code5, code6, code4));
         code6.addTextChangedListener(new OTPTextWatcher(code6, null, code5));
 
-        // Start the OTP countdown timer (e.g. 60 seconds)
+        // Start timer
         startOTPTimer(60000);
 
-        // Resend OTP button logic
+        // Resend OTP
         testResendOTP.setOnClickListener(v -> {
-
-            // Clear the input fields
             clearInputs();
+            currentOtp = otpGenerator.generateOTP();
+            Log.i("new_student_otp", currentOtp);
+            isOtpValid = true;
 
-            currentOtp = otpGenerator.generateOTP(); // Generate a new OTP
-            Log.i("new_student_otp", currentOtp);    // Log it for debugging
-            isOtpValid = true;  // Reset validity
-
-            /* ***** Just comment this to save API usage *****
-            //call EmailAPI from API folder, this time the OTP already emailed the user
-            try {
-                EmailAPI.sendOtpEmail(currentOtp, email);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }*/
-
-            startOTPTimer(60000);                     // Restart timer
+            // TODO: Re-send email here (optional)
+            startOTPTimer(60000);
         });
 
-        // Verification button logic
+        // Verify OTP
         buttonVerify.setOnClickListener(v -> {
-            String otp = getEnteredOTP(); // Get user input
-            Log.i("otp_input : ", otp);   // Log for debugging
+            String enteredOtp = getEnteredOTP();
 
-            // Check if the OTP is still valid
             if (!isOtpValid) {
-                Toast.makeText(getApplicationContext(), "OTP has expired. Please resend.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "OTP has expired. Please resend.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Compare entered OTP with actual
-            if (currentOtp.equals(otp)) {
-                startActivity(new Intent(getApplicationContext(), StudentHPActivity.class)); // Success
-            } else {
-                Toast.makeText(getApplicationContext(), "OTP didn't match.", Toast.LENGTH_LONG).show(); // Fail
+            if (!enteredOtp.equals(currentOtp)) {
+                Toast.makeText(getApplicationContext(), "OTP didn't match.", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            // ✅ Fetch from pending_verification and move to user/student
+            DatabaseReference pendingRef = FirebaseDatabase.getInstance()
+                    .getReference("pending_verification")
+                    .child(studentNumber);
+
+            pendingRef.get().addOnSuccessListener(snapshot -> {
+                if (snapshot.exists()) {
+                    String email = snapshot.child("email").getValue(String.class);
+                    String fullname = snapshot.child("fullname").getValue(String.class);
+                    String password = snapshot.child("password").getValue(String.class);
+
+                    DatabaseReference studentRef = FirebaseDatabase.getInstance()
+                            .getReference("user")
+                            .child("student")
+                            .child(studentNumber);
+
+                    HashMap<String, Object> studentData = new HashMap<>();
+                    studentData.put("email", email);
+                    studentData.put("fullname", fullname);
+                    studentData.put("studentNumber", studentNumber);
+                    studentData.put("password", password);
+                    studentData.put("timestamp", System.currentTimeMillis());
+
+                    studentRef.setValue(studentData)
+                            .addOnSuccessListener(aVoid -> {
+                                pendingRef.removeValue(); // 🧹 Clean up
+                                Toast.makeText(getApplicationContext(), "Account verified!", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getApplicationContext(), StudentHPActivity.class));
+                                finish();
+                            });
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "No pending record found.", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(e -> {
+                Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
         });
     }
 
-    // Combines all EditText fields into a single OTP string
     private String getEnteredOTP() {
         return code1.getText().toString().trim() +
                 code2.getText().toString().trim() +
@@ -133,8 +146,7 @@ public class OTPverifyStudent extends AppCompatActivity {
                 code6.getText().toString().trim();
     }
 
-    // Clear the input fields
-    public void clearInputs(){
+    public void clearInputs() {
         code1.setText("");
         code2.setText("");
         code3.setText("");
@@ -144,11 +156,6 @@ public class OTPverifyStudent extends AppCompatActivity {
         code1.requestFocus();
     }
 
-    /**
-     * Handles text input focus shifting and backspace logic for OTP fields.
-     * When the user enters a digit, focus moves forward.
-     * When user presses backspace on an empty field, focus moves backward.
-     */
     private class OTPTextWatcher implements TextWatcher {
         private final EditText currentEditText;
         private final EditText nextEditText;
@@ -159,13 +166,11 @@ public class OTPverifyStudent extends AppCompatActivity {
             this.nextEditText = nextEditText;
             this.previousEditText = previousEditText;
 
-            // Handle backspace to move focus to the previous field
             this.currentEditText.setOnKeyListener((v, keyCode, event) -> {
                 if (keyCode == KeyEvent.KEYCODE_DEL &&
                         event.getAction() == KeyEvent.ACTION_DOWN &&
                         currentEditText.getText().toString().isEmpty() &&
                         previousEditText != null) {
-
                     previousEditText.requestFocus();
                     previousEditText.setSelection(previousEditText.getText().length());
                     return true;
@@ -177,7 +182,6 @@ public class OTPverifyStudent extends AppCompatActivity {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-        // Automatically move to the next field when user enters a digit
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (!s.toString().trim().isEmpty() && nextEditText != null) {
@@ -189,16 +193,11 @@ public class OTPverifyStudent extends AppCompatActivity {
         public void afterTextChanged(Editable s) {}
     }
 
-    /**
-     * Starts a countdown timer to track OTP expiration.
-     * Disables the resend button during countdown, then enables it when time is up.
-     */
     private void startOTPTimer(long durationInMillis) {
-        testResendOTP.setEnabled(false); // Disable "Resend OTP" button initially
+        testResendOTP.setEnabled(false);
 
         new CountDownTimer(durationInMillis, 1000) {
             public void onTick(long millisUntilFinished) {
-                // Format time as mm:ss and display
                 String time = String.format(Locale.getDefault(), "%02d:%02d",
                         millisUntilFinished / 60000,
                         (millisUntilFinished % 60000) / 1000);
@@ -206,11 +205,10 @@ public class OTPverifyStudent extends AppCompatActivity {
             }
 
             public void onFinish() {
-                // Timer is done
                 textTimer.setText("00:00");
-                testResendOTP.setEnabled(true);  // Allow resend
+                testResendOTP.setEnabled(true);
                 testResendOTP.setVisibility(View.VISIBLE);
-                isOtpValid = false;              // Invalidate current OTP
+                isOtpValid = false;
             }
         }.start();
     }
