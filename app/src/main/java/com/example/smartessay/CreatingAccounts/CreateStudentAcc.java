@@ -30,6 +30,7 @@ public class CreateStudentAcc extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_student_acc);
 
+        //type of accouint, this time its student account
         String account = getIntent().getStringExtra("account");
         Log.i("myTag","account name: " + account);
 
@@ -74,6 +75,9 @@ public class CreateStudentAcc extends AppCompatActivity {
                 Log.i("myOTP",myOTP);
                 //user email
                 email = emailET.getText().toString().trim();
+                String fullname = fnameET.getText().toString().trim() + lnameET.getText().toString().trim();
+                stuNum = snumET.getText().toString().trim();
+                pass = passET.getText().toString().trim();
 
                 /*
                 ***** Just comment this to save API usage *****
@@ -82,17 +86,22 @@ public class CreateStudentAcc extends AppCompatActivity {
                 try {
                     EmailAPI.sendOtpEmail(myOTP, email);
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(e); /
                 } */
 
                 //proceed to OTPverication page if all inputs are valid
                 Intent intent = new Intent(CreateStudentAcc.this, OTPverifyStudent.class);
-                intent.putExtra("otp_code_student",myOTP);
+                intent.putExtra("account",account);
                 intent.putExtra("email_student",email);
+                intent.putExtra("otp_code_student",myOTP);
+                intent.putExtra("fullname",fullname);
+                intent.putExtra("studentNumber",stuNum);
+                intent.putExtra("password",pass);
                 startActivity(intent);
 
 
                 Toast.makeText(getApplicationContext(),"Sign-in",Toast.LENGTH_SHORT).show();
+
             } else {
                 Toast.makeText(getApplicationContext(),"Sign-in failed",Toast.LENGTH_SHORT).show();
             }

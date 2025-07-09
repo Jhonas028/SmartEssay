@@ -60,9 +60,16 @@ public class OTPverifyStudent extends AppCompatActivity {
         testResendOTP = findViewById(R.id.testResendOTP);
 
         // Initialize the OTP generator and get the OTP from intent
+
         otpGenerator = new OTPgenerator();
+
+        //these are the informations need to store in database
+        String account = getIntent().getStringExtra("account");
+        String email = getIntent().getStringExtra("email_student");
         currentOtp = getIntent().getStringExtra("otp_code_student");
-        String email = getIntent().getStringExtra("email_student"); //email from intent
+        String fullname = getIntent().getStringExtra("fullname");
+        String studentNumber = getIntent().getStringExtra("studentNumber");
+        String password = getIntent().getStringExtra("password");
 
         // Add TextWatchers to handle input navigation and backspacing
         code1.addTextChangedListener(new OTPTextWatcher(code1, code2, null));

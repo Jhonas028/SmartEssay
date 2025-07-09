@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "455472031638",
+    "firebase_url": "https://smartessay-79d91-default-rtdb.firebaseio.com",
+    "project_id": "smartessay-79d91",
+    "storage_bucket": "smartessay-79d91.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455472031638:android:f3570ef193e6aaca94dfb7",
+        "android_client_info": {
+          "package_name": "com.example.smartessay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7cyhEDALjN3DNhkyAOXCf1EaQTqd_Q04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

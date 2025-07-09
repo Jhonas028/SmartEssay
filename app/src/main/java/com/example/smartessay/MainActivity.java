@@ -13,6 +13,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.smartessay.CreatingAccounts.ChoosingAccounts;
 import com.example.smartessay.TeacherHomepage.TeacherHPActivity;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +28,9 @@ public class MainActivity extends AppCompatActivity {
         signupTV = findViewById(R.id.signupTV);
         signinBTN = findViewById(R.id.signinBTN);
 
-        signupTV.setOnClickListener(view->{startActivity(new Intent(getApplicationContext(), ChoosingAccounts.class));});
+        signupTV.setOnClickListener(view->{
+            startActivity(new Intent(getApplicationContext(), ChoosingAccounts.class));
+        });
 
         //override
         signinBTN.setOnClickListener(view->{startActivity(new Intent(getApplicationContext(), TeacherHPActivity.class));});
