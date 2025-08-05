@@ -12,11 +12,14 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smartessay.API.EmailAPI;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -95,6 +98,13 @@ public class CreateStudentAcc extends AppCompatActivity {
                 pendingData.put("otp", myOTP);
                 pendingData.put("timestamp", formattedTime); // readable format
                 pendingData.put("timestamp_raw", timestampRaw); // optional raw format
+
+                /* API FOR EMAIL, PLEASE DO NOT REMOVE THIS
+                try {
+                    EmailAPI.sendOtpEmail(currentOtp,email);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }*/
 
                 pendingRef.setValue(pendingData)
                         .addOnSuccessListener(aVoid -> {

@@ -108,6 +108,13 @@ public class OTPverifyStudent extends AppCompatActivity {
             userData.put("timestamp", formattedTime);         // ✅ Human readable
             userData.put("timestamp_raw", timestampRaw);      // ✅ Optional (can remove if unused)
 
+            /* API FOR EMAIL, PLEASE DO NOT REMOVE THIS
+            try {
+                EmailAPI.sendOtpEmail(currentOtp,email);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }*/
+
             myRef.setValue(userData)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getApplicationContext(), "OTP re-sent and updated in pending.", Toast.LENGTH_SHORT).show();
