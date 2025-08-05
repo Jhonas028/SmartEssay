@@ -85,7 +85,6 @@ public class OTPverifyTeacher extends AppCompatActivity {
             String fullname = intent.getStringExtra("fullname");
             String pass = intent.getStringExtra("password");
 
-
             // ✅ Correctly format Philippine time
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
@@ -94,7 +93,7 @@ public class OTPverifyTeacher extends AppCompatActivity {
             long timestampRaw = System.currentTimeMillis(); // optional for raw comparison
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("pending_verification");
+            DatabaseReference myRef = database.getReference("pending_verification").push(); // Generate unique ID
 
             Map<String, Object> userData = new HashMap<>();
             userData.put("email", email);
@@ -121,7 +120,6 @@ public class OTPverifyTeacher extends AppCompatActivity {
                     });
         });
 
-
         buttonVerify.setOnClickListener(v -> {
             String enteredOtp = getEnteredOTP();
 
@@ -146,8 +144,8 @@ public class OTPverifyTeacher extends AppCompatActivity {
 
                     DatabaseReference teacherRef = FirebaseDatabase.getInstance()
                             .getReference("user")
-                            .child("teacher");
-
+                            .child("teacher")
+                            .push(); // Generate unique ID for teacher
 
                     // ✅ Format timestamp again for account creation
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -175,7 +173,6 @@ public class OTPverifyTeacher extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
         });
-
     }
 
     private String getEnteredOTP() {
