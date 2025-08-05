@@ -1,7 +1,7 @@
 package com.example.smartessay.Fragments;
 
+import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -27,6 +27,7 @@ public class CameraFragment extends Fragment {
 
     private ImageView imageView;
 
+    // Request camera permission
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -36,11 +37,14 @@ public class CameraFragment extends Fragment {
                 }
             });
 
+    // Handle crop result
     private final ActivityResultLauncher<CropImageContractOptions> cropImageLauncher =
             registerForActivityResult(new CropImageContract(), result -> {
                 if (result.isSuccessful() && result.getUriContent() != null) {
                     Uri croppedUri = result.getUriContent();
-                    imageView.setImageURI(croppedUri);
+                    imageView.setImageURI(croppedUri); // ✅ Show the cropped image
+                } else {
+                    Toast.makeText(getContext(), "Image cropping failed", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -49,14 +53,21 @@ public class CameraFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
         imageView = view.findViewById(R.id.imageView);
 
-        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
+        // Start cropper directly on fragment load (optional)
+        view.setOnClickListener(v -> checkPermissionAndLaunch());
+
+        checkPermissionAndLaunch(); // or call this inside a button click if needed
+
+        return view;
+    }
+
+    private void checkPermissionAndLaunch() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             launchCameraCropper();
         } else {
-            requestPermissionLauncher.launch(android.Manifest.permission.CAMERA);
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
-
-        return view;
     }
 
     private void launchCameraCropper() {
@@ -69,8 +80,14 @@ public class CameraFragment extends Fragment {
         options.cropShape = CropImageView.CropShape.RECTANGLE;
         options.guidelines = CropImageView.Guidelines.ON;
 
+        // 🔽 This is the key part to bring back confirm/cancel UI
+        options.activityMenuIconColor = ContextCompat.getColor(requireContext(), R.color.white); // optional
+        options.toolbarColor = ContextCompat.getColor(requireContext(), R.color.black); // optional
+        options.toolbarBackButtonColor = ContextCompat.getColor(requireContext(), R.color.black); // optional
+        // optional
+
         CropImageContractOptions contractOptions = new CropImageContractOptions(null, options);
         cropImageLauncher.launch(contractOptions);
     }
-}
 
+}

@@ -1,12 +1,27 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
+    <!-- Optional: Instruction or Title -->
+    <TextView
+        android:id="@+id/camera_instruction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cropped Image:"
+        android:textSize="18sp"
+        android:layout_margin="16dp"
+        android:textStyle="bold"
+        android:layout_gravity="top|center_horizontal" />
+
+    <!-- ImageView for displaying cropped image -->
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:background="#DDD"/>
-</LinearLayout>
+        android:layout_width="305dp"
+        android:layout_height="601dp"
+        android:layout_gravity="center"
+        android:background="#EEEEEE"
+        android:contentDescription="Cropped Image"
+        android:scaleType="centerCrop" />
+
+</FrameLayout>
