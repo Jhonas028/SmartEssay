@@ -16,14 +16,21 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smartessay.API.EmailAPI;
 import com.example.smartessay.R;
 import com.example.smartessay.StudentHomepage.StudentHPActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONException;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class OTPverifyStudent extends AppCompatActivity {
 
@@ -35,6 +42,7 @@ public class OTPverifyStudent extends AppCompatActivity {
     private boolean isOtpValid = true;
     private String currentOtp = "";
     private String studentNumber;
+    String formattedTime = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +50,12 @@ public class OTPverifyStudent extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_otpverification);
 
-        // Get data from previous screen
         String account = getIntent().getStringExtra("account");
         studentNumber = getIntent().getStringExtra("studentNumber");
         currentOtp = getIntent().getStringExtra("otp_code_student");
 
-        // Initialize OTP Generator
         otpGenerator = new OTPgenerator();
 
-        // Find views
         code1 = findViewById(R.id.inputCode1);
         code2 = findViewById(R.id.inputCode2);
         code3 = findViewById(R.id.inputCode3);
@@ -61,7 +66,6 @@ public class OTPverifyStudent extends AppCompatActivity {
         textTimer = findViewById(R.id.textTimer);
         testResendOTP = findViewById(R.id.testResendOTP);
 
-        // Setup OTP field focus
         code1.addTextChangedListener(new OTPTextWatcher(code1, code2, null));
         code2.addTextChangedListener(new OTPTextWatcher(code2, code3, code1));
         code3.addTextChangedListener(new OTPTextWatcher(code3, code4, code2));
@@ -69,21 +73,52 @@ public class OTPverifyStudent extends AppCompatActivity {
         code5.addTextChangedListener(new OTPTextWatcher(code5, code6, code4));
         code6.addTextChangedListener(new OTPTextWatcher(code6, null, code5));
 
-        // Start timer
         startOTPTimer(60000);
 
-        // Resend OTP
         testResendOTP.setOnClickListener(v -> {
             clearInputs();
             currentOtp = otpGenerator.generateOTP();
             Log.i("new_student_otp", currentOtp);
             isOtpValid = true;
 
-            // TODO: Re-send email here (optional)
             startOTPTimer(60000);
+
+            Intent intent = getIntent();
+            String email = intent.getStringExtra("email_student");
+            String fullname = intent.getStringExtra("fullname");
+            String pass = intent.getStringExtra("password");
+            String stuNum = intent.getStringExtra("studentNumber");
+
+            // ✅ Correctly format Philippine time
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
+            formattedTime = sdf.format(new Date());
+
+            long timestampRaw = System.currentTimeMillis(); // optional for raw comparison
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("pending_verification").child(stuNum);
+
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("email", email);
+            userData.put("fullname", fullname);
+            userData.put("password", pass);
+            userData.put("studentNumber", stuNum);
+            userData.put("otp", currentOtp);
+            userData.put("timestamp", formattedTime);         // ✅ Human readable
+            userData.put("timestamp_raw", timestampRaw);      // ✅ Optional (can remove if unused)
+
+            myRef.setValue(userData)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(getApplicationContext(), "OTP re-sent and updated in pending.", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getApplicationContext(), "Failed to update OTP.", Toast.LENGTH_SHORT).show();
+                        Log.e("FirebaseError", e.getMessage());
+                    });
         });
 
-        // Verify OTP
+
         buttonVerify.setOnClickListener(v -> {
             String enteredOtp = getEnteredOTP();
 
@@ -97,7 +132,6 @@ public class OTPverifyStudent extends AppCompatActivity {
                 return;
             }
 
-            // ✅ Fetch from pending_verification and move to user/student
             DatabaseReference pendingRef = FirebaseDatabase.getInstance()
                     .getReference("pending_verification")
                     .child(studentNumber);
@@ -113,21 +147,26 @@ public class OTPverifyStudent extends AppCompatActivity {
                             .child("student")
                             .child(studentNumber);
 
+                    // ✅ Format timestamp again for account creation
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
+                    String accountCreatedTime = sdf.format(new Date());
+
                     HashMap<String, Object> studentData = new HashMap<>();
                     studentData.put("email", email);
                     studentData.put("fullname", fullname);
                     studentData.put("studentNumber", studentNumber);
                     studentData.put("password", password);
                     studentData.put("timestamp", System.currentTimeMillis());
+                    studentData.put("account_created_timestamp", accountCreatedTime);
 
                     studentRef.setValue(studentData)
                             .addOnSuccessListener(aVoid -> {
-                                pendingRef.removeValue(); // 🧹 Clean up
+                                pendingRef.removeValue();
                                 Toast.makeText(getApplicationContext(), "Account verified!", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(getApplicationContext(), StudentHPActivity.class));
                                 finish();
                             });
-
                 } else {
                     Toast.makeText(getApplicationContext(), "No pending record found.", Toast.LENGTH_SHORT).show();
                 }
@@ -135,6 +174,7 @@ public class OTPverifyStudent extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
         });
+
     }
 
     private String getEnteredOTP() {

@@ -1,3 +1,4 @@
+// Full file: CreateStudentAcc.java
 package com.example.smartessay.CreatingAccounts;
 
 import android.content.Intent;
@@ -17,29 +18,30 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class CreateStudentAcc extends AppCompatActivity {
 
     Button signupBTN;
-    EditText emailET,fnameET,lnameET,snumET,passET,conpassET;
-    TextInputLayout emailTV,fnameTV,lnameTV,snumTV,passTV,conpassTV;
-    String email,fname,lname,stuNum,pass,confPass;
+    EditText emailET, fnameET, lnameET, snumET, passET, conpassET;
+    TextInputLayout emailTV, fnameTV, lnameTV, snumTV, passTV, conpassTV;
+    String email, fname, lname, stuNum, pass, confPass;
     TextView logInTV;
     OTPgenerator otp;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_student_acc);
 
-        //type of accouint, this time its student account
         String account = getIntent().getStringExtra("account");
-        Log.i("myTag","account name: " + account);
 
         signupBTN = findViewById(R.id.signupBTN);
-        //Edit Text
         emailET = findViewById(R.id.emailET);
         fnameET = findViewById(R.id.fnameET);
         lnameET = findViewById(R.id.lnameET);
@@ -47,8 +49,6 @@ public class CreateStudentAcc extends AppCompatActivity {
         passET = findViewById(R.id.passET);
         conpassET = findViewById(R.id.conpassET);
 
-
-        //TextInputLayout
         emailTV = findViewById(R.id.emailTV);
         snumTV = findViewById(R.id.snumTV);
         fnameTV = findViewById(R.id.fnameTV);
@@ -56,7 +56,6 @@ public class CreateStudentAcc extends AppCompatActivity {
         passTV = findViewById(R.id.passTV);
         conpassTV = findViewById(R.id.conpassTV);
 
-        //TextView
         logInTV = findViewById(R.id.logInTV);
 
         clearHelperTextOnFocus(emailET, emailTV);
@@ -66,20 +65,25 @@ public class CreateStudentAcc extends AppCompatActivity {
         clearHelperTextOnFocus(passET, passTV);
         clearHelperTextOnFocus(conpassET, conpassTV);
 
-        //Going back to MainActivity when user already have an account
-        logInTV.setOnClickListener(view ->{startActivity(new Intent(CreateStudentAcc.this, MainActivity.class));finish();});
+        logInTV.setOnClickListener(view -> {
+            startActivity(new Intent(CreateStudentAcc.this, MainActivity.class));
+            finish();
+        });
 
         signupBTN.setOnClickListener(v -> {
-
-            if(true){
-                otp = new OTPgenerator(); // Make sure it's initialized
+            if (validateInputs()) {
+                otp = new OTPgenerator();
                 String myOTP = otp.generateOTP();
                 String email = emailET.getText().toString().trim();
                 String fullname = fnameET.getText().toString().trim() + " " + lnameET.getText().toString().trim();
                 String stuNum = snumET.getText().toString().trim();
                 String pass = passET.getText().toString().trim();
 
-                // 🔐 Save to pending_verification
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
+                String formattedTime = sdf.format(new Date());
+                long timestampRaw = System.currentTimeMillis();
+
                 DatabaseReference pendingRef = FirebaseDatabase.getInstance()
                         .getReference("pending_verification")
                         .child(stuNum);
@@ -87,13 +91,13 @@ public class CreateStudentAcc extends AppCompatActivity {
                 HashMap<String, Object> pendingData = new HashMap<>();
                 pendingData.put("email", email);
                 pendingData.put("fullname", fullname);
-                pendingData.put("password", pass); // Optional: hash this
+                pendingData.put("password", pass);
                 pendingData.put("otp", myOTP);
-                pendingData.put("timestamp", System.currentTimeMillis());
+                pendingData.put("timestamp", formattedTime); // readable format
+                pendingData.put("timestamp_raw", timestampRaw); // optional raw format
 
                 pendingRef.setValue(pendingData)
                         .addOnSuccessListener(aVoid -> {
-                            // 🔁 Proceed to OTP page after saving
                             Intent intent = new Intent(CreateStudentAcc.this, OTPverifyStudent.class);
                             intent.putExtra("account", account);
                             intent.putExtra("email_student", email);
@@ -101,6 +105,7 @@ public class CreateStudentAcc extends AppCompatActivity {
                             intent.putExtra("fullname", fullname);
                             intent.putExtra("studentNumber", stuNum);
                             intent.putExtra("password", pass);
+                            intent.putExtra("timestamp", formattedTime);
                             startActivity(intent);
                             Toast.makeText(getApplicationContext(), "OTP sent. Please verify.", Toast.LENGTH_SHORT).show();
                         })
@@ -108,18 +113,12 @@ public class CreateStudentAcc extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Failed to start verification.", Toast.LENGTH_SHORT).show();
                             Log.e("FirebaseError", e.getMessage());
                         });
+            } else {
+                Toast.makeText(getApplicationContext(), "Sign-in failed", Toast.LENGTH_SHORT).show();
             }
-            else {
-                Toast.makeText(getApplicationContext(),"Sign-in failed",Toast.LENGTH_SHORT).show();
-            }
-
-
         });
-
-
     }
 
-    //validations
     private boolean validateInputs() {
         email = emailET.getText().toString().trim();
         fname = fnameET.getText().toString().trim();
@@ -146,11 +145,9 @@ public class CreateStudentAcc extends AppCompatActivity {
             conpassTV.setHelperText(null);
         }
 
-
         return isValid;
     }
 
-    //when fields are empty or other validation this method will appear
     private boolean setError(TextInputLayout layout, boolean condition, String message) {
         if (condition) {
             layout.setHelperText(message);
@@ -161,7 +158,6 @@ public class CreateStudentAcc extends AppCompatActivity {
         }
     }
 
-    //when user click the field setHelperText is clear
     private void clearHelperTextOnFocus(EditText editText, TextInputLayout layout) {
         editText.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
@@ -169,13 +165,8 @@ public class CreateStudentAcc extends AppCompatActivity {
             }
         });
     }
-    public boolean isValidPassword(String password){
+
+    public boolean isValidPassword(String password) {
         return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&.*])[A-Za-z\\d!@#$%^&.*]{8,15}$");
-
     }
-
-
-
-
-
 }
