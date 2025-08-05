@@ -34,8 +34,10 @@ public class TeacherHPActivity extends AppCompatActivity {
 
             if (itemId == R.id.home) {selectedFragment = new HomeFragment();
             } else if (itemId == R.id.room) { selectedFragment = new RoomFragment();
-            } else if (itemId == R.id.camera) {selectedFragment = new CameraFragment();
-            } else if (itemId == R.id.checked) {selectedFragment = new CheckedFragment();}
+            } else if (itemId == R.id.camera) {
+                selectedFragment = new CameraFragment();
+            }
+            else if (itemId == R.id.checked) {selectedFragment = new CheckedFragment();}
 
             if (selectedFragment != null) {
                 loadFragments(selectedFragment);
