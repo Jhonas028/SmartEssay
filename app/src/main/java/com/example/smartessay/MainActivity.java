@@ -1,13 +1,13 @@
 package com.example.smartessay;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartessay.CreatingAccounts.ChoosingAccounts;
@@ -30,13 +30,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize views
         usernameEditText = findViewById(R.id.editTextText);
         passwordEditText = findViewById(R.id.editTextText2);
         signinBTN = findViewById(R.id.signinBTN);
         signUpTextView = findViewById(R.id.signupTV);
 
-        // Set click listeners
         signUpTextView.setOnClickListener(v -> {
             startActivity(new Intent(this, ChoosingAccounts.class));
         });
@@ -55,62 +53,76 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void authenticateUser(String email, String password) {
-        DatabaseReference userRef = FirebaseDatabase.getInstance()
-                .getReference("user");
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
 
-        // Check teacher credentials first
-        DatabaseReference teachersRef = userRef.child("teacher");
-        teachersRef.orderByChild("email").equalTo(email)
+        // Check teachers
+        usersRef.child("teachers").orderByChild("email").equalTo(email)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot teacherSnapshot : dataSnapshot.getChildren()) {
-                                String storedPassword = teacherSnapshot.child("password").getValue(String.class);
+                    public void onDataChange(DataSnapshot teacherSnapshot) {
+                        if (teacherSnapshot.exists()) {
+                            for (DataSnapshot teacher : teacherSnapshot.getChildren()) {
+                                String storedPassword = teacher.child("password").getValue(String.class);
+                                String status = teacher.child("status").getValue(String.class);
+
                                 if (storedPassword != null && storedPassword.equals(password)) {
-                                    // Teacher login successful
-                                    Toast.makeText(MainActivity.this, "Teacher login successful", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(MainActivity.this, TeacherHPActivity.class));
-                                    finish();
-                                    return;
+                                    if ("active".equalsIgnoreCase(status)) {
+                                        saveUserSession("teacherId", teacher.getKey());
+                                        Toast.makeText(MainActivity.this, "Teacher login successful", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(MainActivity.this, TeacherHPActivity.class));
+                                        finish();
+                                        return;
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Account not active. Please verify.", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
                                 }
                             }
                         }
 
-
-                        // If not teacher, check student credentials
-                        DatabaseReference studentsRef = userRef.child("student");
-                        studentsRef.orderByChild("email").equalTo(email)
+                        // If not found in teachers, check students
+                        usersRef.child("students").orderByChild("email").equalTo(email)
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.exists()) {
-                                            for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
-                                                String storedPassword = studentSnapshot.child("password").getValue(String.class);
+                                    public void onDataChange(DataSnapshot studentSnapshot) {
+                                        if (studentSnapshot.exists()) {
+                                            for (DataSnapshot student : studentSnapshot.getChildren()) {
+                                                String storedPassword = student.child("password").getValue(String.class);
+                                                String status = student.child("status").getValue(String.class);
+
                                                 if (storedPassword != null && storedPassword.equals(password)) {
-                                                    // Student login successful
-                                                    Toast.makeText(MainActivity.this, "Student login successful", Toast.LENGTH_SHORT).show();
-                                                    startActivity(new Intent(MainActivity.this, StudentHPActivity.class));
-                                                    finish();
-                                                    return;
+                                                    if ("active".equalsIgnoreCase(status)) {
+                                                        saveUserSession("studentId", student.getKey());
+                                                        Toast.makeText(MainActivity.this, "Student login successful", Toast.LENGTH_SHORT).show();
+                                                        startActivity(new Intent(MainActivity.this, StudentHPActivity.class));
+                                                        finish();
+                                                        return;
+                                                    } else {
+                                                        Toast.makeText(MainActivity.this, "Account not active. Please verify.", Toast.LENGTH_SHORT).show();
+                                                        return;
+                                                    }
                                                 }
                                             }
                                         }
-                                        // If we reach here, login failed
                                         Toast.makeText(MainActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
                                     }
 
                                     @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                        Toast.makeText(MainActivity.this, "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                    public void onCancelled(DatabaseError error) {
+                                        Toast.makeText(MainActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Toast.makeText(MainActivity.this, "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    public void onCancelled(DatabaseError error) {
+                        Toast.makeText(MainActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void saveUserSession(String key, String id) {
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        prefs.edit().putString(key, id).apply();
     }
 }

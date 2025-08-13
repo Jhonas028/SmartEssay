@@ -1,27 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <!-- Optional: Instruction or Title -->
+    <!-- Title -->
     <TextView
         android:id="@+id/camera_instruction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cropped Image:"
         android:textSize="18sp"
-        android:layout_margin="16dp"
         android:textStyle="bold"
-        android:layout_gravity="top|center_horizontal" />
+        android:layout_marginBottom="8dp" />
 
-    <!-- ImageView for displaying cropped image -->
+    <!-- ImageView for Cropped Image -->
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="305dp"
-        android:layout_height="601dp"
-        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
         android:background="#EEEEEE"
         android:contentDescription="Cropped Image"
         android:scaleType="centerCrop" />
 
-</FrameLayout>
+    <!-- OCR Result Title -->
+    <TextView
+        android:id="@+id/ocrResultTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OCR Result:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp" />
+
+    <!-- TextView for OCR Result -->
+    <TextView
+        android:id="@+id/ocr_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F5F5F5"
+        android:padding="8dp"
+        android:textSize="16sp" />
+
+</LinearLayout>
