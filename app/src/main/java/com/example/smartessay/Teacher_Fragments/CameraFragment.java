@@ -1,9 +1,8 @@
-package com.example.smartessay.Fragments;
+package com.example.smartessay.Teacher_Fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,21 +25,11 @@ import com.canhub.cropper.CropImageView;
 import com.example.smartessay.API.PenToPrintAPI;
 import com.example.smartessay.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class CameraFragment extends Fragment {
 
