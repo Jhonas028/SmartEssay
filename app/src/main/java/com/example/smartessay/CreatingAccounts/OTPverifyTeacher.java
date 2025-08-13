@@ -88,7 +88,7 @@ public class OTPverifyTeacher extends AppCompatActivity {
             long timestampRaw = System.currentTimeMillis();
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("pending_verification")
+            DatabaseReference pendingRef1 = database.getReference("pending_verification")
                     .child("teachers")
                     .push();
 
@@ -108,7 +108,7 @@ public class OTPverifyTeacher extends AppCompatActivity {
                 throw new RuntimeException(e);
             }*/
 
-            myRef.setValue(userData)
+            pendingRef1.setValue(userData)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getApplicationContext(), "OTP re-sent and updated in pending.", Toast.LENGTH_SHORT).show();
                     })
@@ -116,6 +116,8 @@ public class OTPverifyTeacher extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Failed to update OTP.", Toast.LENGTH_SHORT).show();
                         Log.e("FirebaseError", e.getMessage());
                     });
+
+
         });
 
 
@@ -174,6 +176,7 @@ public class OTPverifyTeacher extends AppCompatActivity {
                                     prefs.edit().putString("teacherId", teacherId).apply();
 
                                     teacherSnap.getRef().removeValue();
+                                    pendingRef.removeValue();
                                     Toast.makeText(getApplicationContext(), "Account verified!", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                     finish();

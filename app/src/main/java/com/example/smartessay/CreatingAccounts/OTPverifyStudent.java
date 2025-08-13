@@ -120,6 +120,7 @@ public class OTPverifyStudent extends AppCompatActivity {
                 throw new RuntimeException(e);
             }*/
 
+
             myRef.setValue(userData)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getApplicationContext(), "OTP re-sent and updated in pending.", Toast.LENGTH_SHORT).show();

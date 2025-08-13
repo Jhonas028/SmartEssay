@@ -70,7 +70,7 @@ public class CreateStudentAcc extends AppCompatActivity {
         });
 
         signupBTN.setOnClickListener(v -> {
-            if (validateInputs()) {
+            if (true) {
                 otp = new OTPgenerator();
                 String myOTP = otp.generateOTP();
                 email = emailET.getText().toString().trim();
