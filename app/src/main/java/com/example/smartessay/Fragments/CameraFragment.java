@@ -23,6 +23,7 @@ import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
+import com.example.smartessay.API.PenToPrintAPI;
 import com.example.smartessay.R;
 
 import org.json.JSONException;
@@ -78,7 +79,8 @@ public class CameraFragment extends Fragment {
                     }
 
                     // Send image to OCR API
-                    new OCRRequestTask(imageFile, ocrResultTextView).execute();
+                    //This is an API PLEASE DO NOT REMOVE THIS
+                    PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
                 } else {
                     Toast.makeText(getContext(), "Image cropping failed", Toast.LENGTH_SHORT).show();
                 }
@@ -125,62 +127,5 @@ public class CameraFragment extends Fragment {
         cropImageLauncher.launch(contractOptions);
     }
 
-    // AsyncTask for OCR API call
-    private static class OCRRequestTask extends AsyncTask<Void, Void, String> {
-        private final File imageFile;
-        private final TextView resultView;
 
-        public OCRRequestTask(File imageFile, TextView resultView) {
-            this.imageFile = imageFile;
-            this.resultView = resultView;
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            OkHttpClient client = new OkHttpClient();
-
-            RequestBody body = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("srcImg", imageFile.getName(),
-                            RequestBody.create(MediaType.parse("application/octet-stream"), imageFile))
-                    .addFormDataPart("includeSubScan", "0")
-                    .addFormDataPart("Session", "string")
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url("https://pen-to-print-handwriting-ocr.p.rapidapi.com/recognize/")
-                    .post(body)
-                    .addHeader("x-rapidapi-key", "5d6b0c84c3msh8935cfeb2995b5fp15496djsnac76059af8ce") // <-- put working key here
-                    .addHeader("x-rapidapi-host", "pen-to-print-handwriting-ocr.p.rapidapi.com")
-                    .build();
-
-            try (Response response = client.newCall(request).execute()) {
-                return (response.isSuccessful() && response.body() != null)
-                        ? response.body().string()
-                        : "Error: " + response.code() + " - " + response.message();
-            } catch (IOException e) {
-                return "Exception: " + e.getMessage();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                JSONObject jsonObject = new JSONObject(result);
-
-                if (jsonObject.has("value")) {
-                    String value = jsonObject.getString("value")
-                            .replaceAll("\\n+", " ")
-                            .replaceAll("\\s{2,}", " ")
-                            .trim();
-
-                    resultView.setText(value);
-                } else {
-                    resultView.setText("No 'value' in response: " + result);
-                }
-            } catch (JSONException e) {
-                resultView.setText("Invalid OCR response: " + result);
-            }
-        }
-    }
 }
