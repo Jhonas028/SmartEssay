@@ -1,4 +1,3 @@
-// Full file: CreateStudentAcc.java
 package com.example.smartessay.CreatingAccounts;
 
 import android.content.Intent;
@@ -12,14 +11,11 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.smartessay.API.EmailAPI;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -77,34 +73,30 @@ public class CreateStudentAcc extends AppCompatActivity {
             if (validateInputs()) {
                 otp = new OTPgenerator();
                 String myOTP = otp.generateOTP();
-                String email = emailET.getText().toString().trim();
-                String fullname = fnameET.getText().toString().trim() + " " + lnameET.getText().toString().trim();
-                String stuNum = snumET.getText().toString().trim();
-                String pass = passET.getText().toString().trim();
+                email = emailET.getText().toString().trim();
+                fname = fnameET.getText().toString().trim();
+                lname = lnameET.getText().toString().trim();
+                stuNum = snumET.getText().toString().trim();
+                pass = passET.getText().toString().trim();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
                 String formattedTime = sdf.format(new Date());
-                long timestampRaw = System.currentTimeMillis();
 
                 DatabaseReference pendingRef = FirebaseDatabase.getInstance()
                         .getReference("pending_verification")
+                        .child("students")
                         .child(stuNum);
 
                 HashMap<String, Object> pendingData = new HashMap<>();
                 pendingData.put("email", email);
-                pendingData.put("fullname", fullname);
+                pendingData.put("first_name", fname);
+                pendingData.put("last_name", lname);
                 pendingData.put("password", pass);
+                pendingData.put("status", "pending");
                 pendingData.put("otp", myOTP);
-                pendingData.put("timestamp", formattedTime); // readable format
-                pendingData.put("timestamp_raw", timestampRaw); // optional raw format
-
-                /* API FOR EMAIL, PLEASE DO NOT REMOVE THIS
-                try {
-                    EmailAPI.sendOtpEmail(currentOtp,email);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }*/
+                pendingData.put("created_at", formattedTime);
+                pendingData.put("updated_at", formattedTime);
 
                 pendingRef.setValue(pendingData)
                         .addOnSuccessListener(aVoid -> {
@@ -112,10 +104,11 @@ public class CreateStudentAcc extends AppCompatActivity {
                             intent.putExtra("account", account);
                             intent.putExtra("email_student", email);
                             intent.putExtra("otp_code_student", myOTP);
-                            intent.putExtra("fullname", fullname);
+                            intent.putExtra("first_name", fname);
+                            intent.putExtra("last_name", lname);
                             intent.putExtra("studentNumber", stuNum);
                             intent.putExtra("password", pass);
-                            intent.putExtra("timestamp", formattedTime);
+                            intent.putExtra("created_at", formattedTime);
                             startActivity(intent);
                             Toast.makeText(getApplicationContext(), "OTP sent. Please verify.", Toast.LENGTH_SHORT).show();
                         })

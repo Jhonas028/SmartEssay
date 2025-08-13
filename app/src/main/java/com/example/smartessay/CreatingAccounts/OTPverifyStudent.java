@@ -29,7 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 public class OTPverifyStudent extends AppCompatActivity {
@@ -42,7 +41,10 @@ public class OTPverifyStudent extends AppCompatActivity {
     private boolean isOtpValid = true;
     private String currentOtp = "";
     private String studentNumber;
-    String formattedTime = "";
+    private String formattedTime = "";
+
+    // Data from CreateStudentAcc
+    private String email, firstName, lastName, password, createdAt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +52,19 @@ public class OTPverifyStudent extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_otpverification);
 
+        // Get extras
         String account = getIntent().getStringExtra("account");
         studentNumber = getIntent().getStringExtra("studentNumber");
         currentOtp = getIntent().getStringExtra("otp_code_student");
+        email = getIntent().getStringExtra("email_student");
+        firstName = getIntent().getStringExtra("first_name");
+        lastName = getIntent().getStringExtra("last_name");
+        password = getIntent().getStringExtra("password");
+        createdAt = getIntent().getStringExtra("created_at");
 
         otpGenerator = new OTPgenerator();
 
+        // Init views
         code1 = findViewById(R.id.inputCode1);
         code2 = findViewById(R.id.inputCode2);
         code3 = findViewById(R.id.inputCode3);
@@ -66,6 +75,7 @@ public class OTPverifyStudent extends AppCompatActivity {
         textTimer = findViewById(R.id.textTimer);
         testResendOTP = findViewById(R.id.testResendOTP);
 
+        // Set OTP watchers
         code1.addTextChangedListener(new OTPTextWatcher(code1, code2, null));
         code2.addTextChangedListener(new OTPTextWatcher(code2, code3, code1));
         code3.addTextChangedListener(new OTPTextWatcher(code3, code4, code2));
@@ -75,42 +85,37 @@ public class OTPverifyStudent extends AppCompatActivity {
 
         startOTPTimer(60000);
 
+        // Resend OTP
         testResendOTP.setOnClickListener(v -> {
             clearInputs();
             currentOtp = otpGenerator.generateOTP();
             Log.i("new_student_otp", currentOtp);
             isOtpValid = true;
-
             startOTPTimer(60000);
 
-            Intent intent = getIntent();
-            String email = intent.getStringExtra("email_student");
-            String fullname = intent.getStringExtra("fullname");
-            String pass = intent.getStringExtra("password");
-            String stuNum = intent.getStringExtra("studentNumber");
-
-            // ✅ Correctly format Philippine time
+            // Update Firebase pending_verification
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
             formattedTime = sdf.format(new Date());
 
-            long timestampRaw = System.currentTimeMillis(); // optional for raw comparison
+            DatabaseReference myRef = FirebaseDatabase.getInstance()
+                    .getReference("pending_verification")
+                    .child("students")
+                    .child(studentNumber);
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("pending_verification").child(stuNum);
-
-            Map<String, Object> userData = new HashMap<>();
+            HashMap<String, Object> userData = new HashMap<>();
             userData.put("email", email);
-            userData.put("fullname", fullname);
-            userData.put("password", pass);
-            userData.put("studentNumber", stuNum);
+            userData.put("first_name", firstName);
+            userData.put("last_name", lastName);
+            userData.put("password", password);
+            userData.put("status", "pending");
             userData.put("otp", currentOtp);
-            userData.put("timestamp", formattedTime);         // ✅ Human readable
-            userData.put("timestamp_raw", timestampRaw);      // ✅ Optional (can remove if unused)
+            userData.put("created_at", createdAt);
+            userData.put("updated_at", formattedTime);
 
-            /* API FOR EMAIL, PLEASE DO NOT REMOVE THIS
+            /* Uncomment to send OTP email
             try {
-                EmailAPI.sendOtpEmail(currentOtp,email);
+                EmailAPI.sendOtpEmail(currentOtp, email);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }*/
@@ -125,7 +130,7 @@ public class OTPverifyStudent extends AppCompatActivity {
                     });
         });
 
-
+        // Verify OTP
         buttonVerify.setOnClickListener(v -> {
             String enteredOtp = getEnteredOTP();
 
@@ -141,34 +146,40 @@ public class OTPverifyStudent extends AppCompatActivity {
 
             DatabaseReference pendingRef = FirebaseDatabase.getInstance()
                     .getReference("pending_verification")
+                    .child("students")
                     .child(studentNumber);
 
             pendingRef.get().addOnSuccessListener(snapshot -> {
                 if (snapshot.exists()) {
-                    String email = snapshot.child("email").getValue(String.class);
-                    String fullname = snapshot.child("fullname").getValue(String.class);
-                    String password = snapshot.child("password").getValue(String.class);
-
+                    // Create student account in users/students
                     DatabaseReference studentRef = FirebaseDatabase.getInstance()
-                            .getReference("user")
-                            .child("student")
+                            .getReference("users")
+                            .child("students")
                             .child(studentNumber);
 
-                    // ✅ Format timestamp again for account creation
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                     sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
                     String accountCreatedTime = sdf.format(new Date());
 
                     HashMap<String, Object> studentData = new HashMap<>();
                     studentData.put("email", email);
-                    studentData.put("fullname", fullname);
+                    studentData.put("first_name", firstName);
+                    studentData.put("last_name", lastName);
                     studentData.put("studentNumber", studentNumber);
                     studentData.put("password", password);
-                    studentData.put("timestamp", System.currentTimeMillis());
-                    studentData.put("account_created_timestamp", accountCreatedTime);
+                    studentData.put("status", "active");
+                    studentData.put("created_at", createdAt);
+                    studentData.put("updated_at", accountCreatedTime);
 
                     studentRef.setValue(studentData)
                             .addOnSuccessListener(aVoid -> {
+
+                                getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
+                                        .edit()
+                                        .putString("studentNumber", studentNumber)
+                                        .apply();
+
+
                                 pendingRef.removeValue();
                                 Toast.makeText(getApplicationContext(), "Account verified!", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(getApplicationContext(), StudentHPActivity.class));
@@ -181,7 +192,6 @@ public class OTPverifyStudent extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
         });
-
     }
 
     private String getEnteredOTP() {

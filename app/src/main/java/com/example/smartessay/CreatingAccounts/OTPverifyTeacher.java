@@ -1,6 +1,7 @@
 package com.example.smartessay.CreatingAccounts;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -16,20 +17,16 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.smartessay.API.EmailAPI;
+import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
-import com.example.smartessay.TeacherHomepage.TeacherHPActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 public class OTPverifyTeacher extends AppCompatActivity {
@@ -38,10 +35,8 @@ public class OTPverifyTeacher extends AppCompatActivity {
     TextView textTimer, testResendOTP;
     Button buttonVerify;
     OTPgenerator otpGenerator;
-
     private boolean isOtpValid = true;
     private String currentOtp = "";
-    String formattedTime = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,26 +77,29 @@ public class OTPverifyTeacher extends AppCompatActivity {
 
             Intent intent = getIntent();
             String email = intent.getStringExtra("email_teacher");
-            String fullname = intent.getStringExtra("fullname");
+            String firstName = intent.getStringExtra("first_name");
+            String lastName = intent.getStringExtra("last_name");
             String pass = intent.getStringExtra("password");
 
-            // ✅ Correctly format Philippine time
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
-            formattedTime = sdf.format(new Date());
+            String formattedTime = sdf.format(new Date());
 
-            long timestampRaw = System.currentTimeMillis(); // optional for raw comparison
+            long timestampRaw = System.currentTimeMillis();
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("pending_verification").push(); // Generate unique ID
+            DatabaseReference myRef = database.getReference("pending_verification")
+                    .child("teachers")
+                    .push();
 
-            Map<String, Object> userData = new HashMap<>();
+            HashMap<String, Object> userData = new HashMap<>();
             userData.put("email", email);
-            userData.put("fullname", fullname);
+            userData.put("first_name", firstName);
+            userData.put("last_name", lastName);
             userData.put("password", pass);
             userData.put("otp", currentOtp);
-            userData.put("timestamp", formattedTime);         // ✅ Human readable
-            userData.put("timestamp_raw", timestampRaw);      // ✅ Optional (can remove if unused)
+            userData.put("timestamp", formattedTime);
+            userData.put("timestamp_raw", timestampRaw);
 
             /* API FOR EMAIL, PLEASE DO NOT REMOVE THIS
             try {
@@ -120,54 +118,68 @@ public class OTPverifyTeacher extends AppCompatActivity {
                     });
         });
 
+
+
         buttonVerify.setOnClickListener(v -> {
             String enteredOtp = getEnteredOTP();
 
             if (!isOtpValid) {
-                Toast.makeText(getApplicationContext(), "OTP has expired. Please resend.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "OTP expired. Please resend.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (!enteredOtp.equals(currentOtp)) {
-                Toast.makeText(getApplicationContext(), "OTP didn't match.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Incorrect OTP.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             DatabaseReference pendingRef = FirebaseDatabase.getInstance()
-                    .getReference("pending_verification");
+                    .getReference("pending_verification")
+                    .child("teachers");
 
             pendingRef.get().addOnSuccessListener(snapshot -> {
-                if (snapshot.exists()) {
-                    String email = snapshot.child("email").getValue(String.class);
-                    String fullname = snapshot.child("fullname").getValue(String.class);
-                    String password = snapshot.child("password").getValue(String.class);
+                for (DataSnapshot teacherSnap : snapshot.getChildren()) {
+                    String otpFromDb = teacherSnap.child("otp").getValue(String.class);
+                    if (otpFromDb != null && otpFromDb.equals(currentOtp)) {
+                        String email = teacherSnap.child("email").getValue(String.class);
+                        String firstName = teacherSnap.child("first_name").getValue(String.class);
+                        String lastName = teacherSnap.child("last_name").getValue(String.class);
+                        String password = teacherSnap.child("password").getValue(String.class);
 
-                    DatabaseReference teacherRef = FirebaseDatabase.getInstance()
-                            .getReference("user")
-                            .child("teacher")
-                            .push(); // Generate unique ID for teacher
+                        DatabaseReference teacherRef = FirebaseDatabase.getInstance()
+                                .getReference("users")
+                                .child("teachers")
+                                .push();
 
-                    // ✅ Format timestamp again for account creation
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
-                    String accountCreatedTime = sdf.format(new Date());
+                        String teacherId = teacherRef.getKey(); // <-- Get unique ID
 
-                    HashMap<String, Object> teacherData = new HashMap<>();
-                    teacherData.put("email", email);
-                    teacherData.put("fullname", fullname);
-                    teacherData.put("password", password);
-                    teacherData.put("timestamp", System.currentTimeMillis());
-                    teacherData.put("account_created_timestamp", accountCreatedTime);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
+                        String createdTime = sdf.format(new Date());
 
-                    teacherRef.setValue(teacherData)
-                            .addOnSuccessListener(aVoid -> {
-                                pendingRef.removeValue();
-                                Toast.makeText(getApplicationContext(), "Account verified!", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), TeacherHPActivity.class));
-                                finish();
-                            });
-                } else {
-                    Toast.makeText(getApplicationContext(), "No pending record found.", Toast.LENGTH_SHORT).show();
+                        HashMap<String, Object> teacherData = new HashMap<>();
+                        teacherData.put("email", email);
+                        teacherData.put("first_name", firstName);
+                        teacherData.put("last_name", lastName);
+                        teacherData.put("password", password);
+                        teacherData.put("status", "active");
+                        teacherData.put("created_at", createdTime);
+                        teacherData.put("updated_at", createdTime);
+
+                        teacherRef.setValue(teacherData)
+                                .addOnSuccessListener(aVoid -> {
+
+                                    // Store ID so it can be used in other classes
+                                    SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+                                    prefs.edit().putString("teacherId", teacherId).apply();
+
+                                    teacherSnap.getRef().removeValue();
+                                    Toast.makeText(getApplicationContext(), "Account verified!", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                    finish();
+                                });
+                        break;
+                    }
                 }
             }).addOnFailureListener(e -> {
                 Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -182,16 +194,6 @@ public class OTPverifyTeacher extends AppCompatActivity {
                 code4.getText().toString().trim() +
                 code5.getText().toString().trim() +
                 code6.getText().toString().trim();
-    }
-
-    public void clearInputs() {
-        code1.setText("");
-        code2.setText("");
-        code3.setText("");
-        code4.setText("");
-        code5.setText("");
-        code6.setText("");
-        code1.requestFocus();
     }
 
     private class OTPTextWatcher implements TextWatcher {
@@ -210,30 +212,23 @@ public class OTPverifyTeacher extends AppCompatActivity {
                         currentEditText.getText().toString().isEmpty() &&
                         previousEditText != null) {
                     previousEditText.requestFocus();
-                    previousEditText.setSelection(previousEditText.getText().length());
                     return true;
                 }
                 return false;
             });
         }
 
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (!s.toString().trim().isEmpty() && nextEditText != null) {
                 nextEditText.requestFocus();
             }
         }
-
-        @Override
-        public void afterTextChanged(Editable s) {}
+        @Override public void afterTextChanged(Editable s) {}
     }
 
     private void startOTPTimer(long durationInMillis) {
         testResendOTP.setEnabled(false);
-
         new CountDownTimer(durationInMillis, 1000) {
             public void onTick(long millisUntilFinished) {
                 String time = String.format(Locale.getDefault(), "%02d:%02d",
@@ -241,7 +236,6 @@ public class OTPverifyTeacher extends AppCompatActivity {
                         (millisUntilFinished % 60000) / 1000);
                 textTimer.setText(time);
             }
-
             public void onFinish() {
                 textTimer.setText("00:00");
                 testResendOTP.setEnabled(true);
@@ -249,5 +243,15 @@ public class OTPverifyTeacher extends AppCompatActivity {
                 isOtpValid = false;
             }
         }.start();
+    }
+
+    private void clearInputs() {
+        code1.setText("");
+        code2.setText("");
+        code3.setText("");
+        code4.setText("");
+        code5.setText("");
+        code6.setText("");
+        code1.requestFocus();
     }
 }

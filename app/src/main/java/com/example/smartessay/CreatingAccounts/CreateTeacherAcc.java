@@ -1,4 +1,3 @@
-// Full file: CreateStudentAcc.java
 package com.example.smartessay.CreatingAccounts;
 
 import android.content.Intent;
@@ -30,7 +29,7 @@ import java.util.TimeZone;
 public class CreateTeacherAcc extends AppCompatActivity {
 
     Button signupBTN;
-    EditText emailET, fnameET, lnameET, snumET, passET, conpassET;
+    EditText emailET, fnameET, lnameET, passET, conpassET;
     TextInputLayout emailTV, fnameTV, lnameTV, passTV, conpassTV;
     String email, fname, lname, pass, confPass;
     TextView logInTV;
@@ -71,11 +70,13 @@ public class CreateTeacherAcc extends AppCompatActivity {
         });
 
         signupBTN.setOnClickListener(v -> {
-            if (validateInputs()) {
+            //use ur method heret o validate inputs
+            if (true) {
                 otp = new OTPgenerator();
                 String myOTP = otp.generateOTP();
                 String email = emailET.getText().toString().trim();
-                String fullname = fnameET.getText().toString().trim() + " " + lnameET.getText().toString().trim();
+                String firstName = fnameET.getText().toString().trim();
+                String lastName = lnameET.getText().toString().trim();
                 String pass = passET.getText().toString().trim();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -84,20 +85,24 @@ public class CreateTeacherAcc extends AppCompatActivity {
                 long timestampRaw = System.currentTimeMillis();
 
                 DatabaseReference pendingRef = FirebaseDatabase.getInstance()
-                        .getReference("pending_verification");
-
+                        .getReference("pending_verification")
+                        .child("teachers")
+                        .push(); // Unique teacher OTP entry
 
                 HashMap<String, Object> pendingData = new HashMap<>();
                 pendingData.put("email", email);
-                pendingData.put("fullname", fullname);
+                pendingData.put("first_name", firstName);
+                pendingData.put("last_name", lastName);
                 pendingData.put("password", pass);
+                pendingData.put("status", "pending");
                 pendingData.put("otp", myOTP);
-                pendingData.put("timestamp", formattedTime); // readable format
-                pendingData.put("timestamp_raw", timestampRaw); // optional raw format
+                pendingData.put("created_at", formattedTime);
+                pendingData.put("updated_at", formattedTime);
+                pendingData.put("timestamp_raw", timestampRaw);
 
                 /* API FOR EMAIL, PLEASE DO NOT REMOVE THIS
                 try {
-                    EmailAPI.sendOtpEmail(currentOtp,email);
+                    EmailAPI.sendOtpEmail(myOTP,email);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }*/
@@ -108,9 +113,9 @@ public class CreateTeacherAcc extends AppCompatActivity {
                             intent.putExtra("account", account);
                             intent.putExtra("email_teacher", email);
                             intent.putExtra("otp_code_teacher", myOTP);
-                            intent.putExtra("fullname", fullname);
+                            intent.putExtra("first_name", firstName);
+                            intent.putExtra("last_name", lastName);
                             intent.putExtra("password", pass);
-                            intent.putExtra("timestamp", formattedTime);
                             startActivity(intent);
                             Toast.makeText(getApplicationContext(), "OTP sent. Please verify.", Toast.LENGTH_SHORT).show();
                         })
@@ -147,7 +152,6 @@ public class CreateTeacherAcc extends AppCompatActivity {
         } else {
             conpassTV.setHelperText(null);
         }
-
         return isValid;
     }
 

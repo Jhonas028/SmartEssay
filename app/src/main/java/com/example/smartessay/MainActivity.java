@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
 
+
                         // If not teacher, check student credentials
                         DatabaseReference studentsRef = userRef.child("student");
                         studentsRef.orderByChild("email").equalTo(email)
