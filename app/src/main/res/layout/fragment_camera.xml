@@ -3,45 +3,239 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:padding="16dp">
 
     <!-- Title -->
-    <TextView
-        android:id="@+id/camera_instruction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cropped Image:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
-
-    <!-- ImageView for Cropped Image -->
-    <ImageView
-        android:id="@+id/imageView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:background="#EEEEEE"
-        android:contentDescription="Cropped Image"
-        android:scaleType="centerCrop" />
+        android:layout_height="match_parent"
+        android:paddingTop="10dp"
+        android:paddingBottom="20dp">
 
-    <!-- OCR Result Title -->
-    <TextView
-        android:id="@+id/ocrResultTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="OCR Result:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="4dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-    <!-- TextView for OCR Result -->
-    <TextView
-        android:id="@+id/ocr_result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#F5F5F5"
-        android:padding="8dp"
-        android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/camera_instruction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cropped Image:"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <!-- ImageView for Cropped Image -->
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="#EEEEEE"
+                android:contentDescription="Cropped Image"
+                android:scaleType="centerCrop" />
+
+            <!-- OCR Result Title -->
+            <TextView
+                android:id="@+id/ocrResultTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OCR Result:"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="4dp" />
+
+            <!-- TextView for OCR Result -->
+            <TextView
+                android:id="@+id/ocr_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#F5F5F5"
+                android:padding="8dp"
+                android:textSize="16sp" />
+
+            <!-- Rubrics -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/rubricsTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Rubrics"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <!-- Content / Ideas -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/contentTV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="Content / Ideas"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/contentPercentage"
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:gravity="center"
+                        android:hint="%" />
+                </LinearLayout>
+
+                <!-- Organization / Structure -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/OrganizationTV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="Organization / Structure"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/organizationPercentage"
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:gravity="center"
+                        android:hint="%" />
+                </LinearLayout>
+
+                <!-- Development and Support -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/DevelopmentTV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="Development and Support"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/developmentPercentage"
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:gravity="center"
+                        android:hint="%" />
+                </LinearLayout>
+
+                <!-- Grammar and Formatting -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/grammarTV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="Grammar and Formatting"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/grammarPercentage"
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:gravity="center"
+                        android:hint="%" />
+                </LinearLayout>
+
+                <!-- Critical Thinking -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/criticalTV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="Critical Thinking"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/criticalPercentage"
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:gravity="center"
+                        android:hint="%" />
+                </LinearLayout>
+
+                <!-- Others -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/otherTV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="Others"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/othersPercentage"
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:gravity="center"
+                        android:hint="%" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
 
 </LinearLayout>
