@@ -4,6 +4,10 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,8 +26,12 @@ import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
+import com.example.smartessay.API.OpenAiAPI;
 import com.example.smartessay.API.PenToPrintAPI;
 import com.example.smartessay.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,7 +42,86 @@ import java.io.OutputStream;
 public class CameraFragment extends Fragment {
 
     private ImageView imageView;
-    private TextView ocrResultTextView;
+    private TextView ocrResultTextView,scoresTV;
+    EditText contentPercentage,organizationPercentage,developmentPercentage,grammarPercentage,criticalPercentage,otherTV;
+
+    Button submitBtn;
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_camera, container, false);
+        imageView = view.findViewById(R.id.imageView);
+        ocrResultTextView = view.findViewById(R.id.ocr_result);
+
+        //Rubrics
+        contentPercentage = view.findViewById(R.id.contentPercentage);
+        organizationPercentage = view.findViewById(R.id.organizationPercentage);
+        developmentPercentage = view.findViewById(R.id.developmentPercentage);
+        grammarPercentage = view.findViewById(R.id.grammarPercentage);
+        criticalPercentage = view.findViewById(R.id.criticalPercentage);
+        otherTV = view.findViewById(R.id.otherTV);
+
+        //Ai
+        scoresTV = view.findViewById(R.id.scoresTV);
+        submitBtn = view.findViewById(R.id.submitBtn);
+
+
+        // Launch cropper when root view clicked
+        view.setOnClickListener(v -> checkPermissionAndLaunch());
+
+        // Auto-launch on fragment start
+        checkPermissionAndLaunch();
+
+        submitBtn.setOnClickListener(v -> {
+            String essay = ocrResultTextView.getText().toString();
+            if (essay.isEmpty()) {
+                Toast.makeText(getContext(), "No essay detected!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            OpenAiAPI.gradeEssay(
+                    essay,
+                    contentPercentage.getText().toString(),
+                    organizationPercentage.getText().toString(),
+                    developmentPercentage.getText().toString(),
+                    grammarPercentage.getText().toString(),
+                    criticalPercentage.getText().toString(),
+                    otherTV.getText().toString(),
+                    new OpenAiAPI.GradeCallback() {
+                        @Override
+
+                        public void onSuccess(String result) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(result);
+                                String rawText = jsonObject.getString("result");
+
+                                // Clean up escaped sequences
+                                String formatted = rawText
+                                        .replace("\\n", "\n")
+                                        .replace("\\t", "\t")
+                                        .trim();
+
+                                scoresTV.setText(formatted);
+                                Log.i("resultOpenAI", formatted);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                scoresTV.setText("Error parsing result");
+                            }
+                        }
+
+
+
+                        @Override
+                        public void onError(String error) {
+                            scoresTV.setText("Error: " + error);
+                        }
+                    }
+            );
+        });
+
+        return view;
+    }
 
     // Camera permission request
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -75,21 +162,6 @@ public class CameraFragment extends Fragment {
                 }
             });
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_camera, container, false);
-        imageView = view.findViewById(R.id.imageView);
-        ocrResultTextView = view.findViewById(R.id.ocr_result);
-
-        // Launch cropper when root view clicked
-        view.setOnClickListener(v -> checkPermissionAndLaunch());
-
-        // Auto-launch on fragment start
-        checkPermissionAndLaunch();
-
-        return view;
-    }
-
     private void checkPermissionAndLaunch() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -115,6 +187,8 @@ public class CameraFragment extends Fragment {
         CropImageContractOptions contractOptions = new CropImageContractOptions(null, options);
         cropImageLauncher.launch(contractOptions);
     }
+
+
 
 
 }

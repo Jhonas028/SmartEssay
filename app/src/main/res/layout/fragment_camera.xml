@@ -6,18 +6,17 @@
     android:fitsSystemWindows="true"
     android:padding="16dp">
 
-    <!-- Title -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="10dp"
-        android:paddingBottom="20dp">
+        android:fillViewport="true"
+        android:paddingBottom="80dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/camera_instruction"
@@ -28,7 +27,6 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
 
-            <!-- ImageView for Cropped Image -->
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
@@ -37,7 +35,6 @@
                 android:contentDescription="Cropped Image"
                 android:scaleType="centerCrop" />
 
-            <!-- OCR Result Title -->
             <TextView
                 android:id="@+id/ocrResultTextView"
                 android:layout_width="wrap_content"
@@ -48,7 +45,6 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp" />
 
-            <!-- TextView for OCR Result -->
             <TextView
                 android:id="@+id/ocr_result"
                 android:layout_width="match_parent"
@@ -204,38 +200,77 @@
                         android:hint="%" />
                 </LinearLayout>
 
-                <!-- Others -->
+                <!-- Others (Teacher Notes) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
+                    android:orientation="vertical"
                     android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:id="@+id/otherTV"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:padding="8dp"
                         android:text="Others"
                         android:textSize="16sp" />
 
                     <EditText
-                        android:id="@+id/othersPercentage"
-                        android:layout_width="70dp"
+                        android:id="@+id/otherTV"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:gravity="center"
-                        android:hint="%" />
+                        android:textSize="16sp"
+                        android:inputType="textMultiLine"
+                        android:gravity="top|start"
+                        android:minLines="2"
+                        android:scrollbars="vertical" />
                 </LinearLayout>
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/submitBtn"
+                android:layout_width="290dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/button"
+                android:text="Submit" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/scoreTV1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Score and Feedback:"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/scoresTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#F5F5F5"
+                    android:padding="8dp"
+                    android:textSize="16sp"
+                    android:paddingBottom="80dp"
+                    android:scrollHorizontally="false"
+                    android:ellipsize="none"
+                    android:singleLine="false"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false" />
+
+
+            </LinearLayout>
 
 
         </LinearLayout>
     </ScrollView>
-
-
 </LinearLayout>
