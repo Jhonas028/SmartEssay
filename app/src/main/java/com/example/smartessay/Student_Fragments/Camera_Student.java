@@ -50,8 +50,15 @@ public class Camera_Student extends AppCompatActivity {
         submitBtn = findViewById(R.id.submitBtn);
         cancelBtn = findViewById(R.id.cancelBtn);
 
+        // Get student and classroom info from intent
         studentId = getIntent().getStringExtra("studentId");
-        classroomId = getIntent().getStringExtra("roomCode");
+        classroomId = getIntent().getStringExtra("classroomId");
+
+        if (studentId == null || classroomId == null) {
+            Toast.makeText(this, "Student or classroom info missing", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         // Launch cropper when root view is clicked
         findViewById(R.id.mainLayout).setOnClickListener(v -> checkPermissionAndLaunch());
@@ -68,16 +75,11 @@ public class Camera_Student extends AppCompatActivity {
 
             Uri imageUri = null;
             if (imageView.getDrawable() != null && imageView.getTag() != null) {
-                imageUri = (Uri) imageView.getTag(); // store URI in setTag() when loading cropped image
+                imageUri = (Uri) imageView.getTag(); // retrieve URI stored in cropper
             }
-
-            uploadEssay(ocrResultTextView.getText().toString(), imageUri);
-
 
             uploadEssay(essayText, imageUri);
         });
-
-
 
         cancelBtn.setOnClickListener(v -> {
             imageView.setImageDrawable(null);
@@ -86,50 +88,45 @@ public class Camera_Student extends AppCompatActivity {
     }
 
     private void uploadEssay(String convertedText, Uri imageUri) {
-
-
-
-        if (studentId == null || classroomId == null) {
-            Toast.makeText(this, "Student or classroom info missing", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         DatabaseReference db = FirebaseDatabase.getInstance(
-                "https://smartessay-79d91-default-rtdb.asia-southeast1.firebasedatabase.app/"
+                "https://smartessay-79d91-default-rtdb.firebaseio.com/"
         ).getReference();
 
-        // Create new essay ID
+        // Generate unique essay ID
         String essayId = db.child("essay").push().getKey();
         if (essayId == null) {
             Toast.makeText(this, "Failed to generate essay ID", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Essay object
         long timestamp = System.currentTimeMillis();
         Essay essay = new Essay(
                 studentId,
                 classroomId,
                 imageUri != null ? imageUri.toString() : "",
                 convertedText,
-                0,                  // grade default 0
-                "uploaded",         // status
+                0,              // default grade
+                "uploaded",     // status
                 timestamp,
                 timestamp
         );
 
-        // Save essay
+        // Save essay to database
         db.child("essay").child(essayId).setValue(essay)
                 .addOnSuccessListener(aVoid -> {
                     // Link essay to classroom members
                     db.child("classrooms").child(classroomId)
                             .child("classroom_members")
                             .child(studentId)
+                            .child(essayId)
                             .setValue(essayId)
-                            .addOnSuccessListener(v -> Toast.makeText(this, "Essay uploaded!", Toast.LENGTH_SHORT).show())
-                            .addOnFailureListener(e -> Toast.makeText(this, "Failed to update classroom members", Toast.LENGTH_SHORT).show());
+                            .addOnSuccessListener(v ->
+                                    Toast.makeText(this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(this, "Failed to update classroom members", Toast.LENGTH_SHORT).show());
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to upload essay", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Failed to upload essay", Toast.LENGTH_SHORT).show());
     }
 
     // Essay model class
@@ -159,7 +156,6 @@ public class Camera_Student extends AppCompatActivity {
         }
     }
 
-
     // Permission request
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -176,8 +172,9 @@ public class Camera_Student extends AppCompatActivity {
                 if (result.isSuccessful() && result.getUriContent() != null) {
                     Uri croppedUri = result.getUriContent();
                     imageView.setImageURI(croppedUri);
+                    imageView.setTag(croppedUri); // store URI for upload
 
-                    // Save cropped image
+                    // Save cropped image locally (optional)
                     File imageFile = new File(getCacheDir(), "cropped_image.jpg");
                     try (InputStream in = getContentResolver().openInputStream(croppedUri);
                          OutputStream out = new FileOutputStream(imageFile)) {
@@ -191,8 +188,11 @@ public class Camera_Student extends AppCompatActivity {
                         return;
                     }
 
-                    // Send to OCR API
-                    PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
+                    // Send to OCR API (if needed)
+                    // PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
+                    // For testing:
+                    ocrResultTextView.setText("This is a sample essay. LOOREM LORE LOREM RLOREM LOREML");
+
                 } else {
                     Toast.makeText(this, "Image cropping failed", Toast.LENGTH_SHORT).show();
                 }

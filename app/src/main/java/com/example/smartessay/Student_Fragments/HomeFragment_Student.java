@@ -1,7 +1,10 @@
 package com.example.smartessay.Student_Fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartessay.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -99,6 +104,18 @@ public class HomeFragment_Student extends Fragment {
                                             intent.putExtra("roomName", roomName);
                                             intent.putExtra("roomCode", code);
 
+                                            SharedPreferences prefs = requireContext().getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+                                            String currentStudentId = prefs.getString("studentId", null);
+
+                                            if (currentStudentId == null) {
+                                                Toast.makeText(getContext(), "Student not logged in", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+
+                                            intent.putExtra("roomName", roomName);
+                                            intent.putExtra("roomCode", code);
+                                            intent.putExtra("studentId", currentStudentId);      // ✅ from SharedPreferences
+                                            intent.putExtra("classroomId", classroom.getKey());   // push key of classroom
                                         }
 
                                         startActivity(intent);
