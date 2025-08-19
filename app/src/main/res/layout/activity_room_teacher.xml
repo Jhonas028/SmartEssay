@@ -66,10 +66,10 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_search_prompt"
+            android:id="@+id/edit_search_student"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search prompts..."
+            android:hint="Search..."
             android:drawablePadding="8dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
