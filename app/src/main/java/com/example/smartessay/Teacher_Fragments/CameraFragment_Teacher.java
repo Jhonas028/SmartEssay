@@ -48,7 +48,7 @@ public class CameraFragment_Teacher extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_camera, container, false);
+        View view = inflater.inflate(R.layout.fragment_camera_teacher, container, false);
         imageView = view.findViewById(R.id.imageView);
         ocrResultTextView = view.findViewById(R.id.ocr_result);
 

@@ -32,7 +32,7 @@ public class HomeFragment_Teacher extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home_teacher, container, false);
 
         // Initialize RecyclerView
         recyclerView = view.findViewById(R.id.recycler_view_rooms);
