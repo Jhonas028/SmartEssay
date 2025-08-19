@@ -32,15 +32,16 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <com.google.android.material.button.MaterialButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_add_room"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add Room"
-                android:textSize="12sp"
                 android:textColor="@color/back_blue"
-                android:backgroundTint="@color/yellow"
-                style="@style/Widget.MaterialComponents.Button" />
+                android:background="@drawable/round_all_yellow_button"
+                android:textSize="12sp"
+                />
+
 
         </LinearLayout>
 
