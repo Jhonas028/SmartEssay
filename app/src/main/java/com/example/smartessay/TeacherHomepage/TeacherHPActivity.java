@@ -1,9 +1,9 @@
 package com.example.smartessay.TeacherHomepage;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,10 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.smartessay.R;
-import com.example.smartessay.Teacher_Fragments.CameraFragment;
-import com.example.smartessay.Teacher_Fragments.CheckedFragment;
-import com.example.smartessay.Teacher_Fragments.HomeFragment;
-import com.example.smartessay.Teacher_Fragments.RoomFragment;
+import com.example.smartessay.Teacher_Fragments.CameraFragment_Teacher;
+import com.example.smartessay.Teacher_Fragments.HomeFragment_Teacher;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -51,7 +49,7 @@ public class TeacherHPActivity extends AppCompatActivity {
         toggle.syncState();
 
         // Default fragment
-        loadFragments(new HomeFragment());
+        loadFragments(new HomeFragment_Teacher());
 
         // Handle navigation item clicks
         navView.setNavigationItemSelectedListener(item -> {
@@ -59,9 +57,9 @@ public class TeacherHPActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.home) {
-                selectedFragment = new HomeFragment();
+                selectedFragment = new HomeFragment_Teacher();
             } else if (itemId == R.id.logout) {
-                selectedFragment = new CheckedFragment();
+                Toast.makeText(this, "Logout Clicked", Toast.LENGTH_SHORT).show();
             }
 
             if (selectedFragment != null) {
@@ -69,12 +67,11 @@ public class TeacherHPActivity extends AppCompatActivity {
                 drawerLayout.closeDrawers(); // close burger after selection
                 return true;
             }
-
             return false;
         });
 
         fab.setOnClickListener(v -> {
-            Fragment cameraFragment = new CameraFragment();
+            Fragment cameraFragment = new CameraFragment_Teacher();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.framelays, cameraFragment);  // framelays = your FrameLayout container
             transaction.addToBackStack(null);  // allows back navigation

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:strokeColor="@android:color/holo_blue_bright"
+    app:strokeWidth="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/blue_border_background">
+
+        <TextView
+            android:id="@+id/text_room_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Room 101"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/text_room_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Code: ABC123"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:hint="Room Code" />
+
+        <TextView
+            android:id="@+id/text_date_created"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Created: March 15, 2024"
+            android:textSize="12sp"
+            android:textColor="@android:color/black"
+            android:hint="Date Created" />
+
+        <TextView
+            android:id="@+id/text_time_created"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Time: 10:30 AM"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:hint="Time Created" />
+
+        <TextView
+            android:id="@+id/text_available_students"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Available Students: 25/30"
+            android:textSize="14sp"
+            android:textColor="@android:color/holo_green_dark"
+            android:hint="Available Students" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

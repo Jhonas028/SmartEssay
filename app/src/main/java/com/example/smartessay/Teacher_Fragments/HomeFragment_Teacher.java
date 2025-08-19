@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class HomeFragment extends Fragment {
+public class HomeFragment_Teacher extends Fragment {
 
     private RecyclerView recyclerView;
     private RoomAdapter roomAdapter;
@@ -48,9 +47,10 @@ public class HomeFragment extends Fragment {
 
         // Button logic
         btnAddRoom = view.findViewById(R.id.btn_add_room);
+
         btnAddRoom.setOnClickListener(v -> {
             // ✅ Use the inflater passed into onCreateView
-            View dialogView = inflater.inflate(R.layout.dialog_add_classroom, null);
+            View dialogView = inflater.inflate(R.layout.dialog_add_classroom_teacher, null);
 
             EditText etClassroomName = dialogView.findViewById(R.id.etRoomName);
             Button btnCancel = dialogView.findViewById(R.id.btnCancel);

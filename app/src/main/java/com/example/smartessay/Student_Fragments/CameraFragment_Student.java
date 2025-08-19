@@ -1,4 +1,4 @@
-package com.example.smartessay.Teacher_Fragments;
+package com.example.smartessay.Student_Fragments;
 
 import android.os.Bundle;
 
@@ -11,14 +11,15 @@ import android.view.ViewGroup;
 import com.example.smartessay.R;
 
 
-public class CameraFragment_BottomNav extends Fragment {
+public class CameraFragment_Student extends Fragment {
+
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_camera__bottom_nav, container, false);
+        View view = inflater.inflate(R.layout.fragment_camera__student, container, false);
 
         return view;
     }
