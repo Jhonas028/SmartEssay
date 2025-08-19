@@ -38,6 +38,9 @@
             android:name=".TeacherHomepage.AddRoomActivity"
             android:exported="false" />
         <activity
+            android:name=".TeacherHomepage.RoomDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".CreatingAccounts.CreateTeacherAcc"
             android:exported="false" />
         <activity

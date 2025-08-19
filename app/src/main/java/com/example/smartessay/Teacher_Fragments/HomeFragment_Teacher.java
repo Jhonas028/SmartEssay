@@ -19,12 +19,14 @@ import android.widget.Toast;
 
 import com.example.smartessay.R;
 import com.example.smartessay.TeacherHomepage.AddRoomActivity;
+import com.example.smartessay.TeacherHomepage.RoomDetailsActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +91,13 @@ public class HomeFragment_Teacher extends Fragment {
 
         loadRoomsFromFirebase();
 
+        roomAdapter.setOnItemClickListener(room -> {
+            Intent intent = new Intent(requireContext(), RoomDetailsActivity.class);
+            intent.putExtra("roomName", room.getRoomName());  // pass room name
+            intent.putExtra("roomCode", room.getRoomCode()); // pass the entire room object
+            startActivity(intent);
+        });
+
         return view;
     }
 
@@ -146,7 +155,15 @@ public class HomeFragment_Teacher extends Fragment {
 
     public static class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
         private final List<Room> roomList;
+        private OnItemClickListener listener;
 
+        public interface OnItemClickListener {
+            void onItemClick(Room room);
+        }
+
+        public void setOnItemClickListener(OnItemClickListener listener) {
+            this.listener = listener;
+        }
         public RoomAdapter(List<Room> roomList) { this.roomList = roomList; }
 
         @NonNull
@@ -175,6 +192,10 @@ public class HomeFragment_Teacher extends Fragment {
             } else {
                 holder.textRubrics.setText("No Rubrics");
             }
+
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onItemClick(room);
+            });
         }
 
         @Override
@@ -193,4 +214,5 @@ public class HomeFragment_Teacher extends Fragment {
             }
         }
     }
+
 }
