@@ -78,7 +78,7 @@ public class CameraFragment extends Fragment {
                 Toast.makeText(getContext(), "No essay detected!", Toast.LENGTH_SHORT).show();
                 return;
             }
-            //This is an API PLEASE DO NOT REMOVE THIS
+
             OpenAiAPI.gradeEssay(
                     essay,
                     contentPercentage.getText().toString(),
