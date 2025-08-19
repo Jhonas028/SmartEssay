@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
+    android:background="@color/back_blue"
     android:padding="16dp">
 
     <ScrollView
@@ -18,28 +19,34 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Header -->
             <TextView
                 android:id="@+id/camera_instruction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cropped Image:"
+                android:textColor="@color/text_title_yellow"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
 
+            <!-- Image Preview -->
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                android:background="#EEEEEE"
+                android:background="@color/white"
                 android:contentDescription="Cropped Image"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:elevation="4dp" />
 
+            <!-- OCR Result -->
             <TextView
                 android:id="@+id/ocrResultTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="OCR Result:"
+                android:textColor="@color/text_title_yellow"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
@@ -49,26 +56,32 @@
                 android:id="@+id/ocr_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#F5F5F5"
+                android:background="@color/white"
                 android:padding="8dp"
-                android:textSize="16sp" />
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:elevation="2dp" />
 
-            <!-- Rubrics -->
+            <!-- Rubrics Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:padding="10dp"
+                android:background="@color/blue"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:paddingBottom="16dp">
 
                 <TextView
                     android:id="@+id/rubricsTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
                     android:text="Rubrics"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
 
                 <!-- Content / Ideas -->
                 <LinearLayout
@@ -85,6 +98,7 @@
                         android:layout_weight="1"
                         android:padding="8dp"
                         android:text="Content / Ideas"
+                        android:textColor="@color/white"
                         android:textSize="16sp" />
 
                     <EditText
@@ -93,6 +107,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:gravity="center"
+                        android:backgroundTint="@color/button_yellow"
+                        android:textColor="@color/black"
                         android:hint="%" />
                 </LinearLayout>
 
@@ -111,6 +127,7 @@
                         android:layout_weight="1"
                         android:padding="8dp"
                         android:text="Organization / Structure"
+                        android:textColor="@color/white"
                         android:textSize="16sp" />
 
                     <EditText
@@ -119,6 +136,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:gravity="center"
+                        android:backgroundTint="@color/button_yellow"
+                        android:textColor="@color/black"
                         android:hint="%" />
                 </LinearLayout>
 
@@ -137,6 +156,7 @@
                         android:layout_weight="1"
                         android:padding="8dp"
                         android:text="Development and Support"
+                        android:textColor="@color/white"
                         android:textSize="16sp" />
 
                     <EditText
@@ -145,6 +165,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:gravity="center"
+                        android:backgroundTint="@color/button_yellow"
+                        android:textColor="@color/black"
                         android:hint="%" />
                 </LinearLayout>
 
@@ -163,6 +185,7 @@
                         android:layout_weight="1"
                         android:padding="8dp"
                         android:text="Grammar and Formatting"
+                        android:textColor="@color/white"
                         android:textSize="16sp" />
 
                     <EditText
@@ -171,6 +194,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:gravity="center"
+                        android:backgroundTint="@color/button_yellow"
+                        android:textColor="@color/black"
                         android:hint="%" />
                 </LinearLayout>
 
@@ -189,6 +214,7 @@
                         android:layout_weight="1"
                         android:padding="8dp"
                         android:text="Critical Thinking"
+                        android:textColor="@color/white"
                         android:textSize="16sp" />
 
                     <EditText
@@ -197,45 +223,46 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:gravity="center"
+                        android:backgroundTint="@color/button_yellow"
+                        android:textColor="@color/black"
                         android:hint="%" />
                 </LinearLayout>
 
                 <!-- Others (Teacher Notes) -->
-                <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Others"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/otherTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:text="Others"
-                        android:textSize="16sp" />
-
-                    <EditText
-                        android:id="@+id/otherTV"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:inputType="textMultiLine"
-                        android:gravity="top|start"
-                        android:minLines="2"
-                        android:scrollbars="vertical" />
-                </LinearLayout>
-
+                    android:textSize="16sp"
+                    android:inputType="textMultiLine"
+                    android:gravity="top|start"
+                    android:minLines="2"
+                    android:scrollbars="vertical"
+                    android:background="@color/white"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
+            <!-- Submit Button -->
             <Button
                 android:id="@+id/submitBtn"
-                android:layout_width="290dp"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:backgroundTint="@color/button"
-                android:text="Submit" />
+                android:text="Submit"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
+            <!-- Score Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -247,6 +274,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:text="Score and Feedback:"
+                    android:textColor="@color/text_title_yellow"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginTop="16dp"
@@ -256,20 +284,17 @@
                     android:id="@+id/scoresTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#F5F5F5"
+                    android:background="@color/white"
                     android:padding="8dp"
+                    android:textColor="@color/black"
                     android:textSize="16sp"
                     android:paddingBottom="80dp"
                     android:scrollHorizontally="false"
                     android:ellipsize="none"
                     android:singleLine="false"
-                    android:inputType="none"
                     android:focusable="false"
                     android:focusableInTouchMode="false" />
-
-
             </LinearLayout>
-
 
         </LinearLayout>
     </ScrollView>

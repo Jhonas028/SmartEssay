@@ -19,6 +19,7 @@ public class RoomFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_room, container, false);
 
+
         return  view;
     }
 }
