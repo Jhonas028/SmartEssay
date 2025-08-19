@@ -14,11 +14,12 @@
         android:layout_height="wrap_content"/>
 
     <EditText
-        android:id="@+id/etRoomName"
+        android:id="@+id/etRoomCode"
         android:hint="Room Name"
         android:layout_marginTop="10dp"
         android:background="@drawable/rounded_edittext_bg"
         android:padding="12dp"
+        android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -40,7 +41,7 @@
 
         <Button
             android:id="@+id/btnCreate"
-            android:text="Create"
+            android:text="Submit"
             android:backgroundTint="@color/button_yellow"
             android:textColor="@color/back_blue"
             android:layout_width="wrap_content"

@@ -1,6 +1,7 @@
 package com.example.smartessay.Student_Fragments;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartessay.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,30 +54,77 @@ public class HomeFragment_Student extends Fragment {
         // Button setup (Join Room for student)
         btnJoinRoom = view.findViewById(R.id.btn_add_room); // ✅ updated id
         btnJoinRoom.setOnClickListener(v -> {
-            View dialogView = inflater.inflate(R.layout.dialog_add_classroom_student, null);
+            // Inflate custom layout
+            View dialogView = LayoutInflater.from(requireContext())
+                    .inflate(R.layout.dialog_add_classroom_student, null);
 
-            EditText etRoomCode = dialogView.findViewById(R.id.etRoomName);
+            EditText etRoomCode = dialogView.findViewById(R.id.etRoomCode); // ✅ fixed id
             Button btnCancel = dialogView.findViewById(R.id.btnCancel);
             Button btnJoin = dialogView.findViewById(R.id.btnCreate);
 
             AlertDialog dialog = new AlertDialog.Builder(requireContext())
                     .setView(dialogView)
+                    .setCancelable(false) // don’t dismiss by tapping outside
                     .create();
 
             btnCancel.setOnClickListener(view1 -> dialog.dismiss());
 
             btnJoin.setOnClickListener(view12 -> {
                 String roomCode = etRoomCode.getText().toString().trim();
+
+                Log.d("RoomCheck", "Entered code: " + roomCode);
+
                 if (!roomCode.isEmpty()) {
-                    Toast.makeText(requireContext(), "Joined Room: " + roomCode, Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
+                    DatabaseReference classroomsRef = FirebaseDatabase.getInstance(
+                            "https://smartessay-79d91-default-rtdb.firebaseio.com/"
+                    ).getReference("classrooms");
+
+                    classroomsRef.orderByChild("room_code").equalTo(roomCode)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    Log.d("FirebaseCheck", "Snapshot: " + snapshot);
+
+                                    if (snapshot.exists()) {
+                                        // ✅ Match found
+                                        dialog.dismiss();
+
+                                        Intent intent = new Intent(getContext(), Camera_Student.class);
+
+                                        // Optional: send classroom info
+                                        for (DataSnapshot classroom : snapshot.getChildren()) {
+                                            String roomName = classroom.child("classroom_name").getValue(String.class);
+                                            String code = classroom.child("room_code").getValue(String.class);
+
+                                            intent.putExtra("roomName", roomName);
+                                            intent.putExtra("roomCode", code);
+
+                                        }
+
+                                        startActivity(intent);
+                                    } else {
+                                        // ❌ No match
+                                        Toast.makeText(getContext(), "Invalid Room Code", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.e("FirebaseError", error.getMessage());
+                                }
+                            });
+
+
                 } else {
-                    Toast.makeText(requireContext(), "Please enter a room code", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Please enter a room code", Toast.LENGTH_SHORT).show();
                 }
+
             });
+
 
             dialog.show();
         });
+
 
         return view;
     }
