@@ -9,12 +9,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.smartessay.R;
 import com.example.smartessay.Teacher_Fragments.CameraFragment;
 import com.example.smartessay.Teacher_Fragments.CheckedFragment;
 import com.example.smartessay.Teacher_Fragments.HomeFragment;
 import com.example.smartessay.Teacher_Fragments.RoomFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 public class TeacherHPActivity extends AppCompatActivity {
@@ -22,12 +24,15 @@ public class TeacherHPActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navView;
     private Toolbar toolbar;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_teacher_hpactivity);
+
+        fab = findViewById(R.id.fab);
 
         // Toolbar setup
         toolbar = findViewById(R.id.toolbar);
@@ -55,11 +60,7 @@ public class TeacherHPActivity extends AppCompatActivity {
 
             if (itemId == R.id.home) {
                 selectedFragment = new HomeFragment();
-            } else if (itemId == R.id.room) {
-                selectedFragment = new RoomFragment();
-            } else if (itemId == R.id.camera) {
-                selectedFragment = new CameraFragment();
-            } else if (itemId == R.id.checked) {
+            } else if (itemId == R.id.logout) {
                 selectedFragment = new CheckedFragment();
             }
 
@@ -70,6 +71,14 @@ public class TeacherHPActivity extends AppCompatActivity {
             }
 
             return false;
+        });
+
+        fab.setOnClickListener(v -> {
+            Fragment cameraFragment = new CameraFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.framelays, cameraFragment);  // framelays = your FrameLayout container
+            transaction.addToBackStack(null);  // allows back navigation
+            transaction.commit();
         });
     }
 
