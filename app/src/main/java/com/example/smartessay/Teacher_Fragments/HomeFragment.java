@@ -1,5 +1,6 @@
 package com.example.smartessay.Teacher_Fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,10 +8,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smartessay.R;
 
@@ -23,7 +28,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private RoomAdapter roomAdapter;
     private List<Room> roomList;
-
+    Button btnAddRoom;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,6 +45,36 @@ public class HomeFragment extends Fragment {
         // Set up adapter
         roomAdapter = new RoomAdapter(roomList);
         recyclerView.setAdapter(roomAdapter);
+
+        // Button logic
+        btnAddRoom = view.findViewById(R.id.btn_add_room);
+        btnAddRoom.setOnClickListener(v -> {
+            // ✅ Use the inflater passed into onCreateView
+            View dialogView = inflater.inflate(R.layout.dialog_add_classroom, null);
+
+            EditText etClassroomName = dialogView.findViewById(R.id.etRoomName);
+            Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+            Button btnCreate = dialogView.findViewById(R.id.btnCreate);
+
+            AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                    .setView(dialogView)
+                    .create();
+
+            btnCancel.setOnClickListener(view1 -> dialog.dismiss());
+
+            btnCreate.setOnClickListener(view12 -> {
+                String classroomName = etClassroomName.getText().toString().trim();
+                if (!classroomName.isEmpty()) {
+                    Toast.makeText(requireContext(), "Classroom Created: " + classroomName, Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(requireContext(), "Please enter a name", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            dialog.show();
+        });
+
 
         return view;
     }
@@ -131,3 +166,4 @@ public class HomeFragment extends Fragment {
         }
     }
 }
+
