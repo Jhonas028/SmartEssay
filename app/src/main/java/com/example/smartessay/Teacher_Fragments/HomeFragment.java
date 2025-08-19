@@ -18,9 +18,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartessay.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 
 public class HomeFragment extends Fragment {
@@ -28,10 +37,16 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private RoomAdapter roomAdapter;
     private List<Room> roomList;
+
+    private DatabaseReference classroomsRef;
+
     Button btnAddRoom;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        classroomsRef = FirebaseDatabase.getInstance().getReference("classrooms");
+        loadRoomsFromFirebase();
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -65,13 +80,26 @@ public class HomeFragment extends Fragment {
             btnCreate.setOnClickListener(view12 -> {
                 String classroomName = etClassroomName.getText().toString().trim();
                 if (!classroomName.isEmpty()) {
-                    Toast.makeText(requireContext(), "Classroom Created: " + classroomName, Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
+                    generateUniqueCode(roomCode -> {
+                        String date = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date());
+                        String time = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(new Date());
+
+                        Room newRoom = new Room(classroomName, roomCode, date, time, 0);
+
+                        String roomId = classroomsRef.push().getKey();
+                        classroomsRef.child(roomId).setValue(newRoom)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(requireContext(), "Room Created: " + classroomName, Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                })
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                                );
+                    });
                 } else {
                     Toast.makeText(requireContext(), "Please enter a name", Toast.LENGTH_SHORT).show();
                 }
             });
-
             dialog.show();
         });
 
@@ -79,15 +107,32 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    private void loadRoomsFromFirebase() {
+        classroomsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                roomList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Room room = dataSnapshot.getValue(Room.class);
+                    if (room != null) {
+                        roomList.add(room);
+                    }
+                }
+                roomAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(requireContext(), "Failed to load rooms", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void initializeRoomList() {
         roomList = new ArrayList<>();
 
         // Sample room data
-        roomList.add(new Room("Room 101", "ABC123", "March 15, 2024", "10:30 AM", 25, 30));
-        roomList.add(new Room("Room 102", "DEF456", "March 16, 2024", "2:15 PM", 18, 25));
-        roomList.add(new Room("Room 103", "GHI789", "March 17, 2024", "9:00 AM", 30, 30));
-        roomList.add(new Room("Mathematics Lab", "MATH01", "March 18, 2024", "11:45 AM", 15, 20));
-        roomList.add(new Room("Science Lab", "SCI02", "March 19, 2024", "1:30 PM", 22, 28));
+        roomList.add(new Room("Room 101", "ABC123", "March 15, 2024", "10:30 AM", 25));
     }
 
     // Room data model class
@@ -97,25 +142,59 @@ public class HomeFragment extends Fragment {
         private String dateCreated;
         private String timeCreated;
         private int availableStudents;
-        private int totalStudents;
+
+        public Room() {} // required for Firebase
 
         public Room(String roomName, String roomCode, String dateCreated,
-                    String timeCreated, int availableStudents, int totalStudents) {
+                    String timeCreated, int availableStudents) {
             this.roomName = roomName;
             this.roomCode = roomCode;
             this.dateCreated = dateCreated;
             this.timeCreated = timeCreated;
             this.availableStudents = availableStudents;
-            this.totalStudents = totalStudents;
         }
 
-        // Getters
         public String getRoomName() { return roomName; }
         public String getRoomCode() { return roomCode; }
         public String getDateCreated() { return dateCreated; }
         public String getTimeCreated() { return timeCreated; }
         public int getAvailableStudents() { return availableStudents; }
-        public int getTotalStudents() { return totalStudents; }
+    }
+
+    private String generateRoomCode() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder code = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 5; i++) {
+            code.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return code.toString();
+    }
+
+    private void generateUniqueCode(OnCodeGeneratedListener listener) {
+        String code = generateRoomCode();
+
+        classroomsRef.orderByChild("roomCode").equalTo(code)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            generateUniqueCode(listener); // try again
+                        } else {
+                            listener.onCodeGenerated(code);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(requireContext(), "Error checking code", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    interface OnCodeGeneratedListener {
+        void onCodeGenerated(String code);
     }
 
     // RecyclerView Adapter
@@ -143,7 +222,7 @@ public class HomeFragment extends Fragment {
             holder.textDateCreated.setText("Created: " + room.getDateCreated());
             holder.textTimeCreated.setText("Time: " + room.getTimeCreated());
             holder.textAvailableStudents.setText("Available Students: " +
-                    room.getAvailableStudents() + "/" + room.getTotalStudents());
+                    room.getAvailableStudents());
         }
 
         @Override
@@ -165,5 +244,7 @@ public class HomeFragment extends Fragment {
             }
         }
     }
+
+
 }
 
