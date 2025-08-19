@@ -1,6 +1,6 @@
 package com.example.smartessay.Teacher_Fragments;
 
-import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,101 +8,52 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartessay.R;
+import com.example.smartessay.TeacherHomepage.AddRoomActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Random;
-
+import java.util.Map;
 
 public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RoomAdapter roomAdapter;
     private List<Room> roomList;
-
     private DatabaseReference classroomsRef;
+    private Button btnAddRoom;
 
-    Button btnAddRoom;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        classroomsRef = FirebaseDatabase.getInstance().getReference("classrooms");
-        loadRoomsFromFirebase();
 
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Initialize RecyclerView
+        classroomsRef = FirebaseDatabase.getInstance().getReference("classrooms");
+
         recyclerView = view.findViewById(R.id.recycler_view_rooms);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Initialize room list with sample data
-        initializeRoomList();
-
-        // Set up adapter
+        roomList = new ArrayList<>();
         roomAdapter = new RoomAdapter(roomList);
         recyclerView.setAdapter(roomAdapter);
 
-        // Button logic
         btnAddRoom = view.findViewById(R.id.btn_add_room);
-        btnAddRoom.setOnClickListener(v -> {
-            // ✅ Use the inflater passed into onCreateView
-            View dialogView = inflater.inflate(R.layout.dialog_add_classroom, null);
+        btnAddRoom.setOnClickListener(v -> startActivity(new Intent(requireContext(), AddRoomActivity.class)));
 
-            EditText etClassroomName = dialogView.findViewById(R.id.etRoomName);
-            Button btnCancel = dialogView.findViewById(R.id.btnCancel);
-            Button btnCreate = dialogView.findViewById(R.id.btnCreate);
-
-            AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                    .setView(dialogView)
-                    .create();
-
-            btnCancel.setOnClickListener(view1 -> dialog.dismiss());
-
-            btnCreate.setOnClickListener(view12 -> {
-                String classroomName = etClassroomName.getText().toString().trim();
-                if (!classroomName.isEmpty()) {
-                    generateUniqueCode(roomCode -> {
-                        String date = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date());
-                        String time = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(new Date());
-
-                        Room newRoom = new Room(classroomName, roomCode, date, time, 0);
-
-                        String roomId = classroomsRef.push().getKey();
-                        classroomsRef.child(roomId).setValue(newRoom)
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(requireContext(), "Room Created: " + classroomName, Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
-                                })
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                                );
-                    });
-                } else {
-                    Toast.makeText(requireContext(), "Please enter a name", Toast.LENGTH_SHORT).show();
-                }
-            });
-            dialog.show();
-        });
-
+        loadRoomsFromFirebase();
 
         return view;
     }
@@ -112,11 +63,18 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 roomList.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Room room = dataSnapshot.getValue(Room.class);
-                    if (room != null) {
-                        roomList.add(room);
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    String roomName = ds.child("classroom_name").getValue(String.class);
+                    String roomCode = ds.child("room_code").getValue(String.class);
+                    String createdAt = ds.child("created_at").getValue(String.class);
+                    String updatedAt = ds.child("updated_at").getValue(String.class);
+
+                    Map<String, String> rubrics = null;
+                    if (ds.child("rubrics").exists()) {
+                        rubrics = (Map<String, String>) ds.child("rubrics").getValue();
                     }
+
+                    roomList.add(new Room(roomName, roomCode, createdAt, updatedAt, rubrics));
                 }
                 roomAdapter.notifyDataSetChanged();
             }
@@ -128,82 +86,34 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void initializeRoomList() {
-        roomList = new ArrayList<>();
-
-        // Sample room data
-        roomList.add(new Room("Room 101", "ABC123", "March 15, 2024", "10:30 AM", 25));
-    }
-
-    // Room data model class
     public static class Room {
         private String roomName;
         private String roomCode;
-        private String dateCreated;
-        private String timeCreated;
-        private int availableStudents;
+        private String createdAt;
+        private String updatedAt;
+        private Map<String, String> rubrics;
 
-        public Room() {} // required for Firebase
-
-        public Room(String roomName, String roomCode, String dateCreated,
-                    String timeCreated, int availableStudents) {
+        public Room() {}
+        public Room(String roomName, String roomCode, String createdAt, String updatedAt,
+                    Map<String, String> rubrics) {
             this.roomName = roomName;
             this.roomCode = roomCode;
-            this.dateCreated = dateCreated;
-            this.timeCreated = timeCreated;
-            this.availableStudents = availableStudents;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.rubrics = rubrics;
         }
 
         public String getRoomName() { return roomName; }
         public String getRoomCode() { return roomCode; }
-        public String getDateCreated() { return dateCreated; }
-        public String getTimeCreated() { return timeCreated; }
-        public int getAvailableStudents() { return availableStudents; }
+        public String getCreatedAt() { return createdAt; }
+        public String getUpdatedAt() { return updatedAt; }
+        public Map<String, String> getRubrics() { return rubrics; }
     }
 
-    private String generateRoomCode() {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        StringBuilder code = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 5; i++) {
-            code.append(chars.charAt(random.nextInt(chars.length())));
-        }
-        return code.toString();
-    }
-
-    private void generateUniqueCode(OnCodeGeneratedListener listener) {
-        String code = generateRoomCode();
-
-        classroomsRef.orderByChild("roomCode").equalTo(code)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            generateUniqueCode(listener); // try again
-                        } else {
-                            listener.onCodeGenerated(code);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(requireContext(), "Error checking code", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    interface OnCodeGeneratedListener {
-        void onCodeGenerated(String code);
-    }
-
-    // RecyclerView Adapter
     public static class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
-        private List<Room> roomList;
+        private final List<Room> roomList;
 
-        public RoomAdapter(List<Room> roomList) {
-            this.roomList = roomList;
-        }
+        public RoomAdapter(List<Room> roomList) { this.roomList = roomList; }
 
         @NonNull
         @Override
@@ -219,32 +129,34 @@ public class HomeFragment extends Fragment {
 
             holder.textRoomName.setText(room.getRoomName());
             holder.textRoomCode.setText("Code: " + room.getRoomCode());
-            holder.textDateCreated.setText("Created: " + room.getDateCreated());
-            holder.textTimeCreated.setText("Time: " + room.getTimeCreated());
-            holder.textAvailableStudents.setText("Available Students: " +
-                    room.getAvailableStudents());
+            holder.textCreatedAt.setText("Created: " + room.getCreatedAt());
+            holder.textUpdatedAt.setText("Updated: " + room.getUpdatedAt());
+
+            if (room.getRubrics() != null) {
+                StringBuilder summary = new StringBuilder();
+                for (Map.Entry<String, String> e : room.getRubrics().entrySet()) {
+                    summary.append(e.getKey()).append(": ").append(e.getValue()).append("\n");
+                }
+                holder.textRubrics.setText(summary.toString().trim());
+            } else {
+                holder.textRubrics.setText("No Rubrics");
+            }
         }
 
         @Override
-        public int getItemCount() {
-            return roomList.size();
-        }
+        public int getItemCount() { return roomList.size(); }
 
         public static class RoomViewHolder extends RecyclerView.ViewHolder {
-            TextView textRoomName, textRoomCode, textDateCreated, textTimeCreated, textAvailableStudents;
+            TextView textRoomName, textRoomCode, textCreatedAt, textUpdatedAt, textRubrics;
 
             public RoomViewHolder(@NonNull View itemView) {
                 super(itemView);
-
                 textRoomName = itemView.findViewById(R.id.text_room_name);
                 textRoomCode = itemView.findViewById(R.id.text_room_code);
-                textDateCreated = itemView.findViewById(R.id.text_date_created);
-                textTimeCreated = itemView.findViewById(R.id.text_time_created);
-                textAvailableStudents = itemView.findViewById(R.id.text_available_students);
+                textCreatedAt = itemView.findViewById(R.id.text_date_created);
+                textUpdatedAt = itemView.findViewById(R.id.text_time_created);
+                textRubrics = itemView.findViewById(R.id.text_rubrics);
             }
         }
     }
-
-
 }
-
