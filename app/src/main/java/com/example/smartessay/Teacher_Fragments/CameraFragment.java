@@ -79,6 +79,8 @@ public class CameraFragment extends Fragment {
                 return;
             }
 
+
+            //API of OpenAI DO NOT REMOVE THIS
             OpenAiAPI.gradeEssay(
                     essay,
                     contentPercentage.getText().toString(),

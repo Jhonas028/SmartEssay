@@ -18,7 +18,7 @@ public class RoomFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_room, container, false);
-
+        //comment
         return  view;
     }
 }
