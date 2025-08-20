@@ -18,10 +18,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/blue"
+            android:background="@color/back_blue"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:title="Teacher Homepage"
-            app:titleTextColor="@color/white" />
+            app:title="  " />
 
         <!-- Main fragment container -->
         <FrameLayout
@@ -35,7 +34,7 @@
             android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/back_blue"
             app:fabAlignmentMode="center"
             app:fabCradleMargin="10dp"
             app:fabCradleRoundedCornerRadius="20dp"
@@ -53,6 +52,7 @@
             app:backgroundTint="@color/white"
             app:tint="@color/black"
             app:layout_anchor="@id/bottomAppBar"
+            android:layout_marginTop="50dp"
             app:layout_anchorGravity="center" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

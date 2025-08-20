@@ -49,16 +49,6 @@
             android:hint="Date Created" />
 
         <TextView
-            android:id="@+id/text_time_created"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Time: 10:30 AM"
-            android:textSize="12sp"
-            android:textColor="@color/black"
-            android:hint="Time Created" />
-
-        <TextView
             android:id="@+id/text_available_students"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

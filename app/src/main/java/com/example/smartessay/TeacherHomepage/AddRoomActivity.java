@@ -70,14 +70,15 @@ public class AddRoomActivity extends AppCompatActivity {
             generateUniqueRoomCode(roomCode -> {
                 String roomId = classroomsRef.push().getKey();
 
+
                 // Rubrics map (Firebase-safe keys)
                 Map<String, Object> rubrics = new HashMap<>();
-                rubrics.put("content_ideas", etRubricContent.getText().toString().trim());
-                rubrics.put("organization_structure", etRubricOrganization.getText().toString().trim());
-                rubrics.put("development_support", etRubricDevelopment.getText().toString().trim());
-                rubrics.put("grammar_formatting", etRubricGrammar.getText().toString().trim());
-                rubrics.put("critical_thinking", etRubricCritical.getText().toString().trim());
-                rubrics.put("other", etRubricOther.getText().toString().trim());
+                rubrics.put("Content and Ideas", etRubricContent.getText().toString().trim());
+                rubrics.put("Organization and Structure", etRubricOrganization.getText().toString().trim());
+                rubrics.put("Development and Support", etRubricDevelopment.getText().toString().trim());
+                rubrics.put("Language Use and Style", etRubricGrammar.getText().toString().trim());
+                rubrics.put("Grammar, Mechanics, and Formatting", etRubricCritical.getText().toString().trim());
+                rubrics.put("Notes", etRubricOther.getText().toString().trim());
 
                 // Classroom map
                 Map<String, Object> classroomMap = new HashMap<>();
@@ -85,7 +86,6 @@ public class AddRoomActivity extends AppCompatActivity {
                 classroomMap.put("classroom_owner", teacherEmail);
                 classroomMap.put("status", "active");
                 classroomMap.put("created_at", dateTime);
-                classroomMap.put("updated_at", dateTime);
                 classroomMap.put("room_code", roomCode);
                 classroomMap.put("rubrics", rubrics);
 

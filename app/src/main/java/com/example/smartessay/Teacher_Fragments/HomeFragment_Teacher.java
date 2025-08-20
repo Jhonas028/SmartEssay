@@ -181,7 +181,6 @@ public class HomeFragment_Teacher extends Fragment {
             holder.textRoomName.setText(room.getRoomName());
             holder.textRoomCode.setText("Code: " + room.getRoomCode());
             holder.textCreatedAt.setText("Created: " + room.getCreatedAt());
-            holder.textUpdatedAt.setText("Updated: " + room.getUpdatedAt());
 
             if (room.getRubrics() != null) {
                 StringBuilder summary = new StringBuilder();

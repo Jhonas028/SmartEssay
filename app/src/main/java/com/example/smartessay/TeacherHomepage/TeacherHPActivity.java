@@ -1,6 +1,7 @@
 package com.example.smartessay.TeacherHomepage;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -76,7 +77,11 @@ public class TeacherHPActivity extends AppCompatActivity {
             transaction.replace(R.id.framelays, cameraFragment);  // framelays = your FrameLayout container
             transaction.addToBackStack(null);  // allows back navigation
             transaction.commit();
+
+
         });
+
+
     }
 
     private void loadFragments(Fragment fragment) {

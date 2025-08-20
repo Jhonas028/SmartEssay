@@ -2,27 +2,34 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
     android:fitsSystemWindows="true"
     android:background="@color/white">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@color/dirty_white">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/blue_border"
+        android:layout_marginTop="24dp">
 
         <!-- Header -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Create Room"
-            android:textSize="24sp"
+            android:textColor="@color/back_blue"
+            android:textSize="30sp"
             android:textStyle="bold"
-            android:gravity="center"
-            android:padding="16dp"
-            android:background="@color/back_blue"
-            android:textColor="@color/text_title_yellow"
-            android:elevation="2dp" />
+            android:paddingVertical="16dp"
+            />
 
         <!-- Room Name -->
         <EditText
@@ -30,164 +37,206 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter Room Name"
-            android:layout_marginTop="20dp"
-            android:background="@android:drawable/edit_text"
-            android:padding="12dp"
-            android:inputType="text" />
 
-        <!-- Rubrics Section Title -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rubrics (Percentage)"
-            android:textSize="18sp"
-            android:layout_marginTop="24dp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
+            android:background="@drawable/edittext_background"
+            android:padding="14dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:inputType="textCapWords" />
+    </LinearLayout>
 
-        <!-- Rubrics Input Fields -->
+
+        <!-- Rubrics Section (Inside Yellow Border) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:background="@drawable/yellow_border"
             android:layout_marginTop="12dp">
 
-            <!-- Reusable style rows -->
+            <!-- Rubrics Input Fields -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingVertical="6dp">
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/back_blue"
+                android:orientation="vertical">
 
+                <!-- Rubrics Section Title -->
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Content/Ideas"
-                    android:textColor="@color/black" />
+                    android:text="RUBRICS"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"/>
 
-                <EditText
-                    android:id="@+id/etRubricContent"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="%"
-                    android:inputType="number" />
             </LinearLayout>
 
+
+            <!-- Rubrics Input Fields -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingVertical="6dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="0dp"
+                <!-- Content / Ideas -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Organization/Structure"
-                    android:textColor="@color/black" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="4dp">
 
-                <EditText
-                    android:id="@+id/etRubricOrganization"
-                    android:layout_width="80dp"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Content / Ideas"
+                        android:textColor="@color/back_blue"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/etRubricContent"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:hint="%"
+                        android:background="@drawable/edittext_background"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <!-- Organization / Structure -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="%"
-                    android:inputType="number" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Organization / Structure"
+                        android:textColor="@color/back_blue"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/etRubricOrganization"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:hint="%"
+                        android:background="@drawable/edittext_background"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <!-- Development / Support -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="4dp" >
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Development / Support"
+                        android:textColor="@color/back_blue"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/etRubricDevelopment"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:hint="%"
+                        android:background="@drawable/edittext_background"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <!-- Grammar and Formatting -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Grammar and Formatting"
+                        android:textColor="@color/back_blue"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/etRubricGrammar"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:hint="%"
+                        android:background="@drawable/edittext_background"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <!-- Critical Thinking -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Critical Thinking"
+                        android:textColor="@color/back_blue"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/etRubricCritical"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:hint="%"
+                        android:background="@drawable/edittext_background"
+                        android:inputType="number" />
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Other Rubrics -->
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingVertical="6dp">
+                android:text="Other Rubrics (Optional)"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/back_blue"/>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Development/Support"
-                    android:textColor="@color/black" />
-
-                <EditText
-                    android:id="@+id/etRubricDevelopment"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="%"
-                    android:inputType="number" />
-            </LinearLayout>
-
-            <LinearLayout
+            <EditText
+                android:id="@+id/etRubricOther"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingVertical="6dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Grammar and Formatting"
-                    android:textColor="@color/black" />
-
-                <EditText
-                    android:id="@+id/etRubricGrammar"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="%"
-                    android:inputType="number" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingVertical="6dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Critical Thinking"
-                    android:textColor="@color/black" />
-
-                <EditText
-                    android:id="@+id/etRubricCritical"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="%"
-                    android:inputType="number" />
-            </LinearLayout>
+                android:layout_height="120dp"
+                android:hint="Enter custom rubric or prompt here..."
+                android:inputType="textMultiLine"
+                android:gravity="top|start"
+                android:scrollbars="vertical"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"/>
         </LinearLayout>
 
-        <!-- Other Rubrics -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Other Rubrics (Optional)"
-            android:textSize="16sp"
-            android:layout_marginTop="20dp"
-            android:textColor="@color/black"/>
 
-        <EditText
-            android:id="@+id/etRubricOther"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:hint="Enter custom rubric or prompt here..."
-            android:inputType="textMultiLine"
-            android:gravity="top|start"
-            android:scrollbars="vertical"
-            android:background="@android:drawable/edit_text"
-            android:padding="12dp"/>
+
 
         <!-- Buttons -->
         <Button
@@ -196,16 +245,20 @@
             android:layout_height="wrap_content"
             android:text="Create Room"
             android:layout_marginTop="24dp"
-            android:backgroundTint="@color/back_blue"
-            android:textColor="@color/text_title_yellow"/>
+            android:backgroundTint="@color/text_title_yellow"
+            android:textColor="@color/back_blue"
+            android:padding="12dp"
+            android:textStyle="bold"/>
 
         <Button
             android:id="@+id/btnCancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cancel"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="5dp"
             android:backgroundTint="@color/back_blue"
-            android:textColor="@color/text_title_yellow"/>
+            android:textColor="@color/white"
+            android:padding="12dp"
+            android:textStyle="bold"/>
     </LinearLayout>
 </ScrollView>

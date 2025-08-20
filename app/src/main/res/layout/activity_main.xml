@@ -55,7 +55,9 @@
             android:layout_height="48dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/button"
+            android:textColor="@color/back_blue"
+            android:textStyle="bold"
+            android:backgroundTint="@color/button_yellow"
             android:text="Sign in" />
 
         <TextView

@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:paddingBottom="300dp"
+    >
 
     <!-- Header Section -->
     <LinearLayout
@@ -73,7 +75,6 @@
             android:drawablePadding="8dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_rooms"
         android:layout_width="match_parent"
@@ -81,5 +82,8 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:padding="8dp"
-        tools:listitem="@layout/teacher_essay_item_layout"/>
+        android:layout_marginBottom="40dp"
+        tools:listitem="@layout/teacher_essay_item_layout" />
+
+
 </LinearLayout>
