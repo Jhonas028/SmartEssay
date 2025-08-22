@@ -47,5 +47,7 @@ dependencies {
     //camera cropper
     implementation("com.vanniktech:android-image-cropper:4.6.0")
 
+    implementation 'com.google.firebase:firebase-storage:20.3.0'
+
 
 }

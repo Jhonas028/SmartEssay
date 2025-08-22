@@ -21,6 +21,7 @@ import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
 import com.example.smartessay.API.PenToPrintAPI;
 import com.example.smartessay.R;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -73,13 +74,42 @@ public class Camera_Student extends AppCompatActivity {
                 return;
             }
 
-            Uri imageUri = null;
-            if (imageView.getDrawable() != null && imageView.getTag() != null) {
-                imageUri = (Uri) imageView.getTag(); // retrieve URI stored in cropper
-            }
+            DatabaseReference db = FirebaseDatabase.getInstance(
+                    "https://smartessay-79d91-default-rtdb.firebaseio.com/"
+            ).getReference();
 
-            uploadEssay(essayText, imageUri);
+            db.child("essay").get().addOnSuccessListener(snapshot -> {
+                boolean alreadySubmitted = false;
+
+                if (snapshot.exists()) {
+                    for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                        String essayStudentId = essaySnap.child("student_id").getValue(String.class);
+                        String essayClassroomId = essaySnap.child("classroom_id").getValue(String.class);
+
+                        if (studentId.equals(essayStudentId) && classroomId.equals(essayClassroomId)) {
+                            alreadySubmitted = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (alreadySubmitted) {
+                    Toast.makeText(this, "You have already submitted an essay for this classroom!", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Show confirmation dialog
+                    new androidx.appcompat.app.AlertDialog.Builder(this)
+                            .setTitle("Submit Essay")
+                            .setMessage("Are you sure you want to submit this essay? You can only submit once.")
+                            .setPositiveButton("Yes", (dialog, which) -> uploadEssay(essayText))
+                            .setNegativeButton("Cancel", null)
+                            .show();
+                }
+            }).addOnFailureListener(e -> {
+                Toast.makeText(this, "Firebase error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            });
+
         });
+
 
         cancelBtn.setOnClickListener(v -> {
             imageView.setImageDrawable(null);
@@ -87,7 +117,7 @@ public class Camera_Student extends AppCompatActivity {
         });
     }
 
-    private void uploadEssay(String convertedText, Uri imageUri) {
+    private void uploadEssay(String convertedText) {
         DatabaseReference db = FirebaseDatabase.getInstance(
                 "https://smartessay-79d91-default-rtdb.firebaseio.com/"
         ).getReference();
@@ -103,8 +133,7 @@ public class Camera_Student extends AppCompatActivity {
         Essay essay = new Essay(
                 studentId,
                 classroomId,
-                imageUri != null ? imageUri.toString() : "",
-                    convertedText,
+                convertedText,
                 0,              // default grade
                 "uploaded",     // status
                 timestamp,
@@ -133,7 +162,6 @@ public class Camera_Student extends AppCompatActivity {
     public static class Essay {
         public String student_id;
         public String classroom_id;
-        public String image_url;
         public String converted_text;
         public int grade;
         public String status;
@@ -142,12 +170,11 @@ public class Camera_Student extends AppCompatActivity {
 
         public Essay() {} // Required empty constructor
 
-        public Essay(String student_id, String classroom_id, String image_url,
+        public Essay(String student_id, String classroom_id,
                      String converted_text, int grade, String status,
                      long created_at, long updated_at) {
             this.student_id = student_id;
             this.classroom_id = classroom_id;
-            this.image_url = image_url;
             this.converted_text = converted_text;
             this.grade = grade;
             this.status = status;
@@ -188,10 +215,11 @@ public class Camera_Student extends AppCompatActivity {
                         return;
                     }
 
-                    // Send to OCR API (if needed)
+                    // Send to OCR API (if needed) DO NOT REMOVE THIS
                     // PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
+
                     // For testing:
-                    ocrResultTextView.setText("This is a sample essay. LOOREM LORE LOREM RLOREM LOREML");
+                    ocrResultTextView.setText(R.string.sample_essay);
 
                 } else {
                     Toast.makeText(this, "Image cropping failed", Toast.LENGTH_SHORT).show();
