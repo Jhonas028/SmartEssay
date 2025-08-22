@@ -1,5 +1,6 @@
 package com.example.smartessay.TeacherHomepage;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -60,8 +61,12 @@ public class AddRoomActivity extends AppCompatActivity {
                 return;
             }
 
+            /*
             String teacherEmail = FirebaseAuth.getInstance().getCurrentUser() != null ?
-                    FirebaseAuth.getInstance().getCurrentUser().getEmail() : "unknown";
+                    FirebaseAuth.getInstance().getCurrentUser().getEmail() : "unknown";*/
+
+            SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+            String teacherEmail = prefs.getString("teacherEmail", "unknown");
 
             // Date and time
             String dateTime = new SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault())

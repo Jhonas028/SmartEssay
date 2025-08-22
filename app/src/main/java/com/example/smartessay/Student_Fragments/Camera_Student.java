@@ -104,7 +104,7 @@ public class Camera_Student extends AppCompatActivity {
                 studentId,
                 classroomId,
                 imageUri != null ? imageUri.toString() : "",
-                convertedText,
+                    convertedText,
                 0,              // default grade
                 "uploaded",     // status
                 timestamp,

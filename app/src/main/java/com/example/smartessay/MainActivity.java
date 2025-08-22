@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (storedPassword != null && storedPassword.equals(password)) {
                                     if ("active".equalsIgnoreCase(status)) {
                                         saveUserSession("teacherId", teacher.getKey());
+                                        saveUserSession("teacherEmail", email);
                                         Toast.makeText(MainActivity.this, "Teacher login successful", Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(MainActivity.this, TeacherHPActivity.class));
                                         finish();
