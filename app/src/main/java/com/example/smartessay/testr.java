@@ -19,7 +19,9 @@ import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
+import com.example.smartessay.API.PenToPrintAPI;
 import com.example.smartessay.R;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -29,7 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class Camera_Student extends AppCompatActivity {
+public class testr extends AppCompatActivity {
 
     private ImageView imageView;
     private TextView ocrResultTextView;
@@ -66,7 +68,7 @@ public class Camera_Student extends AppCompatActivity {
         checkPermissionAndLaunch();
 
         submitBtn.setOnClickListener(v -> {
-            String essayText = ocrResultTextView.getText().toString().trim();
+            String essayText = ocrResultTextView.getText().toString();
             if (essayText.isEmpty()) {
                 Toast.makeText(this, "No essay detected!", Toast.LENGTH_SHORT).show();
                 return;
@@ -76,24 +78,38 @@ public class Camera_Student extends AppCompatActivity {
                     "https://smartessay-79d91-default-rtdb.firebaseio.com/"
             ).getReference();
 
-            // Check if essay already exists at essay/{studentId}/{classroomId}
-            db.child("essay").child(studentId).child(classroomId).get()
-                    .addOnSuccessListener(snapshot -> {
-                        if (snapshot.exists()) {
-                            Toast.makeText(this, "You already submitted an essay for this classroom!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            new androidx.appcompat.app.AlertDialog.Builder(this)
-                                    .setTitle("Submit Essay")
-                                    .setMessage("Are you sure you want to submit this essay? You can only submit once.")
-                                    .setPositiveButton("Yes", (dialog, which) -> uploadEssay(essayText))
-                                    .setNegativeButton("Cancel", null)
-                                    .show();
+            db.child("essay").get().addOnSuccessListener(snapshot -> {
+                boolean alreadySubmitted = false;
+
+                if (snapshot.exists()) {
+                    for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                        String essayStudentId = essaySnap.child("student_id").getValue(String.class);
+                        String essayClassroomId = essaySnap.child("classroom_id").getValue(String.class);
+
+                        if (studentId.equals(essayStudentId) && classroomId.equals(essayClassroomId)) {
+                            alreadySubmitted = true;
+                            break;
                         }
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Firebase error: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                    );
+                    }
+                }
+
+                if (alreadySubmitted) {
+                    Toast.makeText(this, "You have already submitted an essay for this classroom!", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Show confirmation dialog
+                    new androidx.appcompat.app.AlertDialog.Builder(this)
+                            .setTitle("Submit Essay")
+                            .setMessage("Are you sure you want to submit this essay? You can only submit once.")
+                            .setPositiveButton("Yes", (dialog, which) -> uploadEssay(essayText))
+                            .setNegativeButton("Cancel", null)
+                            .show();
+                }
+            }).addOnFailureListener(e -> {
+                Toast.makeText(this, "Firebase error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            });
+
         });
+
 
         cancelBtn.setOnClickListener(v -> {
             imageView.setImageDrawable(null);
@@ -106,34 +122,40 @@ public class Camera_Student extends AppCompatActivity {
                 "https://smartessay-79d91-default-rtdb.firebaseio.com/"
         ).getReference();
 
-        long timestamp = System.currentTimeMillis();
+        // Generate unique essay ID
+        String essayId = db.child("essay").push().getKey();
+        if (essayId == null) {
+            Toast.makeText(this, "Failed to generate essay ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        long timestamp = System.currentTimeMillis();
         Essay essay = new Essay(
                 studentId,
                 classroomId,
                 convertedText,
-                0, // default score
-                "No feedback yet",
-                "uploaded",
+                0,              // default grade
+                "uploaded",     // status
                 timestamp,
                 timestamp
         );
 
-        // Save essay at essay/{studentId}/{classroomId}
-        db.child("essay").child(studentId).child(classroomId).setValue(essay)
+        // Save essay to database
+        db.child("essay").child(essayId).setValue(essay)
                 .addOnSuccessListener(aVoid -> {
-                    // Add to classroom members with joined_at
-                    db.child("classroom").child(classroomId)
+                    // Link essay to classroom members
+                    db.child("classrooms").child(classroomId)
                             .child("classroom_members")
                             .child(studentId)
-                            .child("joined_at")
-                            .setValue(timestamp);
-
-                    Toast.makeText(this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
+                            .child(essayId)
+                            .setValue(essayId)
+                            .addOnSuccessListener(v ->
+                                    Toast.makeText(this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(this, "Failed to update classroom members", Toast.LENGTH_SHORT).show());
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+                        Toast.makeText(this, "Failed to upload essay", Toast.LENGTH_SHORT).show());
     }
 
     // Essay model class
@@ -141,8 +163,7 @@ public class Camera_Student extends AppCompatActivity {
         public String student_id;
         public String classroom_id;
         public String converted_text;
-        public int score;
-        public String essay_feedback;
+        public int grade;
         public String status;
         public long created_at;
         public long updated_at;
@@ -150,13 +171,12 @@ public class Camera_Student extends AppCompatActivity {
         public Essay() {} // Required empty constructor
 
         public Essay(String student_id, String classroom_id,
-                     String converted_text, int score, String essay_feedback,
-                     String status, long created_at, long updated_at) {
+                     String converted_text, int grade, String status,
+                     long created_at, long updated_at) {
             this.student_id = student_id;
             this.classroom_id = classroom_id;
             this.converted_text = converted_text;
-            this.score = score;
-            this.essay_feedback = essay_feedback;
+            this.grade = grade;
             this.status = status;
             this.created_at = created_at;
             this.updated_at = updated_at;
@@ -179,7 +199,9 @@ public class Camera_Student extends AppCompatActivity {
                 if (result.isSuccessful() && result.getUriContent() != null) {
                     Uri croppedUri = result.getUriContent();
                     imageView.setImageURI(croppedUri);
+                    imageView.setTag(croppedUri); // store URI for upload
 
+                    // Save cropped image locally (optional)
                     File imageFile = new File(getCacheDir(), "cropped_image.jpg");
                     try (InputStream in = getContentResolver().openInputStream(croppedUri);
                          OutputStream out = new FileOutputStream(imageFile)) {
@@ -193,10 +215,10 @@ public class Camera_Student extends AppCompatActivity {
                         return;
                     }
 
-                    // TODO: send to OCR API
+                    // Send to OCR API (if needed) DO NOT REMOVE THIS
                     // PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
 
-                    // For testing
+                    // For testing:
                     ocrResultTextView.setText(R.string.sample_essay);
 
                 } else {
