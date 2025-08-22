@@ -86,7 +86,6 @@ public class Camera_Student extends AppCompatActivity {
                     "https://smartessay-79d91-default-rtdb.firebaseio.com/"
             ).getReference();
 
-            // Check if essay already exists at essay/{studentId}/{classroomId}
             db.child("essay").child(studentId).child(classroomId).get()
                     .addOnSuccessListener(snapshot -> {
                         if (snapshot.exists()) {
@@ -95,7 +94,10 @@ public class Camera_Student extends AppCompatActivity {
                             new androidx.appcompat.app.AlertDialog.Builder(this)
                                     .setTitle("Submit Essay")
                                     .setMessage("Are you sure you want to submit this essay? You can only submit once.")
-                                    .setPositiveButton("Yes", (dialog, which) -> uploadEssay(essayText))
+                                    .setPositiveButton("Yes", (dialog, which) -> {
+                                        // ✅ Run AI grading first, then upload
+                                        getRubricsFromTeacherAndGradeEssay(classroomId, essayText);
+                                    })
                                     .setNegativeButton("Cancel", null)
                                     .show();
                         }
@@ -105,13 +107,14 @@ public class Camera_Student extends AppCompatActivity {
                     );
         });
 
+
         cancelBtn.setOnClickListener(v -> {
             imageView.setImageDrawable(null);
             ocrResultTextView.setText("");
         });
     }
 
-    private void uploadEssay(String convertedText) {
+    private void uploadEssay(String convertedText, int score, String feedback) {
         DatabaseReference db = FirebaseDatabase.getInstance(
                 "https://smartessay-79d91-default-rtdb.firebaseio.com/"
         ).getReference();
@@ -122,17 +125,15 @@ public class Camera_Student extends AppCompatActivity {
                 studentId,
                 classroomId,
                 convertedText,
-                0, // default score
-                "No feedback yet",
+                score,        // 👈 now using AI score
+                feedback,     // 👈 now using AI feedback
                 "uploaded",
                 timestamp,
                 timestamp
         );
 
-        // Save essay at essay/{studentId}/{classroomId}
         db.child("essay").child(studentId).child(classroomId).setValue(essay)
                 .addOnSuccessListener(aVoid -> {
-                    // Add to classroom members with joined_at
                     db.child("classrooms").child(classroomId)
                             .child("classroom_members")
                             .child(studentId)
@@ -145,6 +146,9 @@ public class Camera_Student extends AppCompatActivity {
                         Toast.makeText(this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );
     }
+
+
+
 
     // Essay model class
     public static class Essay {
@@ -257,16 +261,6 @@ public class Camera_Student extends AppCompatActivity {
                         String organizationStructure = snapshot.child("Organization and Structure").getValue(String.class);
                         String notes = snapshot.child("Notes").getValue(String.class);
 
-                        // Debug logs
-                        Log.i("rubrics", "Rubrics loaded successfully");
-                        Log.i("contentIdeas", contentIdeas);
-                        Log.i("developmentSupport", developmentSupport);
-                        Log.i("grammarMechanics", grammarMechanics);
-                        Log.i("languageStyle", languageStyle);
-                        Log.i("organizationStructure", organizationStructure);
-                        Log.i("notes", notes);
-
-                        // ✅ Call your API with essay and rubrics
                         DUMMY_OpenAiAPI.gradeEssay(
                                 essay,
                                 contentIdeas,
@@ -280,12 +274,47 @@ public class Camera_Student extends AppCompatActivity {
                                     public void onSuccess(String result) {
                                         Log.i("AI_RESULT", "Grading result: " + result);
 
-                                        // TODO: maybe show result in UI
+                                        int score = 0;
+                                        String feedback = "";
+
+                                        try {
+                                            JSONObject obj = new JSONObject(result);
+                                            String rawResult = obj.optString("result", "");
+
+                                            if (!rawResult.isEmpty()) {
+                                                // Extract score
+                                                java.util.regex.Matcher matcher = java.util.regex.Pattern
+                                                        .compile("Score:\\s*([0-9.]+)%")
+                                                        .matcher(rawResult);
+
+                                                if (matcher.find()) {
+                                                    float scoreFloat = Float.parseFloat(matcher.group(1));
+                                                    score = Math.round(scoreFloat);
+                                                }
+
+                                                // Extract feedback (everything after first line)
+                                                int firstLineBreak = rawResult.indexOf("\n");
+                                                if (firstLineBreak != -1 && firstLineBreak + 1 < rawResult.length()) {
+                                                    feedback = rawResult.substring(firstLineBreak + 1).trim();
+                                                } else {
+                                                    feedback = rawResult;
+                                                }
+                                            }
+                                        } catch (Exception e) {
+                                            Log.e("AI_PARSE", "Failed to parse grading result: " + e.getMessage());
+                                            feedback = "Parsing error: " + e.getMessage();
+                                        }
+
+                                        // ✅ Upload essay ONLY after AI result
+                                        Log.i("UPLOAD", "Uploading essay with score=" + score + ", feedback=" + feedback);
+                                        uploadEssay(essay, score, feedback);
                                     }
 
                                     @Override
                                     public void onError(String error) {
                                         Log.e("AI_RESULT", "Error: " + error);
+                                        // ✅ Upload fallback only if AI fails
+                                        uploadEssay(essay, 0, "No feedback generated (AI failed)");
                                     }
                                 }
                         );
@@ -298,6 +327,7 @@ public class Camera_Student extends AppCompatActivity {
                     Toast.makeText(this, "Error fetching rubrics: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
+
 
 
 
