@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,9 +20,15 @@ import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
+import com.example.smartessay.API.DUMMY_OpenAiAPI;
+import com.example.smartessay.API.OpenAiAPI;
+import com.example.smartessay.API.PenToPrintAPI;
 import com.example.smartessay.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,6 +59,9 @@ public class Camera_Student extends AppCompatActivity {
         // Get student and classroom info from intent
         studentId = getIntent().getStringExtra("studentId");
         classroomId = getIntent().getStringExtra("classroomId");
+
+        String essay2 = getString(R.string.sample_essay);
+        getRubricsFromTeacherAndGradeEssay(classroomId,essay2);
 
         if (studentId == null || classroomId == null) {
             Toast.makeText(this, "Student or classroom info missing", Toast.LENGTH_SHORT).show();
@@ -123,7 +133,7 @@ public class Camera_Student extends AppCompatActivity {
         db.child("essay").child(studentId).child(classroomId).setValue(essay)
                 .addOnSuccessListener(aVoid -> {
                     // Add to classroom members with joined_at
-                    db.child("classroom").child(classroomId)
+                    db.child("classrooms").child(classroomId)
                             .child("classroom_members")
                             .child(studentId)
                             .child("joined_at")
@@ -193,8 +203,8 @@ public class Camera_Student extends AppCompatActivity {
                         return;
                     }
 
-                    // TODO: send to OCR API
-                    // PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
+                    // TODO: send to OCR API DO NOT REMOVE THIS
+                    //PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
 
                     // For testing
                     ocrResultTextView.setText(R.string.sample_essay);
@@ -229,4 +239,68 @@ public class Camera_Student extends AppCompatActivity {
         CropImageContractOptions contractOptions = new CropImageContractOptions(null, options);
         cropImageLauncher.launch(contractOptions);
     }
+
+    private void getRubricsFromTeacherAndGradeEssay(String classroomId, String essay) {
+        DatabaseReference db = FirebaseDatabase.getInstance(
+                "https://smartessay-79d91-default-rtdb.firebaseio.com/"
+        ).getReference();
+
+        db.child("classrooms").child(classroomId).child("rubrics")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists()) {
+                        // ✅ Fetch rubric values from Firebase
+                        String contentIdeas = snapshot.child("Content and Ideas").getValue(String.class);
+                        String developmentSupport = snapshot.child("Development and Support").getValue(String.class);
+                        String grammarMechanics = snapshot.child("Grammar, Mechanics, and Formatting").getValue(String.class);
+                        String languageStyle = snapshot.child("Language Use and Style").getValue(String.class);
+                        String organizationStructure = snapshot.child("Organization and Structure").getValue(String.class);
+                        String notes = snapshot.child("Notes").getValue(String.class);
+
+                        // Debug logs
+                        Log.i("rubrics", "Rubrics loaded successfully");
+                        Log.i("contentIdeas", contentIdeas);
+                        Log.i("developmentSupport", developmentSupport);
+                        Log.i("grammarMechanics", grammarMechanics);
+                        Log.i("languageStyle", languageStyle);
+                        Log.i("organizationStructure", organizationStructure);
+                        Log.i("notes", notes);
+
+                        // ✅ Call your API with essay and rubrics
+                        DUMMY_OpenAiAPI.gradeEssay(
+                                essay,
+                                contentIdeas,
+                                organizationStructure,
+                                developmentSupport,
+                                grammarMechanics,
+                                languageStyle,
+                                notes,
+                                new DUMMY_OpenAiAPI.GradeCallback() {
+                                    @Override
+                                    public void onSuccess(String result) {
+                                        Log.i("AI_RESULT", "Grading result: " + result);
+
+                                        // TODO: maybe show result in UI
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        Log.e("AI_RESULT", "Error: " + error);
+                                    }
+                                }
+                        );
+
+                    } else {
+                        Toast.makeText(this, "No rubrics found for this classroom.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error fetching rubrics: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+
+
+
+
 }

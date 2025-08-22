@@ -2,6 +2,7 @@ package com.example.smartessay.API;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -29,7 +30,12 @@ public class DUMMY_OpenAiAPI {
     private static final String API_KEY = "201fcac069msh9aaef522fadd289p1863f9jsn3d4ac7d1a1f7";
     private static final String API_HOST = "open-ai21.p.rapidapi.com";
 
-    private static final OkHttpClient client = new OkHttpClient();
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)  // wait up to 60s for connection
+            .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)   // up to 60s to send body
+            .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)   // up to 120s for server to respond
+            .build();
+
     private static final MediaType JSON = MediaType.parse("application/json");
 
     public static void gradeEssay(String essayText,
@@ -88,11 +94,14 @@ public class DUMMY_OpenAiAPI {
             // ✅ Make async call
             client.newCall(request).enqueue(new Callback() {
                 @Override
+
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.e("OpenAI", "Failure details", e);  // <-- full stacktrace
                     new Handler(Looper.getMainLooper()).post(() ->
                             callback.onError("API request failed: " + e.getMessage())
                     );
                 }
+
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
