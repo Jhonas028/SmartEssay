@@ -4,50 +4,61 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:background="@color/back_blue"
+    android:background="@color/dirty_white"
     android:padding="16dp">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="10dp"
         android:fillViewport="true"
+        android:paddingTop="10dp"
         android:paddingBottom="80dp">
 
+        <!-- Main container with margins so it won't look too wide -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="2dp"
+            android:layout_marginHorizontal="5dp">
 
-            <!-- Header -->
+            <!-- ================= CROPPED IMAGE SECTION ================= -->
             <TextView
                 android:id="@+id/camera_instruction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cropped Image:"
-                android:textColor="@color/text_title_yellow"
-                android:textSize="18sp"
+                android:textColor="@color/back_blue"
+                android:textSize="26sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Image Preview -->
-            <ImageView
-                android:id="@+id/imageView"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:background="@color/white"
-                android:contentDescription="Cropped Image"
-                android:scaleType="centerCrop"
-                android:elevation="4dp" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/blue_border"
+                android:padding="8dp"
+                android:layout_marginBottom="16dp">
 
-            <!-- OCR Result -->
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:background="@color/white"
+                    android:contentDescription="Cropped Image"
+                    android:scaleType="centerCrop"
+                    android:clipToOutline="true"
+                    android:elevation="4dp" />
+            </LinearLayout>
+
+            <!-- ================= OCR RESULT ================= -->
             <TextView
                 android:id="@+id/ocrResultTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="OCR Result:"
-                android:textColor="@color/text_title_yellow"
-                android:textSize="18sp"
+                android:textColor="@color/back_blue"
+                android:textSize="26sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp" />
@@ -60,28 +71,56 @@
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:elevation="2dp" />
+                android:elevation="2dp"
+                android:layout_marginBottom="16dp"/>
 
-            <!-- Rubrics Section -->
+            <!-- ================= CREATE ROOM SECTION ================= -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp"
-                android:background="@color/blue"
+                android:background="@drawable/blue_border"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:paddingBottom="16dp">
+                android:padding="12dp">
 
                 <TextView
-                    android:id="@+id/rubricsTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Create Room"
+                    android:textColor="@color/back_blue"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/etRoomName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter Room Name"
+                    android:background="@drawable/edittext_background"
+                    android:padding="14dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:inputType="textCapWords" />
+            </LinearLayout>
+
+            <!-- ================= RUBRICS SECTION ================= -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/yellow_border"
+                android:layout_marginTop="16dp"
+                android:padding="12dp">
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Rubrics"
-                    android:textColor="@color/yellow"
+                    android:textColor="@color/back_blue"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="12dp" />
 
                 <!-- Content / Ideas -->
                 <LinearLayout
@@ -92,13 +131,11 @@
                     android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:id="@+id/contentTV"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="8dp"
                         android:text="Content / Ideas"
-                        android:textColor="@color/white"
+                        android:textColor="@color/back_blue"
                         android:textSize="16sp" />
 
                     <EditText
@@ -107,8 +144,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:gravity="center"
-                        android:backgroundTint="@color/button_yellow"
-                        android:textColor="@color/black"
+                        android:background="@drawable/edittext_background"
                         android:hint="%" />
                 </LinearLayout>
 
@@ -121,13 +157,11 @@
                     android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:id="@+id/OrganizationTV"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="8dp"
                         android:text="Organization / Structure"
-                        android:textColor="@color/white"
+                        android:textColor="@color/back_blue"
                         android:textSize="16sp" />
 
                     <EditText
@@ -136,12 +170,11 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:gravity="center"
-                        android:backgroundTint="@color/button_yellow"
-                        android:textColor="@color/black"
+                        android:background="@drawable/edittext_background"
                         android:hint="%" />
                 </LinearLayout>
 
-                <!-- Development and Support -->
+                <!-- Development / Support -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -150,13 +183,11 @@
                     android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:id="@+id/DevelopmentTV"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="8dp"
-                        android:text="Development and Support"
-                        android:textColor="@color/white"
+                        android:text="Development / Support"
+                        android:textColor="@color/back_blue"
                         android:textSize="16sp" />
 
                     <EditText
@@ -165,8 +196,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:gravity="center"
-                        android:backgroundTint="@color/button_yellow"
-                        android:textColor="@color/black"
+                        android:background="@drawable/edittext_background"
                         android:hint="%" />
                 </LinearLayout>
 
@@ -179,13 +209,11 @@
                     android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:id="@+id/grammarTV"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="8dp"
                         android:text="Grammar and Formatting"
-                        android:textColor="@color/white"
+                        android:textColor="@color/back_blue"
                         android:textSize="16sp" />
 
                     <EditText
@@ -194,8 +222,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:gravity="center"
-                        android:backgroundTint="@color/button_yellow"
-                        android:textColor="@color/black"
+                        android:background="@drawable/edittext_background"
                         android:hint="%" />
                 </LinearLayout>
 
@@ -208,13 +235,11 @@
                     android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:id="@+id/criticalTV"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="8dp"
                         android:text="Critical Thinking"
-                        android:textColor="@color/white"
+                        android:textColor="@color/back_blue"
                         android:textSize="16sp" />
 
                     <EditText
@@ -223,44 +248,51 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:gravity="center"
-                        android:backgroundTint="@color/button_yellow"
-                        android:textColor="@color/black"
+                        android:background="@drawable/edittext_background"
                         android:hint="%" />
                 </LinearLayout>
 
-                <!-- Others (Teacher Notes) -->
+                <!-- Other Rubrics -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="Others"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:text="Other Rubrics (Optional)"
+                    android:textSize="16sp"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/back_blue" />
 
                 <EditText
                     android:id="@+id/otherTV"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
+                    android:layout_height="120dp"
+                    android:hint="Enter custom rubric or prompt here..."
                     android:inputType="textMultiLine"
                     android:gravity="top|start"
-                    android:minLines="2"
                     android:scrollbars="vertical"
-                    android:background="@color/white"
-                    android:textColor="@color/black" />
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"/>
             </LinearLayout>
 
-            <!-- Submit Button -->
+            <!-- ================= BUTTONS ================= -->
             <Button
                 android:id="@+id/submitBtn"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:backgroundTint="@color/button"
-                android:text="Submit"
+                android:text="Create Room"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/text_title_yellow"
+                android:textColor="@color/back_blue"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Cancel"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/back_blue"
                 android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <!-- Score Section -->
             <LinearLayout
@@ -274,7 +306,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:text="Score and Feedback:"
-                    android:textColor="@color/text_title_yellow"
+                    android:textColor="@color/back_blue"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginTop="16dp"

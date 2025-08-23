@@ -22,7 +22,7 @@
             android:layout_weight="1"
             android:text="Smart Essay"
             android:textColor="@color/back_blue"
-            android:textSize="24sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -39,7 +39,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_marginBottom="16dp"
         android:gravity="center_vertical">
 
@@ -57,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Room Code: "
+            android:textStyle="bold"
             android:textSize="16sp"/>
     </LinearLayout>
 
