@@ -6,31 +6,74 @@
     android:padding="16dp"
     android:fitsSystemWindows="true">
 
+
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
+        android:paddingTop="30dp"
+        >
 
-        <!-- Image preview -->
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:scaleType="centerCrop"
-            android:background="#CCCCCC"
-            android:layout_marginBottom="16dp"/>
 
-        <!-- OCR result -->
+        <!-- ================= IMAGE PREVIEW ================= -->
         <TextView
-            android:id="@+id/ocr_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cropped Image"
+            android:textColor="@color/back_blue"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="OCR Result will appear here"
+            android:background="@drawable/blue_border"
             android:padding="8dp"
-            android:background="#EEEEEE"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp">
 
-        <!-- Buttons -->
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="@color/white"
+                android:contentDescription="Cropped Image Preview"
+                android:scaleType="centerCrop"
+                android:clipToOutline="true"
+                android:elevation="4dp"
+                android:adjustViewBounds="true" />
+        </LinearLayout>
+
+        <!-- ================= OCR RESULT ================= -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OCR Result"
+            android:textColor="@color/back_blue"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/yellow_border"
+            android:padding="8dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/ocr_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OCR Result will appear here"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:padding="8dp" />
+        </LinearLayout>
+
+        <!-- ================= BUTTONS ================= -->
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -45,7 +88,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Submit"
-                android:layout_marginEnd="8dp"/>
+                android:backgroundTint="@color/button_yellow"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp" />
 
             <Button
                 android:id="@+id/cancelBtn"
@@ -53,7 +99,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cancel"
-                android:layout_marginStart="8dp"/>
+                android:backgroundTint="@color/back_blue"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp" />
         </LinearLayout>
 
     </LinearLayout>

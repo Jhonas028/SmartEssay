@@ -9,10 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.smartessay.R;
-import com.example.smartessay.Student_Fragments.CameraFragment_Student;
 import com.example.smartessay.Student_Fragments.HomeFragment_Student;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -30,7 +28,6 @@ public class StudentHPActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_student_hpactivity);
 
-        fab = findViewById(R.id.fab);
 
         // Toolbar setup
         toolbar = findViewById(R.id.toolbar);
@@ -72,15 +69,6 @@ public class StudentHPActivity extends AppCompatActivity {
             return false;
         });
 
-        // FAB action (Camera)
-        fab.setOnClickListener(v -> {
-            Fragment cameraFragment = new CameraFragment_Student();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.framelays, cameraFragment);
-            transaction.addToBackStack(null);  // allows back navigation
-            transaction.commit();
-            Toast.makeText(this, "Camera clicked", Toast.LENGTH_SHORT).show();
-        });
     }
 
     private void loadFragments(Fragment fragment) {

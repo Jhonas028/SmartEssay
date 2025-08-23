@@ -153,7 +153,7 @@ public class Camera_Student extends AppCompatActivity {
                             convertedText,
                             score,
                             feedback,
-                            "uploaded",
+                            "pending",
                             timestamp,
                             timestamp,
                             fullname // 👈 save fullname inside essay
