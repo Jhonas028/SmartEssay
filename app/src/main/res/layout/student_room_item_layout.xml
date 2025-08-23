@@ -59,7 +59,7 @@
             android:hint="Time Created" />
 
         <TextView
-            android:id="@+id/text_available_students"
+            android:id="@+id/students_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

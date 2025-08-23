@@ -22,8 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartessay.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -225,7 +223,7 @@ public class HomeFragment_Student extends Fragment {
                 textRoomCode = itemView.findViewById(R.id.text_room_code);
                 textDateCreated = itemView.findViewById(R.id.text_date_created);
                 textTimeCreated = itemView.findViewById(R.id.text_time_created);
-                textAvailableStudents = itemView.findViewById(R.id.text_available_students);
+                textAvailableStudents = itemView.findViewById(R.id.students_name);
             }
         }
     }

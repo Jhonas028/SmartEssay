@@ -9,6 +9,15 @@ public class EssayTeacher {
     private String status;
     private long created_at;
     private long updated_at;
+    private String fullname;
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
 
     // Required empty constructor for Firebase
     public EssayTeacher() {}

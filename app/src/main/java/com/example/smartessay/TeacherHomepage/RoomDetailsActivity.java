@@ -76,6 +76,9 @@ public class RoomDetailsActivity extends AppCompatActivity {
 
                 for (DataSnapshot studentSnap : snapshot.getChildren()) {
                     String studentId = studentSnap.getKey();
+                    String fullname = studentSnap.child("fullname").getValue(String.class); // 👈 get fullname
+
+                    Log.d("FirebaseDebug", "Found studentId: " + studentId + " fullname: " + fullname);
                     Log.d("FirebaseDebug", "Found studentId: " + studentId);
 
                     DatabaseReference essayRef = FirebaseDatabase.getInstance()
@@ -94,6 +97,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
                                     EssayTeacher essay = essayEntry.getValue(EssayTeacher.class);
                                     if (essay != null) {
                                         essayList.add(essay);
+                                        essay.setFullname(fullname);
                                         Log.d("FirebaseDebug", "Essay found for " + studentId + ": " + essay.getConvertedText());
                                     }
                                 }
@@ -101,6 +105,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
                                 // Add a placeholder if no essay yet
                                 EssayTeacher noEssay = new EssayTeacher();
                                 noEssay.setStudentId(studentId);
+                                noEssay.setFullname(fullname);
                                 noEssay.setConvertedText("No submission yet");
                                 noEssay.setScore(0);
                                 noEssay.setCreatedAt(System.currentTimeMillis()); // or joined_at
@@ -159,7 +164,8 @@ public class RoomDetailsActivity extends AppCompatActivity {
 
             holder.tvDateCreated.setText("Submitted: " + dateFormat.format(date));
             holder.tvTimeCreated.setText("Time: " + timeFormat.format(date));
-            holder.tvScore.setText("Score: " + essay.getScore());
+            holder.tvFullname.setText("Fullname: " + essay.getFullname());
+
         }
 
 
@@ -169,14 +175,16 @@ public class RoomDetailsActivity extends AppCompatActivity {
         }
 
         static class StudentViewHolder extends RecyclerView.ViewHolder {
-            TextView tvStudentName, tvDateCreated, tvTimeCreated, tvScore;
+            TextView tvStudentName, tvDateCreated, tvTimeCreated, tvScore, tvFullname;
+
 
             public StudentViewHolder(@NonNull View itemView) {
                 super(itemView);
                 tvStudentName = itemView.findViewById(R.id.text_student_name);
                 tvDateCreated = itemView.findViewById(R.id.text_date_created);
                 tvTimeCreated = itemView.findViewById(R.id.text_time_created);
-                tvScore = itemView.findViewById(R.id.text_available_students);
+                tvScore = itemView.findViewById(R.id.students_name);
+                tvFullname = itemView.findViewById(R.id.students_name);
             }
         }
     }

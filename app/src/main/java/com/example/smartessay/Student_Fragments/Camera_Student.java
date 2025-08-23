@@ -86,6 +86,24 @@ public class Camera_Student extends AppCompatActivity {
                     "https://smartessay-79d91-default-rtdb.firebaseio.com/"
             ).getReference();
 
+            db.child("users").child("students").child(studentId)
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (snapshot.exists()) {
+                            String firstName = snapshot.child("first_name").getValue(String.class);
+                            String lastName = snapshot.child("last_name").getValue(String.class);
+                            String fullname = lastName+ "," + firstName;
+
+                            Log.i("STUDENT_INFO", "Name: " + firstName + " " + lastName);
+
+                        } else {
+                            Log.w("STUDENT_INFO", "No student found with ID " + studentId);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("STUDENT_INFO", "Error fetching student: " + e.getMessage());
+                    });
+
             db.child("essay").child(studentId).child(classroomId).get()
                     .addOnSuccessListener(snapshot -> {
                         if (snapshot.exists()) {
@@ -121,31 +139,48 @@ public class Camera_Student extends AppCompatActivity {
 
         long timestamp = System.currentTimeMillis();
 
-        Essay essay = new Essay(
-                studentId,
-                classroomId,
-                convertedText,
-                score,        // 👈 now using AI score
-                feedback,     // 👈 now using AI feedback
-                "uploaded",
-                timestamp,
-                timestamp
-        );
+        // 🔹 fetch first/last name before uploading
+        db.child("users").child("students").child(studentId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    String firstName = snapshot.child("first_name").getValue(String.class);
+                    String lastName = snapshot.child("last_name").getValue(String.class);
+                    String fullname = lastName + ", " + firstName;
 
-        db.child("essay").child(studentId).child(classroomId).setValue(essay)
-                .addOnSuccessListener(aVoid -> {
-                    db.child("classrooms").child(classroomId)
-                            .child("classroom_members")
-                            .child(studentId)
-                            .child("joined_at")
-                            .setValue(timestamp);
+                    Essay essay = new Essay(
+                            studentId,
+                            classroomId,
+                            convertedText,
+                            score,
+                            feedback,
+                            "uploaded",
+                            timestamp,
+                            timestamp,
+                            fullname // 👈 save fullname inside essay
+                    );
 
-                    Toast.makeText(this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
+                    db.child("essay").child(studentId).child(classroomId).setValue(essay)
+                            .addOnSuccessListener(aVoid -> {
+                                DatabaseReference memberRef = db.child("classrooms")
+                                        .child(classroomId)
+                                        .child("classroom_members")
+                                        .child(studentId);
+
+                                memberRef.child("joined_at").setValue(timestamp);
+                                memberRef.child("fullname").setValue(fullname); // 👈 add fullname here
+
+
+                                Toast.makeText(this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                            );
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Failed to fetch student info: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );
     }
+
 
 
 
@@ -160,12 +195,14 @@ public class Camera_Student extends AppCompatActivity {
         public String status;
         public long created_at;
         public long updated_at;
+        public String fullname;   // 👈 added
 
         public Essay() {} // Required empty constructor
 
         public Essay(String student_id, String classroom_id,
                      String converted_text, int score, String essay_feedback,
-                     String status, long created_at, long updated_at) {
+                     String status, long created_at, long updated_at,
+                     String fullname) {
             this.student_id = student_id;
             this.classroom_id = classroom_id;
             this.converted_text = converted_text;
@@ -174,8 +211,10 @@ public class Camera_Student extends AppCompatActivity {
             this.status = status;
             this.created_at = created_at;
             this.updated_at = updated_at;
+            this.fullname = fullname;
         }
     }
+
 
     // Permission request
     private final ActivityResultLauncher<String> requestPermissionLauncher =

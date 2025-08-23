@@ -50,11 +50,11 @@
             android:hint="Time Submitted" />
 
         <TextView
-            android:id="@+id/text_available_students"
+            android:id="@+id/students_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Score: 20"
+            android:text="Fullname: "
             android:textSize="14sp"
             android:textColor="@android:color/holo_green_dark"
             android:hint="Score" />
