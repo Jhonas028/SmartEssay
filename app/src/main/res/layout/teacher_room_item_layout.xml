@@ -39,6 +39,16 @@
             android:hint="Room Code" />
 
         <TextView
+            android:id="@+id/text_room_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Room ID FDO: ABC123"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:hint="Room Code" />
+
+        <TextView
             android:id="@+id/text_date_created"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -47,6 +57,8 @@
             android:textSize="12sp"
             android:textColor="@android:color/black"
             android:hint="Date Created" />
+
+
 
         <TextView
             android:id="@+id/text_available_students"

@@ -95,6 +95,7 @@ public class HomeFragment_Teacher extends Fragment {
             Intent intent = new Intent(requireContext(), RoomDetailsActivity.class);
             intent.putExtra("roomName", room.getRoomName());  // pass room name
             intent.putExtra("roomCode", room.getRoomCode()); // pass the entire room object
+            intent.putExtra("roomId", room.getRoomId());
             startActivity(intent);
         });
 
@@ -107,6 +108,7 @@ public class HomeFragment_Teacher extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 roomList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
+                    String roomId = ds.getKey();
                     String roomName = ds.child("classroom_name").getValue(String.class);
                     String roomCode = ds.child("room_code").getValue(String.class);
                     String createdAt = ds.child("created_at").getValue(String.class);
@@ -117,7 +119,7 @@ public class HomeFragment_Teacher extends Fragment {
                         rubrics = (Map<String, String>) ds.child("rubrics").getValue();
                     }
 
-                    roomList.add(new Room(roomName, roomCode, createdAt, updatedAt, rubrics));
+                    roomList.add(new Room(roomId, roomName, roomCode, createdAt, updatedAt, rubrics));
                 }
                 roomAdapter.notifyDataSetChanged();
             }
@@ -130,15 +132,21 @@ public class HomeFragment_Teacher extends Fragment {
     }
 
     public static class Room {
+        private String roomId;   // Firebase key (-OYL4rE...)
         private String roomName;
         private String roomCode;
         private String createdAt;
         private String updatedAt;
         private Map<String, String> rubrics;
 
-        public Room() {}
-        public Room(String roomName, String roomCode, String createdAt, String updatedAt,
-                    Map<String, String> rubrics) {
+        public Room() {
+            // empty constructor needed for Firebase
+        }
+
+        // ✅ Full constructor including roomId
+        public Room(String roomId, String roomName, String roomCode,
+                    String createdAt, String updatedAt, Map<String, String> rubrics) {
+            this.roomId = roomId;
             this.roomName = roomName;
             this.roomCode = roomCode;
             this.createdAt = createdAt;
@@ -146,12 +154,22 @@ public class HomeFragment_Teacher extends Fragment {
             this.rubrics = rubrics;
         }
 
+        // ✅ Old constructor without roomId (optional, but avoids "cannot resolve constructor")
+        public Room(String roomName, String roomCode, String createdAt,
+                    String updatedAt, Map<String, String> rubrics) {
+            this(null, roomName, roomCode, createdAt, updatedAt, rubrics);
+        }
+
+        // Getters
+        public String getRoomId() { return roomId; }
         public String getRoomName() { return roomName; }
         public String getRoomCode() { return roomCode; }
         public String getCreatedAt() { return createdAt; }
         public String getUpdatedAt() { return updatedAt; }
         public Map<String, String> getRubrics() { return rubrics; }
     }
+
+
 
     public static class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
         private final List<Room> roomList;
@@ -181,6 +199,7 @@ public class HomeFragment_Teacher extends Fragment {
             holder.textRoomName.setText(room.getRoomName());
             holder.textRoomCode.setText("Code: " + room.getRoomCode());
             holder.textCreatedAt.setText("Created: " + room.getCreatedAt());
+            holder.text_room_id.setText("Room id: " + room.getRoomId());
 
             if (room.getRubrics() != null) {
                 StringBuilder summary = new StringBuilder();
@@ -201,7 +220,7 @@ public class HomeFragment_Teacher extends Fragment {
         public int getItemCount() { return roomList.size(); }
 
         public static class RoomViewHolder extends RecyclerView.ViewHolder {
-            TextView textRoomName, textRoomCode, textCreatedAt, textUpdatedAt, textRubrics;
+            TextView textRoomName, textRoomCode, textCreatedAt, textUpdatedAt, textRubrics,text_room_id;
 
             public RoomViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -210,6 +229,7 @@ public class HomeFragment_Teacher extends Fragment {
                 textCreatedAt = itemView.findViewById(R.id.text_date_created);
                 textUpdatedAt = itemView.findViewById(R.id.text_time_created);
                 textRubrics = itemView.findViewById(R.id.text_rubrics);
+                text_room_id = itemView.findViewById(R.id.text_room_id);
             }
         }
     }
