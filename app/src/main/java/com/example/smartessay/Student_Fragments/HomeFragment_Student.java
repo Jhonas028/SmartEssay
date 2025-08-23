@@ -35,7 +35,7 @@ public class HomeFragment_Student extends Fragment {
 
     private RecyclerView recyclerView;
     private RoomAdapter roomAdapter;
-    private List<Room> roomList;
+    private List<EssayInfo> roomList;
     private Button btnJoinRoom;
 
     @Override
@@ -43,16 +43,18 @@ public class HomeFragment_Student extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home__student, container, false);
 
-        // RecyclerView setup
+
+// RecyclerView setup
         recyclerView = view.findViewById(R.id.recycler_view_rooms);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Initialize room list (sample for now)
-        initializeRoomList();
-
-        // Adapter setup
+// ✅ Initialize list before adapter
+        roomList = new ArrayList<>();
         roomAdapter = new RoomAdapter(roomList);
         recyclerView.setAdapter(roomAdapter);
+
+// Load student essays
+        loadStudentEssays();
 
         // Button setup (Join Room for student)
         btnJoinRoom = view.findViewById(R.id.btn_add_room); // ✅ updated id
@@ -136,7 +138,6 @@ public class HomeFragment_Student extends Fragment {
 
             });
 
-
             dialog.show();
         });
 
@@ -144,48 +145,78 @@ public class HomeFragment_Student extends Fragment {
         return view;
     }
 
-    private void initializeRoomList() {
-        roomList = new ArrayList<>();
+    private void loadStudentEssays() {
+        roomList.clear();
 
-        // Sample data (later you can load actual available classes)
-        roomList.add(new Room("English 101", "ENG123", "March 15, 2024", "10:30 AM", 25, 30));
-        roomList.add(new Room("History 201", "HIS456", "March 16, 2024", "2:15 PM", 18, 25));
-        roomList.add(new Room("Mathematics Lab", "MATH01", "March 17, 2024", "9:00 AM", 20, 25));
-    }
+        SharedPreferences prefs = requireContext().getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String currentStudentId = prefs.getString("studentId", null);
 
-    // Room model
-    public static class Room {
-        private String roomName;
-        private String roomCode;
-        private String dateCreated;
-        private String timeCreated;
-        private int availableStudents;
-        private int totalStudents;
-
-        public Room(String roomName, String roomCode, String dateCreated,
-                    String timeCreated, int availableStudents, int totalStudents) {
-            this.roomName = roomName;
-            this.roomCode = roomCode;
-            this.dateCreated = dateCreated;
-            this.timeCreated = timeCreated;
-            this.availableStudents = availableStudents;
-            this.totalStudents = totalStudents;
+        if (currentStudentId == null) {
+            Toast.makeText(getContext(), "Student not logged in", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        public String getRoomName() { return roomName; }
-        public String getRoomCode() { return roomCode; }
-        public String getDateCreated() { return dateCreated; }
-        public String getTimeCreated() { return timeCreated; }
-        public int getAvailableStudents() { return availableStudents; }
-        public int getTotalStudents() { return totalStudents; }
+        DatabaseReference essayRef = FirebaseDatabase.getInstance(
+                "https://smartessay-79d91-default-rtdb.firebaseio.com/"
+        ).getReference("essay").child(currentStudentId);
+
+        essayRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                roomList.clear();
+
+                for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                    String classroomName = essaySnap.child("classroom_name").getValue(String.class);
+                    Long createdAt = essaySnap.child("created_at").getValue(Long.class);
+                    Long updatedAt = essaySnap.child("updated_at").getValue(Long.class);
+                    String status = essaySnap.child("status").getValue(String.class);
+
+                    EssayInfo essayInfo = new EssayInfo(
+                            classroomName != null ? classroomName : "Unknown",
+                            createdAt != null ? createdAt : 0,
+                            status != null ? status : "N/A"
+                    );
+
+                    roomList.add(essayInfo);   // ✅ now it matches
+                }
+
+                roomAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseError", error.getMessage());
+            }
+        });
     }
 
-    // RecyclerView Adapter
-    public static class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
-        private List<Room> roomList;
 
-        public RoomAdapter(List<Room> roomList) {
-            this.roomList = roomList;
+    // Room model
+// Model for essay submission
+    public static class EssayInfo {
+        private String classroomName;
+        private long createdAt;
+        private String status;
+
+        public EssayInfo() {} // Needed for Firebase
+
+        public EssayInfo(String classroomName, long createdAt, String status) {
+            this.classroomName = classroomName;
+            this.createdAt = createdAt;
+            this.status = status;
+        }
+
+        public String getClassroomName() { return classroomName; }
+        public long getCreatedAt() { return createdAt; }
+        public String getStatus() { return status; }
+    }
+
+
+    public static class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
+        private List<EssayInfo> roomList;
+
+        public RoomAdapter(List<EssayInfo> roomList) {
+            this.roomList = (roomList != null) ? roomList : new ArrayList<>();
         }
 
         @NonNull
@@ -198,33 +229,35 @@ public class HomeFragment_Student extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
-            Room room = roomList.get(position);
+            EssayInfo essay = roomList.get(position);
 
-            holder.textRoomName.setText(room.getRoomName());
-            holder.textRoomCode.setText("Code: " + room.getRoomCode());
-            holder.textDateCreated.setText("Created: " + room.getDateCreated());
-            holder.textTimeCreated.setText("Time: " + room.getTimeCreated());
-            holder.textAvailableStudents.setText("Available Students: " +
-                    room.getAvailableStudents() + "/" + room.getTotalStudents());
+            holder.textRoomName.setText(essay.getClassroomName());
+
+            // format timestamps into readable date/time
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM dd, yyyy hh:mm a");
+            String created = (essay.getCreatedAt() > 0) ? sdf.format(new java.util.Date(essay.getCreatedAt())) : "N/A";
+
+            holder.textDateCreated.setText("created: " + created);
+            holder.textStatus.setText("status: " + essay.getStatus());
         }
 
         @Override
         public int getItemCount() {
-            return roomList.size();
+            return roomList != null ? roomList.size() : 0;
         }
 
+
         public static class RoomViewHolder extends RecyclerView.ViewHolder {
-            TextView textRoomName, textRoomCode, textDateCreated, textTimeCreated, textAvailableStudents;
+            TextView textRoomName, textDateCreated, textStatus;
 
             public RoomViewHolder(@NonNull View itemView) {
                 super(itemView);
 
                 textRoomName = itemView.findViewById(R.id.text_room_name);
-                textRoomCode = itemView.findViewById(R.id.text_room_code);
                 textDateCreated = itemView.findViewById(R.id.text_date_created);
-                textTimeCreated = itemView.findViewById(R.id.text_time_created);
-                textAvailableStudents = itemView.findViewById(R.id.students_name);
+                textStatus = itemView.findViewById(R.id.text_sname);
             }
         }
     }
+
 }

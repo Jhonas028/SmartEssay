@@ -156,7 +156,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull StudentViewHolder holder, int position) {
             EssayTeacher essay = essays.get(position);
 
-            holder.tvStudentName.setText("Student ID: " + essay.getStudentId());
+            holder.tvStudentName.setText("Student no.: " + essay.getStudentId());
 
             Date date = new Date(essay.getCreatedAt());
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
@@ -164,7 +164,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
 
             holder.tvDateCreated.setText("Submitted: " + dateFormat.format(date));
             holder.tvTimeCreated.setText("Time: " + timeFormat.format(date));
-            holder.tvFullname.setText("Fullname: " + essay.getFullname());
+            holder.tvFullname.setText(essay.getFullname());
 
         }
 
@@ -180,11 +180,11 @@ public class RoomDetailsActivity extends AppCompatActivity {
 
             public StudentViewHolder(@NonNull View itemView) {
                 super(itemView);
-                tvStudentName = itemView.findViewById(R.id.text_student_name);
+                tvStudentName = itemView.findViewById(R.id.text_studnum);
                 tvDateCreated = itemView.findViewById(R.id.text_date_created);
                 tvTimeCreated = itemView.findViewById(R.id.text_time_created);
-                tvScore = itemView.findViewById(R.id.students_name);
-                tvFullname = itemView.findViewById(R.id.students_name);
+                tvScore = itemView.findViewById(R.id.text_sname);
+                tvFullname = itemView.findViewById(R.id.text_sname);
             }
         }
     }

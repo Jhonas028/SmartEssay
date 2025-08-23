@@ -28,15 +28,6 @@
             android:textStyle="bold"
             android:textColor="@android:color/black" />
 
-        <TextView
-            android:id="@+id/text_room_code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Code: ABC123"
-            android:textSize="14sp"
-            android:textColor="@color/black"
-            android:hint="Room Code" />
 
         <TextView
             android:id="@+id/text_date_created"
@@ -48,25 +39,16 @@
             android:textColor="@android:color/black"
             android:hint="Date Created" />
 
-        <TextView
-            android:id="@+id/text_time_created"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Time: 10:30 AM"
-            android:textSize="12sp"
-            android:textColor="@color/black"
-            android:hint="Time Created" />
+
 
         <TextView
-            android:id="@+id/students_name"
+            android:id="@+id/text_sname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Available Students: 25/30"
-            android:textSize="14sp"
-            android:textColor="@android:color/holo_green_dark"
-            android:hint="Available Students" />
+            android:text="Status: "
+            android:textSize="12sp"
+            android:textColor="@android:color/black"
+             />
 
     </LinearLayout>
 

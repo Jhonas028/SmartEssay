@@ -69,7 +69,7 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:padding="8dp"
-            tools:listitem="@layout/teacher_room_item_layout" />
+            tools:listitem="@layout/student_room_item_layout" />
 
     </LinearLayout>
 

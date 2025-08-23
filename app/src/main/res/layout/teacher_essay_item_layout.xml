@@ -20,20 +20,28 @@
         android:background="@drawable/blue_border_background">
 
         <TextView
-            android:id="@+id/text_student_name"
+            android:id="@+id/text_sname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bruno Mars"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/text_studnum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Student no.: "
+            android:textSize="12sp"
+            android:textColor="@android:color/black"
+            android:hint="Score" />
 
 
         <TextView
             android:id="@+id/text_date_created"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="Submitted: March 15, 2024"
             android:textSize="12sp"
             android:textColor="@android:color/black"
@@ -43,21 +51,12 @@
             android:id="@+id/text_time_created"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
             android:text="Time: 10:30 AM"
             android:textSize="12sp"
             android:textColor="@color/black"
             android:hint="Time Submitted" />
 
-        <TextView
-            android:id="@+id/students_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Fullname: "
-            android:textSize="14sp"
-            android:textColor="@android:color/holo_green_dark"
-            android:hint="Score" />
+
 
 
     </LinearLayout>

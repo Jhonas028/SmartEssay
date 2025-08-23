@@ -45,6 +45,7 @@ public class Camera_Student extends AppCompatActivity {
     private String studentId;
     private String classroomId;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,7 +140,7 @@ public class Camera_Student extends AppCompatActivity {
 
         long timestamp = System.currentTimeMillis();
 
-        // 🔹 fetch first/last name before uploading
+        // Fetch student info
         db.child("users").child("students").child(studentId)
                 .get()
                 .addOnSuccessListener(snapshot -> {
@@ -147,34 +148,42 @@ public class Camera_Student extends AppCompatActivity {
                     String lastName = snapshot.child("last_name").getValue(String.class);
                     String fullname = lastName + ", " + firstName;
 
-                    Essay essay = new Essay(
-                            studentId,
-                            classroomId,
-                            convertedText,
-                            score,
-                            feedback,
-                            "pending",
-                            timestamp,
-                            timestamp,
-                            fullname // 👈 save fullname inside essay
-                    );
+                    // ✅ Fetch classroom_name
+                    db.child("classrooms").child(classroomId).child("classroom_name")
+                            .get()
+                            .addOnSuccessListener(classSnap -> {
+                                String classroomName = classSnap.getValue(String.class);
 
-                    db.child("essay").child(studentId).child(classroomId).setValue(essay)
-                            .addOnSuccessListener(aVoid -> {
-                                DatabaseReference memberRef = db.child("classrooms")
-                                        .child(classroomId)
-                                        .child("classroom_members")
-                                        .child(studentId);
+                                // ✅ Create Essay object with classroom_name
+                                Essay essay = new Essay(
+                                        studentId,
+                                        classroomId,
+                                        classroomName,   // 👈 added classroom name
+                                        convertedText,
+                                        score,
+                                        feedback,
+                                        "pending",
+                                        timestamp,
+                                        timestamp,
+                                        fullname
+                                );
 
-                                memberRef.child("joined_at").setValue(timestamp);
-                                memberRef.child("fullname").setValue(fullname); // 👈 add fullname here
+                                db.child("essay").child(studentId).child(classroomId).setValue(essay)
+                                        .addOnSuccessListener(aVoid -> {
+                                            DatabaseReference memberRef = db.child("classrooms")
+                                                    .child(classroomId)
+                                                    .child("classroom_members")
+                                                    .child(studentId);
 
+                                            memberRef.child("joined_at").setValue(timestamp);
+                                            memberRef.child("fullname").setValue(fullname);
 
-                                Toast.makeText(this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                            );
+                                            Toast.makeText(this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
+                                        })
+                                        .addOnFailureListener(e ->
+                                                Toast.makeText(this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                                        );
+                            });
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Failed to fetch student info: " + e.getMessage(), Toast.LENGTH_SHORT).show()
@@ -185,11 +194,13 @@ public class Camera_Student extends AppCompatActivity {
 
 
 
+
     // Essay model class
     public static class Essay {
         public String student_id;
         public String classroom_id;
         public String converted_text;
+        public String classroom_name;
         public int score;
         public String essay_feedback;
         public String status;
@@ -199,12 +210,13 @@ public class Camera_Student extends AppCompatActivity {
 
         public Essay() {} // Required empty constructor
 
-        public Essay(String student_id, String classroom_id,
+        public Essay(String student_id, String classroom_id, String classroom_name,
                      String converted_text, int score, String essay_feedback,
                      String status, long created_at, long updated_at,
                      String fullname) {
             this.student_id = student_id;
             this.classroom_id = classroom_id;
+            this.classroom_name = classroom_name;
             this.converted_text = converted_text;
             this.score = score;
             this.essay_feedback = essay_feedback;
