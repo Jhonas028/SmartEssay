@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login"
+    android:background="@drawable/selectaccountbg"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -17,9 +17,10 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="0.0">
 
 
         <EditText
@@ -55,10 +56,10 @@
             android:layout_height="48dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:textColor="@color/back_blue"
-            android:textStyle="bold"
             android:backgroundTint="@color/button_yellow"
-            android:text="Sign in" />
+            android:text="Sign in"
+            android:textColor="@color/back_blue"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView23"
@@ -86,10 +87,9 @@
         android:id="@+id/imageView2"
         android:layout_width="343dp"
         android:layout_height="368dp"
-        android:layout_marginTop="94dp"
+        android:layout_marginTop="4dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/smart_essaylogo" />

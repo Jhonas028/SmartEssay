@@ -6,68 +6,76 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:paddingBottom="300dp"
+    android:background="@drawable/bg"
     >
-
-    <!-- Header Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/tvRoomName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Smart Essay"
-            android:textColor="@color/back_blue"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_post_scoree"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Post"
-            android:textColor="@color/back_blue"
-            android:background="@drawable/round_all_yellow_button"
-            android:textSize="12sp"/>
-    </LinearLayout>
-
-    <!-- Room Info Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_vertical">
-
-
-        <TextView
-            android:id="@+id/tvRoomCode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Room Code: "
-            android:textStyle="bold"
-            android:textSize="16sp"/>
-    </LinearLayout>
-
-    <!-- Search Bar -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_search_student"
+        android:background="@drawable/yellow_border"
+        >
+        <!-- Header Section -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search..."
-            android:drawablePadding="8dp"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvRoomName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Smart Essay"
+                android:textColor="@color/back_blue"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_post_scoree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Post"
+                android:textColor="@color/back_blue"
+                android:background="@drawable/round_all_yellow_button"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <!-- Room Info Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical">
+
+
+            <TextView
+                android:id="@+id/tvRoomCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Room Code: "
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <!-- Search Bar -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_search_student"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search..."
+                android:drawablePadding="8dp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_rooms"

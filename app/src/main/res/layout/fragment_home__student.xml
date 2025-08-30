@@ -12,8 +12,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp"
+        android:background="@drawable/bg"
         >
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/yellow_border"
+        >
         <!-- Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,6 +66,9 @@
                 android:drawablePadding="8dp" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView

@@ -4,59 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:background="@color/blue"
+    android:background="@drawable/selectaccountbg"
     android:layout_height="match_parent"
-    tools:context=".CreatingAccounts.ChoosingAccounts">
+    tools:context=".CreatingAccounts.ChoosingAccounts"
+
+    >
+
 
     <LinearLayout
-        android:layout_width="360dp"
-        android:layout_height="600dp"
-        android:background="@drawable/round_br_bl"
-        android:orientation="vertical"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-    </LinearLayout>
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="316dp"
-        android:layout_height="310dp"
-        android:layout_marginTop="16dp"
-        android:clipToOutline="true"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.477"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/smart_essaylogo" />
-
-    <LinearLayout
-        android:layout_width="316dp"
-        android:layout_height="398dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_marginStart="21dp"
         android:layout_marginEnd="23dp"
-        android:layout_marginBottom="72dp"
+        android:layout_marginBottom="84dp"
+        android:background="@drawable/round_all_white"
         android:orientation="vertical"
         android:padding="10dp"
-        android:background="@drawable/round_all_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="35dp"
-            android:textStyle="bold"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
             android:text="Create Account"
+            android:textColor="@color/back_blue"
+            android:textSize="40dp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -64,24 +42,34 @@
             android:id="@+id/educBTN"
             android:layout_width="250dp"
             android:layout_height="60dp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:layout_marginTop="80dp"
-            android:background="@drawable/round_all_blue"
             android:layout_gravity="center"
-            android:text="Educator" />
+            android:layout_marginTop="50dp"
+            android:background="@drawable/round_all_yellow_button"
+            android:text="Educator"
+            android:textColor="@color/back_blue"
+            android:textSize="15dp"
+            android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/stuBTN"
             android:layout_width="250dp"
             android:layout_height="60dp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/round_all_blue"
             android:layout_gravity="center"
-            android:text="Student" />
+            android:layout_marginTop="15dp"
+            android:background="@drawable/round_all_yellow_button"
+            android:text="Student"
+            android:textColor="@color/back_blue"
+            android:textSize="15dp"
+            android:textStyle="bold" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="338dp"
+        android:layout_height="533dp"
+        app:srcCompat="@drawable/smart_essaylogo"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="-114dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
