@@ -1,5 +1,6 @@
 package com.example.smartessay.TeacherHomepage;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,7 +52,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
         tvRoomCode.setText("Room Code: " + roomCode);
 
         rvStudents.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new StudentAdapter(essayList);
+        adapter = new StudentAdapter(essayList, classroomId);
         rvStudents.setAdapter(adapter);
 
         loadEssaysFromFirebase();
@@ -139,9 +140,11 @@ public class RoomDetailsActivity extends AppCompatActivity {
     public static class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentViewHolder> {
 
         private List<EssayTeacher> essays;
+        private String classroomId;
 
-        public StudentAdapter(List<EssayTeacher> essays) {
+        public StudentAdapter(List<EssayTeacher> essays, String classroomId) {
             this.essays = essays;
+            this.classroomId = classroomId;
         }
 
         @NonNull
@@ -165,9 +168,19 @@ public class RoomDetailsActivity extends AppCompatActivity {
             holder.tvDateCreated.setText("Submitted: " + dateFormat.format(date));
             holder.tvTimeCreated.setText("Time: " + timeFormat.format(date));
             holder.tvFullname.setText(essay.getFullname());
-            Log.d("room_id", essay.getClassroomId());
+
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), EssayDetails.class);
+                intent.putExtra("roomId", classroomId);   // ✅ send roomId
+                intent.putExtra("studentId", essay.getStudentId());
+                v.getContext().startActivity(intent);
+
+            });
+
 
         }
+
+
 
 
         @Override
@@ -188,5 +201,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
                 tvFullname = itemView.findViewById(R.id.text_sname);
             }
         }
+
+
     }
 }
