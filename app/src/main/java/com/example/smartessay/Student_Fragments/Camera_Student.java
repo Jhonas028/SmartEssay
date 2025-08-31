@@ -21,13 +21,14 @@ import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
 import com.example.smartessay.API.DUMMY_OpenAiAPI;
-import com.example.smartessay.API.OpenAiAPI;
 import com.example.smartessay.API.PenToPrintAPI;
 import com.example.smartessay.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -45,7 +46,6 @@ public class Camera_Student extends AppCompatActivity {
     private String studentId;
     private String classroomId;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,9 +60,6 @@ public class Camera_Student extends AppCompatActivity {
         // Get student and classroom info from intent
         studentId = getIntent().getStringExtra("studentId");
         classroomId = getIntent().getStringExtra("classroomId");
-
-        String essay2 = getString(R.string.sample_essay);
-        getRubricsFromTeacherAndGradeEssay(classroomId,essay2);
 
         if (studentId == null || classroomId == null) {
             Toast.makeText(this, "Student or classroom info missing", Toast.LENGTH_SHORT).show();
@@ -87,45 +84,47 @@ public class Camera_Student extends AppCompatActivity {
                     "https://smartessay-79d91-default-rtdb.firebaseio.com/"
             ).getReference();
 
-            db.child("users").child("students").child(studentId)
-                    .get()
-                    .addOnSuccessListener(snapshot -> {
-                        if (snapshot.exists()) {
-                            String firstName = snapshot.child("first_name").getValue(String.class);
-                            String lastName = snapshot.child("last_name").getValue(String.class);
-                            String fullname = lastName+ "," + firstName;
+            // ✅ Validate BEFORE AI grading
+            db.child("essay")
+                    .orderByChild("student_id")
+                    .equalTo(studentId)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            boolean alreadySubmitted = false;
+                            for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                                String cid = essaySnap.child("classroom_id").getValue(String.class);
+                                if (cid != null && cid.equals(classroomId)) {
+                                    alreadySubmitted = true;
+                                    break;
+                                }
+                            }
 
-                            Log.i("STUDENT_INFO", "Name: " + firstName + " " + lastName);
-
-                        } else {
-                            Log.w("STUDENT_INFO", "No student found with ID " + studentId);
+                            if (alreadySubmitted) {
+                                Toast.makeText(Camera_Student.this,
+                                        "You already submitted an essay for this classroom!",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                new androidx.appcompat.app.AlertDialog.Builder(Camera_Student.this)
+                                        .setTitle("Submit Essay")
+                                        .setMessage("Are you sure you want to submit this essay? You can only submit once.")
+                                        .setPositiveButton("Yes", (dialog, which) -> {
+                                            // ✅ Run AI grading first
+                                            getRubricsFromTeacherAndGradeEssay(classroomId, essayText);
+                                        })
+                                        .setNegativeButton("Cancel", null)
+                                        .show();
+                            }
                         }
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("STUDENT_INFO", "Error fetching student: " + e.getMessage());
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Toast.makeText(Camera_Student.this,
+                                    "Firebase error: " + error.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
                     });
-
-            db.child("essay").child(studentId).child(classroomId).get()
-                    .addOnSuccessListener(snapshot -> {
-                        if (snapshot.exists()) {
-                            Toast.makeText(this, "You already submitted an essay for this classroom!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            new androidx.appcompat.app.AlertDialog.Builder(this)
-                                    .setTitle("Submit Essay")
-                                    .setMessage("Are you sure you want to submit this essay? You can only submit once.")
-                                    .setPositiveButton("Yes", (dialog, which) -> {
-                                        // ✅ Run AI grading first, then upload
-                                        getRubricsFromTeacherAndGradeEssay(classroomId, essayText);
-                                    })
-                                    .setNegativeButton("Cancel", null)
-                                    .show();
-                        }
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Firebase error: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                    );
         });
-
 
         cancelBtn.setOnClickListener(v -> {
             imageView.setImageDrawable(null);
@@ -140,80 +139,114 @@ public class Camera_Student extends AppCompatActivity {
 
         long timestamp = System.currentTimeMillis();
 
-        // Fetch student info
-        db.child("users").child("students").child(studentId)
-                .get()
-                .addOnSuccessListener(snapshot -> {
-                    String firstName = snapshot.child("first_name").getValue(String.class);
-                    String lastName = snapshot.child("last_name").getValue(String.class);
-                    String fullname = lastName + ", " + firstName;
+        // ✅ Double-check validation before saving
+        db.child("essay")
+                .orderByChild("student_id")
+                .equalTo(studentId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        boolean alreadySubmitted = false;
+                        for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                            String cid = essaySnap.child("classroom_id").getValue(String.class);
+                            if (cid != null && cid.equals(classroomId)) {
+                                alreadySubmitted = true;
+                                break;
+                            }
+                        }
 
-                    // ✅ Fetch classroom_name
-                    db.child("classrooms").child(classroomId).child("classroom_name")
-                            .get()
-                            .addOnSuccessListener(classSnap -> {
-                                String classroomName = classSnap.getValue(String.class);
+                        if (alreadySubmitted) {
+                            Toast.makeText(Camera_Student.this,
+                                    "Essay already exists. Submission blocked.",
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
-                                // ✅ Create Essay object with classroom_name
-                                Essay essay = new Essay(
-                                        studentId,
-                                        classroomId,
-                                        classroomName,   // 👈 added classroom name
-                                        convertedText,
-                                        score,
-                                        feedback,
-                                        "pending",
-                                        timestamp,
-                                        timestamp,
-                                        fullname
+                        // ✅ Fetch student info
+                        db.child("users").child("students").child(studentId)
+                                .get()
+                                .addOnSuccessListener(stuSnap -> {
+                                    String firstName = stuSnap.child("first_name").getValue(String.class);
+                                    String lastName = stuSnap.child("last_name").getValue(String.class);
+                                    String fullname = lastName + ", " + firstName;
+
+                                    // ✅ Fetch classroom_name
+                                    db.child("classrooms").child(classroomId).child("classroom_name")
+                                            .get()
+                                            .addOnSuccessListener(classSnap -> {
+                                                String classroomName = classSnap.getValue(String.class);
+
+                                                // ✅ Generate essayId before creating object
+                                                String essayId = db.child("essay").push().getKey();
+
+                                                if (essayId != null) {
+                                                    Essay essay = new Essay(
+                                                            essayId,
+                                                            studentId,
+                                                            classroomId,
+                                                            classroomName,
+                                                            convertedText,
+                                                            score,
+                                                            feedback,
+                                                            "pending",
+                                                            timestamp,
+                                                            timestamp,
+                                                            fullname
+                                                    );
+
+                                                    db.child("essay").child(essayId).setValue(essay)
+                                                            .addOnSuccessListener(aVoid -> {
+                                                                DatabaseReference memberRef = db.child("classrooms")
+                                                                        .child(classroomId)
+                                                                        .child("classroom_members")
+                                                                        .child(studentId);
+
+                                                                memberRef.child("joined_at").setValue(timestamp);
+                                                                memberRef.child("fullname").setValue(fullname);
+
+                                                                Toast.makeText(Camera_Student.this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
+                                                            })
+                                                            .addOnFailureListener(e ->
+                                                                    Toast.makeText(Camera_Student.this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                                                            );
+                                                }
+                                            });
+                                })
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(Camera_Student.this, "Failed to fetch student info: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                                 );
+                    }
 
-                                db.child("essay").child(studentId).child(classroomId).setValue(essay)
-                                        .addOnSuccessListener(aVoid -> {
-                                            DatabaseReference memberRef = db.child("classrooms")
-                                                    .child(classroomId)
-                                                    .child("classroom_members")
-                                                    .child(studentId);
-
-                                            memberRef.child("joined_at").setValue(timestamp);
-                                            memberRef.child("fullname").setValue(fullname);
-
-                                            Toast.makeText(this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
-                                        })
-                                        .addOnFailureListener(e ->
-                                                Toast.makeText(this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                                        );
-                            });
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed to fetch student info: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Toast.makeText(Camera_Student.this,
+                                "Database error: " + error.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
-
-
-
-
-
-    // Essay model class
+    // ✅ Essay model class
     public static class Essay {
+        public String essay_id;
         public String student_id;
         public String classroom_id;
-        public String converted_text;
         public String classroom_name;
+        public String converted_text;
         public int score;
         public String essay_feedback;
         public String status;
         public long created_at;
         public long updated_at;
-        public String fullname;   // 👈 added
+        public String fullname;
 
         public Essay() {} // Required empty constructor
 
-        public Essay(String student_id, String classroom_id, String classroom_name,
+        public Essay(String essay_id, String student_id, String classroom_id, String classroom_name,
                      String converted_text, int score, String essay_feedback,
                      String status, long created_at, long updated_at,
                      String fullname) {
+            this.essay_id = essay_id;
             this.student_id = student_id;
             this.classroom_id = classroom_id;
             this.classroom_name = classroom_name;
@@ -227,8 +260,7 @@ public class Camera_Student extends AppCompatActivity {
         }
     }
 
-
-    // Permission request
+    // ✅ Camera + Cropper code (unchanged)
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -238,7 +270,6 @@ public class Camera_Student extends AppCompatActivity {
                 }
             });
 
-    // Cropper result
     private final ActivityResultLauncher<CropImageContractOptions> cropImageLauncher =
             registerForActivityResult(new CropImageContract(), result -> {
                 if (result.isSuccessful() && result.getUriContent() != null) {
@@ -304,7 +335,6 @@ public class Camera_Student extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     if (snapshot.exists()) {
-                        // ✅ Fetch rubric values from Firebase
                         String contentIdeas = snapshot.child("Content and Ideas").getValue(String.class);
                         String developmentSupport = snapshot.child("Development and Support").getValue(String.class);
                         String grammarMechanics = snapshot.child("Grammar, Mechanics, and Formatting").getValue(String.class);
@@ -333,7 +363,6 @@ public class Camera_Student extends AppCompatActivity {
                                             String rawResult = obj.optString("result", "");
 
                                             if (!rawResult.isEmpty()) {
-                                                // Extract score
                                                 java.util.regex.Matcher matcher = java.util.regex.Pattern
                                                         .compile("Score:\\s*([0-9.]+)%")
                                                         .matcher(rawResult);
@@ -343,7 +372,6 @@ public class Camera_Student extends AppCompatActivity {
                                                     score = Math.round(scoreFloat);
                                                 }
 
-                                                // Extract feedback (everything after first line)
                                                 int firstLineBreak = rawResult.indexOf("\n");
                                                 if (firstLineBreak != -1 && firstLineBreak + 1 < rawResult.length()) {
                                                     feedback = rawResult.substring(firstLineBreak + 1).trim();
@@ -356,20 +384,16 @@ public class Camera_Student extends AppCompatActivity {
                                             feedback = "Parsing error: " + e.getMessage();
                                         }
 
-                                        // ✅ Upload essay ONLY after AI result
-                                        Log.i("UPLOAD", "Uploading essay with score=" + score + ", feedback=" + feedback);
                                         uploadEssay(essay, score, feedback);
                                     }
 
                                     @Override
                                     public void onError(String error) {
                                         Log.e("AI_RESULT", "Error: " + error);
-                                        // ✅ Upload fallback only if AI fails
                                         uploadEssay(essay, 0, "No feedback generated (AI failed)");
                                     }
                                 }
                         );
-
                     } else {
                         Toast.makeText(this, "No rubrics found for this classroom.", Toast.LENGTH_SHORT).show();
                     }
@@ -378,10 +402,4 @@ public class Camera_Student extends AppCompatActivity {
                     Toast.makeText(this, "Error fetching rubrics: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
-
-
-
-
-
-
 }

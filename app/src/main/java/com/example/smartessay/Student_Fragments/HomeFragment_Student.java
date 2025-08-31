@@ -158,37 +158,38 @@ public class HomeFragment_Student extends Fragment {
 
         DatabaseReference essayRef = FirebaseDatabase.getInstance(
                 "https://smartessay-79d91-default-rtdb.firebaseio.com/"
-        ).getReference("essay").child(currentStudentId);
+        ).getReference("essay");
 
-        essayRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                roomList.clear();
+        essayRef.orderByChild("student_id").equalTo(currentStudentId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        roomList.clear();
 
-                for (DataSnapshot essaySnap : snapshot.getChildren()) {
-                    String classroomName = essaySnap.child("classroom_name").getValue(String.class);
-                    Long createdAt = essaySnap.child("created_at").getValue(Long.class);
-                    Long updatedAt = essaySnap.child("updated_at").getValue(Long.class);
-                    String status = essaySnap.child("status").getValue(String.class);
+                        for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                            String classroomName = essaySnap.child("classroom_name").getValue(String.class);
+                            Long createdAt = essaySnap.child("created_at").getValue(Long.class);
+                            String status = essaySnap.child("status").getValue(String.class);
 
-                    EssayInfo essayInfo = new EssayInfo(
-                            classroomName != null ? classroomName : "Unknown",
-                            createdAt != null ? createdAt : 0,
-                            status != null ? status : "N/A"
-                    );
+                            EssayInfo essayInfo = new EssayInfo(
+                                    classroomName != null ? classroomName : "Unknown",
+                                    createdAt != null ? createdAt : 0,
+                                    status != null ? status : "N/A"
+                            );
 
-                    roomList.add(essayInfo);   // ✅ now it matches
-                }
+                            roomList.add(essayInfo);
+                        }
 
-                roomAdapter.notifyDataSetChanged();
-            }
+                        roomAdapter.notifyDataSetChanged();
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("FirebaseError", error.getMessage());
+                    }
+                });
     }
+
 
 
     // Room model

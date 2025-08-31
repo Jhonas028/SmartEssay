@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,6 +36,8 @@ public class RoomDetailsActivity extends AppCompatActivity {
 
     String classroomId; // Passed from previous activity
 
+    Button btn_post_scoree;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,11 +47,13 @@ public class RoomDetailsActivity extends AppCompatActivity {
         tvRoomCode = findViewById(R.id.tvRoomCode);
         rvStudents = findViewById(R.id.recycler_view_rooms);
 
+        btn_post_scoree = findViewById(R.id.btn_post_scoree);
+
         String roomName = getIntent().getStringExtra("roomName");
         String roomCode = getIntent().getStringExtra("roomCode");
         classroomId = getIntent().getStringExtra("roomId"); // 🔑 from intent
 
-        tvRoomName.setText("Room Name: " + roomName);
+        tvRoomName.setText(roomName);
         tvRoomCode.setText("Room Code: " + roomCode);
 
         rvStudents.setLayoutManager(new LinearLayoutManager(this));
@@ -170,7 +175,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
             holder.tvFullname.setText(essay.getFullname());
 
             holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), EssayDetails.class);
+                Intent intent = new Intent(v.getContext(), EssayDetails_Teacher.class);
                 intent.putExtra("roomId", classroomId);   // ✅ send roomId
                 intent.putExtra("studentId", essay.getStudentId());
                 v.getContext().startActivity(intent);
