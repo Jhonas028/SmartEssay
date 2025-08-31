@@ -165,6 +165,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
             holder.tvDateCreated.setText("Submitted: " + dateFormat.format(date));
             holder.tvTimeCreated.setText("Time: " + timeFormat.format(date));
             holder.tvFullname.setText(essay.getFullname());
+            Log.d("room_id", essay.getClassroomId());
 
         }
 

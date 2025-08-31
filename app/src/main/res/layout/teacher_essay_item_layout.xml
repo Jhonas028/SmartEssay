@@ -38,6 +38,7 @@
             android:hint="Score" />
 
 
+
         <TextView
             android:id="@+id/text_date_created"
             android:layout_width="match_parent"
