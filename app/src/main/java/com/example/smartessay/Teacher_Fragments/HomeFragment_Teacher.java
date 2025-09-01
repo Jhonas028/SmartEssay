@@ -211,16 +211,36 @@ public class HomeFragment_Teacher extends Fragment {
                 holder.textRubrics.setText("No Rubrics");
             }
 
+            // ---- NEW: Load classroom member count ----
+            DatabaseReference membersRef = FirebaseDatabase.getInstance()
+                    .getReference("classrooms")
+                    .child(room.getRoomId())
+                    .child("classroom_members");
+
+            membersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    long memberCount = snapshot.getChildrenCount();
+                    holder.textUploads.setText("Available Students: " + memberCount); // replace 30 with max if you have it
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    holder.textUploads.setText("Available Students: ");
+                }
+            });
+
             holder.itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onItemClick(room);
             });
         }
 
+
         @Override
         public int getItemCount() { return roomList.size(); }
 
         public static class RoomViewHolder extends RecyclerView.ViewHolder {
-            TextView textRoomName, textRoomCode, textCreatedAt, textUpdatedAt, textRubrics,text_room_id;
+            TextView textRoomName, textRoomCode, textCreatedAt, textUpdatedAt, textRubrics,text_room_id,textUploads;
 
             public RoomViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -230,6 +250,7 @@ public class HomeFragment_Teacher extends Fragment {
                 textUpdatedAt = itemView.findViewById(R.id.text_time_created);
                 textRubrics = itemView.findViewById(R.id.text_rubrics);
                 text_room_id = itemView.findViewById(R.id.text_room_id);
+                textUploads = itemView.findViewById(R.id.text_uploads);
             }
         }
     }

@@ -61,7 +61,7 @@
 
 
         <TextView
-            android:id="@+id/text_status"
+            android:id="@+id/text_uploads"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
