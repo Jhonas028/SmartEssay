@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -140,6 +141,76 @@ public class HomeFragment_Student extends Fragment {
 
             dialog.show();
         });
+
+        // Swipe-to-delete for student essays
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                // Not supporting drag & drop
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+
+                // Safety check: ensure list has items
+                if (position < 0 || position >= roomList.size()) {
+                    roomAdapter.notifyDataSetChanged();
+                    return;
+                }
+
+                EssayInfo essayToDelete = roomList.get(position);
+
+                // Confirmation dialog
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Delete Essay")
+                        .setMessage("Are you sure you want to delete this essay?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            // Remove from Firebase first
+                            DatabaseReference essayRef = FirebaseDatabase.getInstance(
+                                    "https://smartessay-79d91-default-rtdb.firebaseio.com/"
+                            ).getReference("essay");
+
+                            essayRef.child(essayToDelete.getEssayId()).removeValue()
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Remove locally by object reference to avoid IndexOutOfBounds
+                                        roomList.remove(essayToDelete);
+                                        roomAdapter.notifyDataSetChanged();
+                                        Toast.makeText(requireContext(), "Essay deleted", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        roomAdapter.notifyItemChanged(position); // reset swipe
+                                        Toast.makeText(requireContext(), "Delete failed", Toast.LENGTH_SHORT).show();
+                                    });
+                        })
+                        .setNegativeButton("No", (dialog, which) -> {
+                            roomAdapter.notifyItemChanged(position); // reset swipe
+                            dialog.dismiss();
+                        })
+                        .show();
+            }
+
+            @Override
+            public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
+                return 0.7f; // swipe must travel 70% of item width
+            }
+
+            @Override
+            public float getSwipeEscapeVelocity(float defaultValue) {
+                return defaultValue * 0.5f; // slower swipe allowed
+            }
+
+            @Override
+            public float getSwipeVelocityThreshold(float defaultValue) {
+                return defaultValue * 0.5f; // slower swipe allowed
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
 
         return view;

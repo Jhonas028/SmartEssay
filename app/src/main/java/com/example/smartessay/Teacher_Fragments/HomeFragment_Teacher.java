@@ -146,6 +146,21 @@ public class HomeFragment_Teacher extends Fragment {
                         .show();
             }
 
+            @Override
+            public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
+                return 0.7f; // swipe must travel 70% of item width
+            }
+
+            @Override
+            public float getSwipeEscapeVelocity(float defaultValue) {
+                return defaultValue * 1f; // slower swipe allowed
+            }
+
+            @Override
+            public float getSwipeVelocityThreshold(float defaultValue) {
+                return defaultValue * 1f; // slower swipe allowed
+            }
+
         };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
