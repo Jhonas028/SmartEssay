@@ -1,7 +1,6 @@
 package com.example.smartessay.TeacherHomepage;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -13,12 +12,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.smartessay.R;
-import com.example.smartessay.Teacher_Fragments.CameraFragment_Teacher;
-import com.example.smartessay.Teacher_Fragments.HomeFragment_Teacher;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-public class TeacherHPActivity extends AppCompatActivity {
+public class FragmentHP_Teacher extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private NavigationView navView;
@@ -29,7 +26,7 @@ public class TeacherHPActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_teacher_hpactivity);
+        setContentView(R.layout.fragment_hp_activity);
 
         fab = findViewById(R.id.fab);
 
@@ -50,7 +47,7 @@ public class TeacherHPActivity extends AppCompatActivity {
         toggle.syncState();
 
         // Default fragment
-        loadFragments(new HomeFragment_Teacher());
+        loadFragments(new HomePage_Teacher());
 
         // Handle navigation item clicks
         navView.setNavigationItemSelectedListener(item -> {
@@ -58,7 +55,7 @@ public class TeacherHPActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.home) {
-                selectedFragment = new HomeFragment_Teacher();
+                selectedFragment = new HomePage_Teacher();
             } else if (itemId == R.id.logout) {
                 Toast.makeText(this, "Logout Clicked", Toast.LENGTH_SHORT).show();
             }

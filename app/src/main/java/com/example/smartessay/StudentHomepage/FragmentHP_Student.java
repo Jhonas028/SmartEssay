@@ -11,11 +11,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.smartessay.R;
-import com.example.smartessay.Student_Fragments.HomeFragment_Student;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-public class StudentHPActivity extends AppCompatActivity {
+public class FragmentHP_Student extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private NavigationView navView;
@@ -46,7 +45,7 @@ public class StudentHPActivity extends AppCompatActivity {
         toggle.syncState();
 
         // Default fragment
-        loadFragments(new HomeFragment_Student());
+        loadFragments(new HomePage_Student());
 
         // Handle navigation item clicks
         navView.setNavigationItemSelectedListener(item -> {
@@ -54,7 +53,7 @@ public class StudentHPActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.homeStudent) {
-                selectedFragment = new HomeFragment_Student();
+                selectedFragment = new HomePage_Student();
             } else if (itemId == R.id.logoutStudent) {
                 Toast.makeText(this, "Logout clicked", Toast.LENGTH_SHORT).show();
             }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".StudentHomepage.StudentHPActivity">
+    tools:context=".StudentHomepage.FragmentHP_Student">
 
     <!-- Main content -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout

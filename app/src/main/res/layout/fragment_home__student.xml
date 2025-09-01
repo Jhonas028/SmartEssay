@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".Teacher_Fragments.HomeFragment_Teacher"
+    tools:context=".TeacherHomepage.HomePage_Teacher"
     >
 
     <LinearLayout

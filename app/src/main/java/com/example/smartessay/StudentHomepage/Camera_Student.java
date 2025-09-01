@@ -1,4 +1,4 @@
-package com.example.smartessay.Student_Fragments;
+package com.example.smartessay.StudentHomepage;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -21,7 +21,6 @@ import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
 import com.example.smartessay.API.DUMMY_OpenAiAPI;
-import com.example.smartessay.API.PenToPrintAPI;
 import com.example.smartessay.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

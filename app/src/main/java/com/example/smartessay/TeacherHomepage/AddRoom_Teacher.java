@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartessay.R;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,7 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-public class AddRoomActivity extends AppCompatActivity {
+public class AddRoom_Teacher extends AppCompatActivity {
 
     EditText etRoomName, etRubricContent, etRubricOrganization, etRubricDevelopment,
             etRubricGrammar, etRubricCritical, etRubricOther;
@@ -44,7 +43,7 @@ public class AddRoomActivity extends AppCompatActivity {
         etRoomName = findViewById(R.id.etRoomName);
         etRubricContent = findViewById(R.id.etRubricContent);
         etRubricOrganization = findViewById(R.id.etRubricOrganization);
-        etRubricDevelopment = findViewById(R.id.etRubricDevelopment);
+        //etRubricDevelopment = findViewById(R.id.etRubricDevelopment);
         etRubricGrammar = findViewById(R.id.etRubricGrammar);
         etRubricCritical = findViewById(R.id.etRubricCritical);
         etRubricOther = findViewById(R.id.etRubricOther);
@@ -61,9 +60,20 @@ public class AddRoomActivity extends AppCompatActivity {
                 return;
             }
 
-            /*
-            String teacherEmail = FirebaseAuth.getInstance().getCurrentUser() != null ?
-                    FirebaseAuth.getInstance().getCurrentUser().getEmail() : "unknown";*/
+            // RUBRIC VALIDATION
+            int content = parseEditText(etRubricContent);
+            int organization = parseEditText(etRubricOrganization);
+           // int development = parseEditText(etRubricDevelopment);
+            int grammar = parseEditText(etRubricGrammar);
+            int critical = parseEditText(etRubricCritical);
+
+            int total = content + organization + grammar + critical;
+
+            if (total != 100) {
+                Toast.makeText(this, "Rubrics must sum exactly to 100%", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
 
             SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
             String teacherEmail = prefs.getString("teacherEmail", "unknown");
@@ -80,7 +90,7 @@ public class AddRoomActivity extends AppCompatActivity {
                 Map<String, Object> rubrics = new HashMap<>();
                 rubrics.put("Content and Ideas", etRubricContent.getText().toString().trim());
                 rubrics.put("Organization and Structure", etRubricOrganization.getText().toString().trim());
-                rubrics.put("Development and Support", etRubricDevelopment.getText().toString().trim());
+               // rubrics.put("Development and Support", etRubricDevelopment.getText().toString().trim());
                 rubrics.put("Language Use and Style", etRubricGrammar.getText().toString().trim());
                 rubrics.put("Grammar, Mechanics, and Formatting", etRubricCritical.getText().toString().trim());
                 rubrics.put("Notes", etRubricOther.getText().toString().trim());
@@ -124,7 +134,7 @@ public class AddRoomActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(AddRoomActivity.this, "Error checking code", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddRoom_Teacher.this, "Error checking code", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -141,5 +151,15 @@ public class AddRoomActivity extends AppCompatActivity {
 
     interface OnCodeGeneratedListener {
         void onCodeGenerated(String code);
+    }
+
+    private int parseEditText(EditText et) {
+        String text = et.getText().toString().trim();
+        if (text.isEmpty()) return 0;
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.smartessay.Teacher_Fragments;
+package com.example.smartessay.TeacherHomepage;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -19,20 +19,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartessay.R;
-import com.example.smartessay.TeacherHomepage.AddRoomActivity;
-import com.example.smartessay.TeacherHomepage.RoomDetailsActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HomeFragment_Teacher extends Fragment {
+public class HomePage_Teacher extends Fragment {
 
     private RecyclerView recyclerView;
     private RoomAdapter roomAdapter;
@@ -44,7 +41,7 @@ public class HomeFragment_Teacher extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home_teacher, container, false);
+        View view = inflater.inflate(R.layout.home_page_teacher, container, false);
 
 
 
@@ -87,13 +84,13 @@ public class HomeFragment_Teacher extends Fragment {
             dialog.show();
         });
 
-        btnAddRoom.setOnClickListener(v -> startActivity(new Intent(requireContext(), AddRoomActivity.class)));
+        btnAddRoom.setOnClickListener(v -> startActivity(new Intent(requireContext(), AddRoom_Teacher.class)));
 
 
         loadRoomsFromFirebase();
 
         roomAdapter.setOnItemClickListener(room -> {
-            Intent intent = new Intent(requireContext(), RoomDetailsActivity.class);
+            Intent intent = new Intent(requireContext(), RoomDetails_Teacher.class);
             intent.putExtra("roomName", room.getRoomName());  // pass room name
             intent.putExtra("roomCode", room.getRoomCode()); // pass the entire room object
             intent.putExtra("roomId", room.getRoomId());

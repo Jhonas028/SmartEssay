@@ -32,25 +32,25 @@
             android:name=".TeacherHomepage.EssayDetails_Teacher"
             android:exported="false" />
         <activity
-            android:name=".Student_Fragments.Camera_Student"
+            android:name=".StudentHomepage.Camera_Student"
             android:exported="false" />
         <activity
             android:name=".CreatingAccounts.OTPverifyTeacher"
             android:exported="false" />
         <activity
-            android:name=".StudentHomepage.StudentHPActivity"
+            android:name=".StudentHomepage.FragmentHP_Student"
             android:exported="false" />
         <activity
             android:name=".CreatingAccounts.OTPverifyStudent"
             android:exported="false" />
         <activity
-            android:name=".TeacherHomepage.TeacherHPActivity"
+            android:name=".TeacherHomepage.FragmentHP_Teacher"
             android:exported="false" />
         <activity
-            android:name=".TeacherHomepage.AddRoomActivity"
+            android:name=".TeacherHomepage.AddRoom_Teacher"
             android:exported="false" />
         <activity
-            android:name=".TeacherHomepage.RoomDetailsActivity"
+            android:name=".TeacherHomepage.RoomDetails_Teacher"
             android:exported="false" />
         <activity
             android:name=".CreatingAccounts.CreateTeacherAcc"

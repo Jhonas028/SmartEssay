@@ -11,8 +11,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartessay.CreatingAccounts.ChoosingAccounts;
-import com.example.smartessay.StudentHomepage.StudentHPActivity;
-import com.example.smartessay.TeacherHomepage.TeacherHPActivity;
+import com.example.smartessay.StudentHomepage.FragmentHP_Student;
+import com.example.smartessay.TeacherHomepage.FragmentHP_Teacher;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                                         saveUserSession("teacherId", teacher.getKey());
                                         saveUserSession("teacherEmail", email);
                                         Toast.makeText(MainActivity.this, "Teacher login successful", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(MainActivity.this, TeacherHPActivity.class));
+                                        startActivity(new Intent(MainActivity.this, FragmentHP_Teacher.class));
                                         finish();
                                         return;
                                     } else {
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                                                     if ("active".equalsIgnoreCase(status)) {
                                                         saveUserSession("studentId", student.getKey());
                                                         Toast.makeText(MainActivity.this, "Student login successful", Toast.LENGTH_SHORT).show();
-                                                        startActivity(new Intent(MainActivity.this, StudentHPActivity.class));
+                                                        startActivity(new Intent(MainActivity.this, FragmentHP_Student.class));
                                                         finish();
                                                         return;
                                                     } else {

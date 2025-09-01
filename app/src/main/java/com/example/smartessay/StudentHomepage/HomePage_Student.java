@@ -1,4 +1,4 @@
-package com.example.smartessay.Student_Fragments;
+package com.example.smartessay.StudentHomepage;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -32,7 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment_Student extends Fragment {
+public class HomePage_Student extends Fragment {
 
     private RecyclerView recyclerView;
     private RoomAdapter roomAdapter;

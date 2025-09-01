@@ -16,14 +16,10 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.smartessay.API.EmailAPI;
 import com.example.smartessay.R;
-import com.example.smartessay.StudentHomepage.StudentHPActivity;
-import com.google.firebase.database.DataSnapshot;
+import com.example.smartessay.StudentHomepage.FragmentHP_Student;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -183,7 +179,7 @@ public class OTPverifyStudent extends AppCompatActivity {
 
                                 pendingRef.removeValue();
                                 Toast.makeText(getApplicationContext(), "Account verified!", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), StudentHPActivity.class));
+                                startActivity(new Intent(getApplicationContext(), FragmentHP_Student.class));
                                 finish();
                             });
                 } else {

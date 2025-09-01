@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class RoomDetailsActivity extends AppCompatActivity {
+public class RoomDetails_Teacher extends AppCompatActivity {
 
     TextView tvRoomName, tvRoomCode;
     RecyclerView rvStudents;
@@ -43,7 +44,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_room_teacher);
+        setContentView(R.layout.room_details_teacher);
 
         tvRoomName = findViewById(R.id.tvRoomName);
         tvRoomCode = findViewById(R.id.tvRoomCode);
@@ -63,7 +64,19 @@ public class RoomDetailsActivity extends AppCompatActivity {
         rvStudents.setAdapter(adapter);
 
         btn_post_scoree.setOnClickListener(v -> {
-            postScoresToFirebase();
+            // Create the AlertDialog
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirm Post")
+                    .setMessage("Are you sure you want to post the scores of students?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        // User confirmed, post scores
+                        postScoresToFirebase();
+                    })
+                    .setNegativeButton("No", (dialog, which) -> {
+                        // User canceled, dismiss dialog
+                        dialog.dismiss();
+                    })
+                    .show();
         });
 
         loadEssaysFromFirebase();
@@ -211,7 +224,6 @@ public class RoomDetailsActivity extends AppCompatActivity {
     }
 
     private void postScoresToFirebase() {
-        Toast.makeText(getApplicationContext(), "POSTED BUTTON CLICKED", Toast.LENGTH_SHORT).show();
 
         String classroomId2 = getIntent().getStringExtra("roomId");
 

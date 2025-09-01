@@ -1,4 +1,4 @@
-package com.example.smartessay.Teacher_Fragments;
+package com.example.smartessay.TeacherHomepage;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -48,7 +48,7 @@ public class CameraFragment_Teacher extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_camera_teacher, container, false);
+        View view = inflater.inflate(R.layout.camera_fragment_teacher, container, false);
         imageView = view.findViewById(R.id.imageView);
         ocrResultTextView = view.findViewById(R.id.ocr_result);
 
