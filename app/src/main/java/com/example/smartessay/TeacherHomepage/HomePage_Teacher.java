@@ -109,6 +109,8 @@ public class HomePage_Teacher extends Fragment {
 
             @Override
             //delete function
+
+//delete function
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
 
@@ -143,6 +145,7 @@ public class HomePage_Teacher extends Fragment {
                         .show();
             }
 
+
             @Override
             public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
                 return 0.7f; // swipe must travel 70% of item width
@@ -171,22 +174,31 @@ public class HomePage_Teacher extends Fragment {
         classroomsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                roomList.clear();
+                // Do NOT clear the list
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     String roomId = ds.getKey();
-                    String roomName = ds.child("classroom_name").getValue(String.class);
-                    String roomCode = ds.child("room_code").getValue(String.class);
-                    String createdAt = ds.child("created_at").getValue(String.class);
-                    String updatedAt = ds.child("updated_at").getValue(String.class);
-
-                    Map<String, String> rubrics = null;
-                    if (ds.child("rubrics").exists()) {
-                        rubrics = (Map<String, String>) ds.child("rubrics").getValue();
+                    boolean exists = false;
+                    for (Room r : roomList) {
+                        if (r.getRoomId().equals(roomId)) {
+                            exists = true;
+                            break;
+                        }
                     }
+                    if (!exists) {
+                        String roomName = ds.child("classroom_name").getValue(String.class);
+                        String roomCode = ds.child("room_code").getValue(String.class);
+                        String createdAt = ds.child("created_at").getValue(String.class);
+                        String updatedAt = ds.child("updated_at").getValue(String.class);
 
-                    roomList.add(new Room(roomId, roomName, roomCode, createdAt, updatedAt, rubrics));
+                        Map<String, String> rubrics = null;
+                        if (ds.child("rubrics").exists()) {
+                            rubrics = (Map<String, String>) ds.child("rubrics").getValue();
+                        }
+
+                        roomList.add(new Room(roomId, roomName, roomCode, createdAt, updatedAt, rubrics));
+                        roomAdapter.notifyItemInserted(roomList.size() - 1);
+                    }
                 }
-                roomAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -195,6 +207,7 @@ public class HomePage_Teacher extends Fragment {
             }
         });
     }
+
 
     public static class Room {
         private String roomId;   // Firebase key (-OYL4rE...)
