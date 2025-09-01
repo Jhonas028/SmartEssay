@@ -16,8 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@drawable/blue_border_background">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/text_room_name"
@@ -56,23 +55,26 @@
             android:layout_height="wrap_content"
             android:text="Essays Uploaded:"
             android:textSize="14sp"
-            android:textColor="@android:color/holo_green_dark"
-             />
+            android:textColor="@android:color/black"/>
 
-        <TextView
-            android:id="@+id/textOnly"
-            android:layout_width="wrap_content"
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_show_rubrics"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Rubrics"
-            android:textColor="#555555"
-            android:layout_marginTop="12sp"
-            android:textSize="14sp"/>
+            android:text="Show Rubrics"
+            android:textSize="14sp"
+            android:background="@color/back_blue"
+            android:textColor="@color/white"
+            android:layout_marginTop="8dp"/>
         <TextView
             android:id="@+id/text_rubrics"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="........"
+            android:text="these are the criteria"
             android:textColor="#555555"
+            android:visibility="gone"
             android:layout_marginTop="12sp"
             android:textSize="14sp"/>
 

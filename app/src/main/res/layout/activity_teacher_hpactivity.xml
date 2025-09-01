@@ -48,7 +48,7 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/baseline_camera_24"
+            android:src="@drawable/camera_icon3"
             app:backgroundTint="@color/white"
             app:tint="@color/black"
             app:layout_anchor="@id/bottomAppBar"

@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -98,6 +99,58 @@ public class HomeFragment_Teacher extends Fragment {
             intent.putExtra("roomId", room.getRoomId());
             startActivity(intent);
         });
+
+        // Attach ItemTouchHelper for swipe actions
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                // We are not doing drag & drop, so return false
+                return false;
+            }
+
+            @Override
+            //delete function
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+
+                if (position < 0 || position >= roomList.size()) {
+                    roomAdapter.notifyDataSetChanged(); // reset swipe
+                    return;
+                }
+
+                Room roomToDelete = roomList.get(position);
+
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Delete Room")
+                        .setMessage("Are you sure you want to delete this room?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            classroomsRef.child(roomToDelete.getRoomId()).removeValue()
+                                    .addOnSuccessListener(aVoid -> {
+                                        if (position < roomList.size()) {
+                                            roomList.remove(position);
+                                            roomAdapter.notifyItemRemoved(position);
+                                            Toast.makeText(requireContext(), "Room deleted", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        roomAdapter.notifyItemChanged(position);
+                                        Toast.makeText(requireContext(), "Delete failed", Toast.LENGTH_SHORT).show();
+                                    });
+                        })
+                        .setNegativeButton("No", (dialog, which) -> {
+                            roomAdapter.notifyItemChanged(position);
+                            dialog.dismiss();
+                        })
+                        .show();
+            }
+
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
 
         return view;
     }
@@ -201,6 +254,16 @@ public class HomeFragment_Teacher extends Fragment {
             holder.textCreatedAt.setText("Created: " + room.getCreatedAt());
            // holder.text_room_id.setText("Room id: " + room.getRoomId());
 
+            holder.btnShowRubrics.setOnClickListener(v -> {
+                if (holder.textRubrics.getVisibility() == View.GONE) {
+                    holder.textRubrics.setVisibility(View.VISIBLE);
+                    holder.btnShowRubrics.setText("Hide Rubrics");
+                } else {
+                    holder.textRubrics.setVisibility(View.GONE);
+                    holder.btnShowRubrics.setText("Show Rubrics");
+                }
+            });
+
             if (room.getRubrics() != null) {
                 StringBuilder summary = new StringBuilder();
                 for (Map.Entry<String, String> e : room.getRubrics().entrySet()) {
@@ -241,6 +304,7 @@ public class HomeFragment_Teacher extends Fragment {
 
         public static class RoomViewHolder extends RecyclerView.ViewHolder {
             TextView textRoomName, textRoomCode, textCreatedAt, textUpdatedAt, textRubrics,text_room_id,textUploads;
+            Button btnShowRubrics;
 
             public RoomViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -251,6 +315,7 @@ public class HomeFragment_Teacher extends Fragment {
                 textRubrics = itemView.findViewById(R.id.text_rubrics);
                 //text_room_id = itemView.findViewById(R.id.text_room_id);
                 textUploads = itemView.findViewById(R.id.text_uploads);
+                btnShowRubrics = itemView.findViewById(R.id.btn_show_rubrics);
             }
         }
     }
