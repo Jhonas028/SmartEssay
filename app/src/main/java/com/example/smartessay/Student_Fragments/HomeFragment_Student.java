@@ -167,11 +167,13 @@ public class HomeFragment_Student extends Fragment {
                         roomList.clear();
 
                         for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                            String essayId = essaySnap.getKey(); // 🔑 Firebase ID
                             String classroomName = essaySnap.child("classroom_name").getValue(String.class);
                             Long createdAt = essaySnap.child("created_at").getValue(Long.class);
                             String status = essaySnap.child("status").getValue(String.class);
 
                             EssayInfo essayInfo = new EssayInfo(
+                                    essayId,
                                     classroomName != null ? classroomName : "Unknown",
                                     createdAt != null ? createdAt : 0,
                                     status != null ? status : "N/A"
@@ -179,6 +181,7 @@ public class HomeFragment_Student extends Fragment {
 
                             roomList.add(essayInfo);
                         }
+
 
                         roomAdapter.notifyDataSetChanged();
                     }
@@ -195,22 +198,26 @@ public class HomeFragment_Student extends Fragment {
     // Room model
 // Model for essay submission
     public static class EssayInfo {
+        private String id; // 🔑 Firebase push key
         private String classroomName;
         private long createdAt;
         private String status;
 
         public EssayInfo() {} // Needed for Firebase
 
-        public EssayInfo(String classroomName, long createdAt, String status) {
+        public EssayInfo(String id, String classroomName, long createdAt, String status) {
+            this.id = id;
             this.classroomName = classroomName;
             this.createdAt = createdAt;
             this.status = status;
         }
 
+        public String getId() { return id; }
         public String getClassroomName() { return classroomName; }
         public long getCreatedAt() { return createdAt; }
         public String getStatus() { return status; }
     }
+
 
 
     public static class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
@@ -234,13 +241,19 @@ public class HomeFragment_Student extends Fragment {
 
             holder.textRoomName.setText(essay.getClassroomName());
 
-            // format timestamps into readable date/time
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM dd, yyyy hh:mm a");
             String created = (essay.getCreatedAt() > 0) ? sdf.format(new java.util.Date(essay.getCreatedAt())) : "N/A";
-
             holder.textDateCreated.setText("created: " + created);
             holder.textStatus.setText("status: " + essay.getStatus());
+
+            // 👇 click event to open essay details
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), com.example.smartessay.Student_Fragments.EssayResult_Student.class);
+                intent.putExtra("essayId", essay.getId()); // send essayId
+                v.getContext().startActivity(intent);
+            });
         }
+
 
         @Override
         public int getItemCount() {
@@ -256,7 +269,7 @@ public class HomeFragment_Student extends Fragment {
 
                 textRoomName = itemView.findViewById(R.id.text_room_name);
                 textDateCreated = itemView.findViewById(R.id.text_date_created);
-                textStatus = itemView.findViewById(R.id.text_sname);
+                textStatus = itemView.findViewById(R.id.text_status);
             }
         }
     }

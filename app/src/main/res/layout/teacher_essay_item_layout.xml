@@ -20,7 +20,7 @@
         android:background="@drawable/blue_border_background">
 
         <TextView
-            android:id="@+id/text_sname"
+            android:id="@+id/txt_name_teachere"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"

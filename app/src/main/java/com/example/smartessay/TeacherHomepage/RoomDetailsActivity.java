@@ -60,6 +60,10 @@ public class RoomDetailsActivity extends AppCompatActivity {
         adapter = new StudentAdapter(essayList, classroomId);
         rvStudents.setAdapter(adapter);
 
+        btn_post_scoree.setOnClickListener(v -> {
+            postScoresToFirebase();
+        });
+
         loadEssaysFromFirebase();
     }
 
@@ -102,6 +106,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
                                 for (DataSnapshot essayEntry : essaySnap.getChildren()) {
                                     EssayTeacher essay = essayEntry.getValue(EssayTeacher.class);
                                     if (essay != null) {
+
                                         essayList.add(essay);
                                         essay.setFullname(fullname);
                                         Log.d("FirebaseDebug", "Essay found for " + studentId + ": " + essay.getConvertedText());
@@ -202,11 +207,47 @@ public class RoomDetailsActivity extends AppCompatActivity {
                 tvStudentName = itemView.findViewById(R.id.text_studnum);
                 tvDateCreated = itemView.findViewById(R.id.text_date_created);
                 tvTimeCreated = itemView.findViewById(R.id.text_time_created);
-                tvScore = itemView.findViewById(R.id.text_sname);
-                tvFullname = itemView.findViewById(R.id.text_sname);
+                tvScore = itemView.findViewById(R.id.text_status);
+                tvFullname = itemView.findViewById(R.id.txt_name_teachere);
             }
         }
 
 
     }
+
+
+    private void postScoresToFirebase() {
+        if (essayList.isEmpty()) {
+            Log.d("PostScores", "No essays to post");
+            return;
+        }
+
+        DatabaseReference classRef = FirebaseDatabase.getInstance()
+                .getReference("classrooms")
+                .child(classroomId)
+                .child("essay");
+
+        for (EssayTeacher essay : essayList) {
+            if (essay.getStudentId() == null) continue;
+
+            String studentId = essay.getStudentId();
+            String essayId = essay.getEssayId(); // make sure EssayTeacher has essayId
+            int score = essay.getScore();        // whatever score was set
+
+            if (essayId == null) {
+                Log.w("PostScores", "EssayId is null for student " + studentId);
+                continue;
+            }
+
+            DatabaseReference essayRef = classRef.child(studentId).child(essayId);
+
+            // ✅ post both score and status
+            essayRef.child("score").setValue(score);
+            essayRef.child("status").setValue("posted")
+                    .addOnSuccessListener(aVoid -> Log.d("PostScores", "Score + status posted for " + studentId))
+                    .addOnFailureListener(e -> Log.e("PostScores", "Error posting score", e));
+        }
+    }
+
+
 }

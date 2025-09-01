@@ -7,9 +7,20 @@ public class EssayTeacher {
     private String essay_feedback;
     private int score;
     private String status;
+
     private long created_at;
     private long updated_at;
     private String fullname;
+
+    private String essay_id;
+
+    public String getEssayId() {
+        return essay_id;
+    }
+
+    public void setEssayId(String essay_id) {
+        this.essay_id = essay_id;
+    }
 
     public String getFullname() {
         return fullname;
