@@ -198,21 +198,21 @@ public class HomeFragment_Student extends Fragment {
     // Room model
 // Model for essay submission
     public static class EssayInfo {
-        private String id; // 🔑 Firebase push key
+        private String essayId; // 🔑 Firebase push key
         private String classroomName;
         private long createdAt;
         private String status;
 
         public EssayInfo() {} // Needed for Firebase
 
-        public EssayInfo(String id, String classroomName, long createdAt, String status) {
-            this.id = id;
+        public EssayInfo(String essayId, String classroomName, long createdAt, String status) {
+            this.essayId = essayId;
             this.classroomName = classroomName;
             this.createdAt = createdAt;
             this.status = status;
         }
 
-        public String getId() { return id; }
+        public String getEssayId() { return essayId; }
         public String getClassroomName() { return classroomName; }
         public long getCreatedAt() { return createdAt; }
         public String getStatus() { return status; }
@@ -248,10 +248,17 @@ public class HomeFragment_Student extends Fragment {
 
             // 👇 click event to open essay details
             holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), com.example.smartessay.Student_Fragments.EssayResult_Student.class);
-                intent.putExtra("essayId", essay.getId()); // send essayId
-                v.getContext().startActivity(intent);
+                if ("pending".equalsIgnoreCase(essay.getStatus())) {
+                    Toast.makeText(v.getContext(),
+                            "Your essay is still under review. Please wait for the teacher to post your score.",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(v.getContext(), com.example.smartessay.Student_Fragments.EssayResult_Student.class);
+                    intent.putExtra("essayId", essay.getEssayId()); // ✅ make sure you use essayId, not getId()
+                    v.getContext().startActivity(intent);
+                }
             });
+
         }
 
 

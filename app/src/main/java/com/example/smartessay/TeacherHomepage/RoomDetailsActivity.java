@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import com.example.smartessay.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.DatabaseError;
 
@@ -86,10 +88,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
 
                 for (DataSnapshot studentSnap : snapshot.getChildren()) {
                     String studentId = studentSnap.getKey();
-                    String fullname = studentSnap.child("fullname").getValue(String.class); // 👈 get fullname
-
-                    Log.d("FirebaseDebug", "Found studentId: " + studentId + " fullname: " + fullname);
-                    Log.d("FirebaseDebug", "Found studentId: " + studentId);
+                    String fullname = studentSnap.child("fullname").getValue(String.class);
 
                     DatabaseReference essayRef = FirebaseDatabase.getInstance()
                             .getReference("classrooms")
@@ -97,34 +96,34 @@ public class RoomDetailsActivity extends AppCompatActivity {
                             .child("essay")
                             .child(studentId);
 
-                    // Check if this student has essays
                     essayRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot essaySnap) {
                             if (essaySnap.exists()) {
-                                // A student may have multiple essays, loop them
                                 for (DataSnapshot essayEntry : essaySnap.getChildren()) {
                                     EssayTeacher essay = essayEntry.getValue(EssayTeacher.class);
+                                    String essayId = essayEntry.getKey();
                                     if (essay != null) {
-
-                                        essayList.add(essay);
+                                        essay.setEssayId(essayId);
+                                        // ✅ attach essayId
+                                        essay.setStudentId(studentId);
                                         essay.setFullname(fullname);
-                                        Log.d("FirebaseDebug", "Essay found for " + studentId + ": " + essay.getConvertedText());
+                                        Log.d("FirebaseDebug2", "Loaded EssayId: " + essayId + " for Student: " + studentId);
+                                        essayList.add(essay);
                                     }
                                 }
                             } else {
-                                // Add a placeholder if no essay yet
                                 EssayTeacher noEssay = new EssayTeacher();
                                 noEssay.setStudentId(studentId);
                                 noEssay.setFullname(fullname);
                                 noEssay.setConvertedText("No submission yet");
                                 noEssay.setScore(0);
-                                noEssay.setCreatedAt(System.currentTimeMillis()); // or joined_at
+                                noEssay.setCreatedAt(System.currentTimeMillis());
+                                // ⚠️ no essayId here, so it will be skipped in postScores
                                 essayList.add(noEssay);
 
-                                Log.d("FirebaseDebug", "No essay for studentId: " + studentId);
+                                Log.d("FirebaseDebug", "No essay found for student: " + studentId);
                             }
-
                             adapter.notifyDataSetChanged();
                         }
 
@@ -142,9 +141,6 @@ public class RoomDetailsActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
 
     // 🔽 Adapter Class
     public static class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentViewHolder> {
@@ -181,17 +177,12 @@ public class RoomDetailsActivity extends AppCompatActivity {
 
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), EssayDetails_Teacher.class);
-                intent.putExtra("roomId", classroomId);   // ✅ send roomId
+                intent.putExtra("roomId", classroomId);
                 intent.putExtra("studentId", essay.getStudentId());
+                intent.putExtra("essayId", essay.getEssayId()); // ✅ send essayId
                 v.getContext().startActivity(intent);
-
             });
-
-
         }
-
-
-
 
         @Override
         public int getItemCount() {
@@ -200,7 +191,6 @@ public class RoomDetailsActivity extends AppCompatActivity {
 
         static class StudentViewHolder extends RecyclerView.ViewHolder {
             TextView tvStudentName, tvDateCreated, tvTimeCreated, tvScore, tvFullname;
-
 
             public StudentViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -211,43 +201,52 @@ public class RoomDetailsActivity extends AppCompatActivity {
                 tvFullname = itemView.findViewById(R.id.txt_name_teachere);
             }
         }
-
-
     }
-
 
     private void postScoresToFirebase() {
-        if (essayList.isEmpty()) {
-            Log.d("PostScores", "No essays to post");
-            return;
-        }
+        Toast.makeText(getApplicationContext(), "POSTED BUTTON CLICKED", Toast.LENGTH_SHORT).show();
 
-        DatabaseReference classRef = FirebaseDatabase.getInstance()
-                .getReference("classrooms")
-                .child(classroomId)
-                .child("essay");
 
-        for (EssayTeacher essay : essayList) {
-            if (essay.getStudentId() == null) continue;
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("essay");
+        /*
+        String essayId = "-OZ3F4wkyIuev4XOzj_Y"; // Replace with your essay ID
 
-            String studentId = essay.getStudentId();
-            String essayId = essay.getEssayId(); // make sure EssayTeacher has essayId
-            int score = essay.getScore();        // whatever score was set
+        databaseReference.child(essayId).child("status").setValue("posted")
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getApplicationContext(), "Status updated to posted!", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getApplicationContext(), "Failed to update status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+        */
 
-            if (essayId == null) {
-                Log.w("PostScores", "EssayId is null for student " + studentId);
-                continue;
+       // String classroomId = "-OYosA9-Fm2kQCNR3R0W";
+        String classroomId2 = getIntent().getStringExtra("roomId");
+
+        Query query = databaseReference.orderByChild("classroom_id").equalTo(classroomId2);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    snapshot.getRef().child("status").setValue("posted");
+                }
+                Toast.makeText(getApplicationContext(), "All essays updated to posted!", Toast.LENGTH_SHORT).show();
             }
 
-            DatabaseReference essayRef = classRef.child(studentId).child(essayId);
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getApplicationContext(), "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
-            // ✅ post both score and status
-            essayRef.child("score").setValue(score);
-            essayRef.child("status").setValue("posted")
-                    .addOnSuccessListener(aVoid -> Log.d("PostScores", "Score + status posted for " + studentId))
-                    .addOnFailureListener(e -> Log.e("PostScores", "Error posting score", e));
-        }
+
+
     }
+
+
+
+
 
 
 }
