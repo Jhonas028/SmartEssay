@@ -38,23 +38,13 @@
             android:textColor="@color/black"
             android:hint="Room Code" />
 
-        <TextView
-            android:id="@+id/text_room_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:hint="Room Code"
-            android:text="Room ID FDO: ABC123"
-            android:textColor="@color/black"
-            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/text_date_created"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="Created: March 15, 2024"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textColor="@android:color/black"
             android:hint="Date Created" />
 
@@ -64,19 +54,26 @@
             android:id="@+id/text_uploads"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Available Students: 25/30"
+            android:text="Essays Uploaded:"
             android:textSize="14sp"
             android:textColor="@android:color/holo_green_dark"
-            android:hint="Available Students" />
+             />
 
         <TextView
-            android:id="@+id/text_rubrics"
+            android:id="@+id/textOnly"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Rubrics"
             android:textColor="#555555"
-            android:paddingTop="4dp"
+            android:layout_marginTop="12sp"
+            android:textSize="14sp"/>
+        <TextView
+            android:id="@+id/text_rubrics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="........"
+            android:textColor="#555555"
+            android:layout_marginTop="12sp"
             android:textSize="14sp"/>
 
     </LinearLayout>

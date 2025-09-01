@@ -199,7 +199,7 @@ public class HomeFragment_Teacher extends Fragment {
             holder.textRoomName.setText(room.getRoomName());
             holder.textRoomCode.setText("Code: " + room.getRoomCode());
             holder.textCreatedAt.setText("Created: " + room.getCreatedAt());
-            holder.text_room_id.setText("Room id: " + room.getRoomId());
+           // holder.text_room_id.setText("Room id: " + room.getRoomId());
 
             if (room.getRubrics() != null) {
                 StringBuilder summary = new StringBuilder();
@@ -221,12 +221,12 @@ public class HomeFragment_Teacher extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     long memberCount = snapshot.getChildrenCount();
-                    holder.textUploads.setText("Available Students: " + memberCount); // replace 30 with max if you have it
+                    holder.textUploads.setText("Submitted Essays: " + memberCount); // replace 30 with max if you have it
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    holder.textUploads.setText("Available Students: ");
+                    holder.textUploads.setText("Submitted Essays: ");
                 }
             });
 
@@ -249,7 +249,7 @@ public class HomeFragment_Teacher extends Fragment {
                 textCreatedAt = itemView.findViewById(R.id.text_date_created);
                 textUpdatedAt = itemView.findViewById(R.id.text_time_created);
                 textRubrics = itemView.findViewById(R.id.text_rubrics);
-                text_room_id = itemView.findViewById(R.id.text_room_id);
+                //text_room_id = itemView.findViewById(R.id.text_room_id);
                 textUploads = itemView.findViewById(R.id.text_uploads);
             }
         }
