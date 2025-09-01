@@ -178,7 +178,7 @@ public class Camera_Student extends AppCompatActivity {
 
                                                 // ✅ Generate essayId before creating object
                                                 String essayId = db.child("essay").push().getKey();
-
+                                                String status =  "pending";
                                                 if (essayId != null) {
                                                     Essay essay = new Essay(
                                                             essayId,
@@ -188,7 +188,7 @@ public class Camera_Student extends AppCompatActivity {
                                                             convertedText,
                                                             score,
                                                             feedback,
-                                                            "pending",
+                                                            status,
                                                             timestamp,
                                                             timestamp,
                                                             fullname
@@ -203,6 +203,7 @@ public class Camera_Student extends AppCompatActivity {
 
                                                                 memberRef.child("joined_at").setValue(timestamp);
                                                                 memberRef.child("fullname").setValue(fullname);
+                                                                memberRef.child("status").setValue(status);
 
                                                                 Toast.makeText(Camera_Student.this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
                                                             })

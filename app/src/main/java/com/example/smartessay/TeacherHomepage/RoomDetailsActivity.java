@@ -89,6 +89,8 @@ public class RoomDetailsActivity extends AppCompatActivity {
                 for (DataSnapshot studentSnap : snapshot.getChildren()) {
                     String studentId = studentSnap.getKey();
                     String fullname = studentSnap.child("fullname").getValue(String.class);
+                    String stats = studentSnap.child("status").getValue(String.class);
+                    Log.i("statusDebug", "This is a status: " + stats);
 
                     DatabaseReference essayRef = FirebaseDatabase.getInstance()
                             .getReference("classrooms")
@@ -108,6 +110,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
                                         // ✅ attach essayId
                                         essay.setStudentId(studentId);
                                         essay.setFullname(fullname);
+                                        essay.setStatus(stats);
                                         Log.d("FirebaseDebug2", "Loaded EssayId: " + essayId + " for Student: " + studentId);
                                         essayList.add(essay);
                                     }
@@ -119,6 +122,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
                                 noEssay.setConvertedText("No submission yet");
                                 noEssay.setScore(0);
                                 noEssay.setCreatedAt(System.currentTimeMillis());
+                                noEssay.setStatus(stats);
                                 // ⚠️ no essayId here, so it will be skipped in postScores
                                 essayList.add(noEssay);
 
@@ -175,6 +179,9 @@ public class RoomDetailsActivity extends AppCompatActivity {
             holder.tvTimeCreated.setText("Time: " + timeFormat.format(date));
             holder.tvFullname.setText(essay.getFullname());
 
+            holder.text_status.setText("Status: " + essay.getStatus());
+
+
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), EssayDetails_Teacher.class);
                 intent.putExtra("roomId", classroomId);
@@ -190,14 +197,14 @@ public class RoomDetailsActivity extends AppCompatActivity {
         }
 
         static class StudentViewHolder extends RecyclerView.ViewHolder {
-            TextView tvStudentName, tvDateCreated, tvTimeCreated, tvScore, tvFullname;
+            TextView tvStudentName, tvDateCreated, tvTimeCreated, text_status, tvFullname;
 
             public StudentViewHolder(@NonNull View itemView) {
                 super(itemView);
                 tvStudentName = itemView.findViewById(R.id.text_studnum);
                 tvDateCreated = itemView.findViewById(R.id.text_date_created);
                 tvTimeCreated = itemView.findViewById(R.id.text_time_created);
-                tvScore = itemView.findViewById(R.id.text_status);
+                text_status = itemView.findViewById(R.id.text_status);
                 tvFullname = itemView.findViewById(R.id.txt_name_teachere);
             }
         }
@@ -206,24 +213,11 @@ public class RoomDetailsActivity extends AppCompatActivity {
     private void postScoresToFirebase() {
         Toast.makeText(getApplicationContext(), "POSTED BUTTON CLICKED", Toast.LENGTH_SHORT).show();
 
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("essay");
-        /*
-        String essayId = "-OZ3F4wkyIuev4XOzj_Y"; // Replace with your essay ID
-
-        databaseReference.child(essayId).child("status").setValue("posted")
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(getApplicationContext(), "Status updated to posted!", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getApplicationContext(), "Failed to update status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-        */
-
-       // String classroomId = "-OYosA9-Fm2kQCNR3R0W";
         String classroomId2 = getIntent().getStringExtra("roomId");
 
-        Query query = databaseReference.orderByChild("classroom_id").equalTo(classroomId2);
+        // 1️⃣ Update essay statuses
+        DatabaseReference essayRef = FirebaseDatabase.getInstance().getReference("essay");
+        Query query = essayRef.orderByChild("classroom_id").equalTo(classroomId2);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -231,19 +225,40 @@ public class RoomDetailsActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     snapshot.getRef().child("status").setValue("posted");
                 }
-                Toast.makeText(getApplicationContext(), "All essays updated to posted!", Toast.LENGTH_SHORT).show();
+
+                // 2️⃣ Update classroom_members statuses
+                DatabaseReference membersRef = FirebaseDatabase.getInstance()
+                        .getReference("classrooms")
+                        .child(classroomId2)
+                        .child("classroom_members");
+
+                membersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot memberSnap : snapshot.getChildren()) {
+                            String studentId = memberSnap.getKey();
+                            if (studentId != null) {
+                                membersRef.child(studentId).child("status").setValue("posted");
+                            }
+                        }
+
+                        Toast.makeText(getApplicationContext(), "All essays and classroom members updated to posted!", Toast.LENGTH_SHORT).show();
+                        loadEssaysFromFirebase(); // refresh UI
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(getApplicationContext(), "Error updating members: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error updating essays: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-
-
     }
-
 
 
 
