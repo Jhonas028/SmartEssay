@@ -132,6 +132,8 @@ public class Camera_Student extends AppCompatActivity {
         });
     }
 
+
+
     private void uploadEssay(String convertedText, int score, String feedback) {
         DatabaseReference db = FirebaseDatabase.getInstance(
                 "https://smartessay-79d91-default-rtdb.firebaseio.com/"
@@ -206,6 +208,7 @@ public class Camera_Student extends AppCompatActivity {
                                                                 memberRef.child("status").setValue(status);
 
                                                                 Toast.makeText(Camera_Student.this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
+                                                                finish();
                                                             })
                                                             .addOnFailureListener(e ->
                                                                     Toast.makeText(Camera_Student.this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show()

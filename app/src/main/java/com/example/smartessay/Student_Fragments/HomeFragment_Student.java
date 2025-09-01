@@ -145,6 +145,11 @@ public class HomeFragment_Student extends Fragment {
         return view;
     }
 
+    public void onResume() {
+        super.onResume();
+        loadStudentEssays(); // reload essays from Firebase
+    }
+
     private void loadStudentEssays() {
         roomList.clear();
 
