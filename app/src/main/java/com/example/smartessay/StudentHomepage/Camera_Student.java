@@ -1,10 +1,13 @@
 package com.example.smartessay.StudentHomepage;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -44,6 +48,7 @@ public class Camera_Student extends AppCompatActivity {
 
     private String studentId;
     private String classroomId;
+    private Dialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +113,7 @@ public class Camera_Student extends AppCompatActivity {
                                         .setTitle("Submit Essay")
                                         .setMessage("Are you sure you want to submit this essay? You can only submit once.")
                                         .setPositiveButton("Yes", (dialog, which) -> {
+                                            showLoadingDialog("Submitting essay...");
                                             // ✅ Run AI grading first
                                             getRubricsFromTeacherAndGradeEssay(classroomId, essayText);
                                         })
@@ -205,13 +211,14 @@ public class Camera_Student extends AppCompatActivity {
                                                                 memberRef.child("joined_at").setValue(timestamp);
                                                                 memberRef.child("fullname").setValue(fullname);
                                                                 memberRef.child("status").setValue(status);
-
+                                                                hideLoadingDialog();
                                                                 Toast.makeText(Camera_Student.this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
                                                                 finish();
                                                             })
-                                                            .addOnFailureListener(e ->
-                                                                    Toast.makeText(Camera_Student.this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                                                            );
+                                                            .addOnFailureListener(e -> {
+                                                                hideLoadingDialog();
+                                                                Toast.makeText(Camera_Student.this, "Failed to upload essay: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                            });
                                                 }
                                             });
                                 })
@@ -404,5 +411,26 @@ public class Camera_Student extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error fetching rubrics: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
+    }
+
+    private void showLoadingDialog(String message) {
+        if (loadingDialog != null && loadingDialog.isShowing()) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_creating_room_loading, null);
+        ((TextView) dialogView.findViewById(R.id.tvLoadingMessage)).setText(message);
+
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+
+        loadingDialog = builder.create();
+        loadingDialog.show();
+    }
+
+    private void hideLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
     }
 }
