@@ -3,6 +3,7 @@ package com.example.smartessay;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -74,8 +75,13 @@ public class MainActivity extends AppCompatActivity {
                                         saveUserSession("teacherId", teacher.getKey());
                                         saveUserSession("teacherEmail", email);
                                         Toast.makeText(MainActivity.this, "Teacher login successful", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(MainActivity.this, FragmentHP_Teacher.class));
+
+                                        Intent intent = new Intent(MainActivity.this, FragmentHP_Teacher.class);
+                                        intent.putExtra("teacherEmail", email); // Pass the email
+                                        Log.i("emailTeaher", "Email sent: " + email);
+                                        startActivity(intent);
                                         finish();
+
                                         return;
                                     } else {
                                         hideLoadingDialog();
@@ -99,8 +105,12 @@ public class MainActivity extends AppCompatActivity {
                                                 if (storedPassword != null && storedPassword.equals(password)) {
                                                     if ("active".equalsIgnoreCase(status)) {
                                                         saveUserSession("studentId", student.getKey());
+
                                                         Toast.makeText(MainActivity.this, "Student login successful", Toast.LENGTH_SHORT).show();
-                                                        startActivity(new Intent(MainActivity.this, FragmentHP_Student.class));
+                                                        Intent intent = new Intent(MainActivity.this, FragmentHP_Student.class);
+                                                        intent.putExtra("studentEmail", email); // Pass student email
+                                                        startActivity(intent);
+
                                                         finish();
                                                         return;
                                                     } else {

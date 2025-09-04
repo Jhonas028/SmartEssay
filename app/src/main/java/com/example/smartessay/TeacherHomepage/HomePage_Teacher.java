@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ public class HomePage_Teacher extends Fragment {
     private DatabaseReference classroomsRef;
     private Button btnAddRoom;
 
+    String teacherEmail;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,6 +62,15 @@ public class HomePage_Teacher extends Fragment {
         recyclerView.setAdapter(roomAdapter);
 
         btnAddRoom = view.findViewById(R.id.btn_add_room);
+
+        Bundle args = getArguments();
+
+       if (args != null) {
+        teacherEmail = args.getString("teacherEmail");
+        Log.d("HomePage_Teacher", "Email: " + teacherEmail);
+         }
+
+
 
 
         btnAddRoom.setOnClickListener(v -> {
@@ -221,7 +232,10 @@ public class HomePage_Teacher extends Fragment {
     }
 
     private void loadRoomsFromFirebase() {
-        classroomsRef.addValueEventListener(new ValueEventListener() {
+
+
+        classroomsRef.orderByChild("classroom_owner").equalTo(teacherEmail)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 

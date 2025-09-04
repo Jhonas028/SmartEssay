@@ -58,6 +58,7 @@ public class HomePage_Student extends Fragment {
         roomAdapter = new RoomAdapter(roomList);
         recyclerView.setAdapter(roomAdapter);
 
+
         // Load student essays
         loadStudentEssays();
 

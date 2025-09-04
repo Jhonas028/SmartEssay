@@ -44,8 +44,14 @@ public class FragmentHP_Student extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Default fragment
-        loadFragments(new HomePage_Student());
+        String studentEmail = getIntent().getStringExtra("studentEmail");
+
+        HomePage_Student homeFragment = new HomePage_Student();
+        Bundle bundle = new Bundle();
+        bundle.putString("studentEmail", studentEmail);
+        homeFragment.setArguments(bundle);
+
+        loadFragments(homeFragment);
 
         // Handle navigation item clicks
         navView.setNavigationItemSelectedListener(item -> {

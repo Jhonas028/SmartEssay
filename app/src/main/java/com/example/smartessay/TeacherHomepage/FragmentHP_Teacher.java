@@ -1,6 +1,7 @@
 package com.example.smartessay.TeacherHomepage;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -38,6 +39,12 @@ public class FragmentHP_Teacher extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         navView = findViewById(R.id.nav_view);
 
+        // Retrieve email
+        String teacherEmail = getIntent().getStringExtra("teacherEmail");
+        if (teacherEmail != null) {
+            Toast.makeText(this, "Teacher: " + teacherEmail, Toast.LENGTH_SHORT).show();
+        }
+
         // Burger toggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
@@ -46,8 +53,14 @@ public class FragmentHP_Teacher extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Default fragment
-        loadFragments(new HomePage_Teacher());
+
+        HomePage_Teacher homeFragment = new HomePage_Teacher();
+        Bundle bundle = new Bundle();
+        bundle.putString("teacherEmail", teacherEmail);
+        homeFragment.setArguments(bundle);
+
+// Load fragment
+        loadFragments(homeFragment);
 
         // Handle navigation item clicks
         navView.setNavigationItemSelectedListener(item -> {
