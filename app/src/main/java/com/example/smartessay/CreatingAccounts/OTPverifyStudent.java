@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.example.smartessay.StudentHomepage.FragmentHP_Student;
 import com.google.firebase.database.DatabaseReference;
@@ -179,7 +180,7 @@ public class OTPverifyStudent extends AppCompatActivity {
 
                                 pendingRef.removeValue();
                                 Toast.makeText(getApplicationContext(), "Account verified!", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), FragmentHP_Student.class));
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 finish();
                             });
                 } else {
