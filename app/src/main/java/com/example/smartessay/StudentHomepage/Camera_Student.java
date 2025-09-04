@@ -137,8 +137,6 @@ public class Camera_Student extends AppCompatActivity {
         });
     }
 
-
-
     private void uploadEssay(String convertedText, int score, String feedback) {
         DatabaseReference db = FirebaseDatabase.getInstance(
                 "https://smartessay-79d91-default-rtdb.firebaseio.com/"

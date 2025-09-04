@@ -190,6 +190,10 @@ public class HomePage_Student extends Fragment {
                             roomAdapter.notifyItemChanged(position); // reset swipe
                             dialog.dismiss();
                         })
+                        .setOnCancelListener(dialog -> {
+                            // 👇 handle outside tap or back button
+                            roomAdapter.notifyItemChanged(position); // restore item
+                        })
                         .show();
             }
 

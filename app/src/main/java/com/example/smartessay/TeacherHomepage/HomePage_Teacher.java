@@ -98,7 +98,7 @@ public class HomePage_Teacher extends Fragment {
         });
 
         // Attach ItemTouchHelper for swipe actions
-        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,
@@ -141,6 +141,10 @@ public class HomePage_Teacher extends Fragment {
                         .setNegativeButton("No", (dialog, which) -> {
                             roomAdapter.notifyItemChanged(position);
                             dialog.dismiss();
+                        })
+                        .setOnCancelListener(dialog -> {
+                            // Handles outside touch or back button
+                            roomAdapter.notifyItemChanged(position); // restore item
                         })
                         .show();
             }
