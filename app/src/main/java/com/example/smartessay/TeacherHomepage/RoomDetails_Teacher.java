@@ -31,6 +31,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import androidx.core.content.ContextCompat;
+
 public class RoomDetails_Teacher extends AppCompatActivity {
 
     TextView tvRoomName, tvRoomCode;
@@ -80,11 +86,126 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                     .show();
         });
 
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                return false; // We don’t support drag & drop
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                EssayTeacher essay = essayList.get(position);
+
+                // Show confirm dialog before deleting
+                new AlertDialog.Builder(RoomDetails_Teacher.this)
+                        .setTitle("Delete Student")
+                        .setMessage("Are you sure you want to remove this student and their essay?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            deleteStudentEssay(essay, position);
+                        })
+                        .setNegativeButton("No", (dialog, which) -> {
+                            // Restore the item if cancel
+                            adapter.notifyItemChanged(position);
+                        })
+                        .setOnCancelListener(dialog -> {
+                            // Handles outside touch or back button
+                            adapter.notifyItemChanged(position); // restore item
+                        })
+                        .show();
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c,
+                                    @NonNull RecyclerView recyclerView,
+                                    @NonNull RecyclerView.ViewHolder viewHolder,
+                                    float dX, float dY,
+                                    int actionState, boolean isCurrentlyActive) {
+
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && dX < 0) {
+                    View itemView = viewHolder.itemView;
+
+                    // 🔴 Red background
+                    Paint paint = new Paint();
+                    paint.setColor(Color.RED);
+                    c.drawRect(
+                            (float) itemView.getRight() + dX, // left bound
+                            (float) itemView.getTop(),        // top
+                            (float) itemView.getRight(),      // right bound
+                            (float) itemView.getBottom(),     // bottom
+                            paint
+                    );
+
+                    // 🗑 Delete icon
+                    Drawable icon = ContextCompat.getDrawable(RoomDetails_Teacher.this, R.drawable.ic_delete);
+                    if (icon != null) {
+                        int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                        int iconTop = itemView.getTop() + iconMargin;
+                        int iconBottom = iconTop + icon.getIntrinsicHeight();
+                        int iconLeft = itemView.getRight() - iconMargin - icon.getIntrinsicWidth();
+                        int iconRight = itemView.getRight() - iconMargin;
+
+                        icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                        icon.draw(c);
+                    }
+                }
+
+                // let RecyclerView draw the foreground (the actual card moving)
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        });
+
+// 🔗 Attach to RecyclerView
+        itemTouchHelper.attachToRecyclerView(rvStudents);
 
 
 
         loadEssaysFromFirebase();
     }
+
+    private void deleteStudentEssay(EssayTeacher essay, int position) {
+        if (essay.getEssayId() != null) {
+            // Delete essay from Firebase
+            DatabaseReference essayRef = FirebaseDatabase.getInstance()
+                    .getReference("classrooms")
+                    .child(classroomId)
+                    .child("essay")
+                    .child(essay.getStudentId())
+                    .child(essay.getEssayId());
+
+            essayRef.removeValue().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    essayList.remove(position);
+                    adapter.notifyItemRemoved(position);
+                    Toast.makeText(RoomDetails_Teacher.this, "Essay deleted", Toast.LENGTH_SHORT).show();
+                } else {
+                    adapter.notifyItemChanged(position); // restore if error
+                    Toast.makeText(RoomDetails_Teacher.this, "Failed to delete essay", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // If essayId is null → remove student only
+            DatabaseReference memberRef = FirebaseDatabase.getInstance()
+                    .getReference("classrooms")
+                    .child(classroomId)
+                    .child("classroom_members")
+                    .child(essay.getStudentId());
+
+            memberRef.removeValue().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    essayList.remove(position);
+                    adapter.notifyItemRemoved(position);
+                    Toast.makeText(RoomDetails_Teacher.this, "Student removed", Toast.LENGTH_SHORT).show();
+                } else {
+                    adapter.notifyItemChanged(position);
+                    Toast.makeText(RoomDetails_Teacher.this, "Failed to remove student", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
 
     private void loadEssaysFromFirebase() {
         DatabaseReference membersRef = FirebaseDatabase.getInstance()

@@ -5,9 +5,14 @@ import static android.content.Context.MODE_PRIVATE;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -190,6 +195,45 @@ public class HomePage_Student extends Fragment {
                         })
                         .show();
             }
+
+            public void onChildDraw(@NonNull Canvas c,
+                                    @NonNull RecyclerView recyclerView,
+                                    @NonNull RecyclerView.ViewHolder viewHolder,
+                                    float dX, float dY,
+                                    int actionState, boolean isCurrentlyActive) {
+
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && dX < 0) {
+                    View itemView = viewHolder.itemView;
+
+                    // 🔴 Red background
+                    Paint paint = new Paint();
+                    paint.setColor(Color.RED);
+                    c.drawRect(
+                            (float) itemView.getRight() + dX, // left bound
+                            (float) itemView.getTop(),        // top
+                            (float) itemView.getRight(),      // right bound
+                            (float) itemView.getBottom(),     // bottom
+                            paint
+                    );
+
+                    // 🗑 Delete icon
+                    Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_delete);
+                    if (icon != null) {
+                        int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                        int iconTop = itemView.getTop() + iconMargin;
+                        int iconBottom = iconTop + icon.getIntrinsicHeight();
+                        int iconLeft = itemView.getRight() - iconMargin - icon.getIntrinsicWidth();
+                        int iconRight = itemView.getRight() - iconMargin;
+
+                        icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                        icon.draw(c);
+                    }
+                }
+
+                // let RecyclerView draw the foreground (the actual card moving)
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+
 
             @Override
             public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {

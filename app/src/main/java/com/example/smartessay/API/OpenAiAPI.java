@@ -33,12 +33,12 @@ public class OpenAiAPI {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    /* For grading students
-    private static final OkHttpClient client = new OkHttpClient.Builder()
+
+    private static final OkHttpClient client2 = new OkHttpClient.Builder()
             .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)  // wait up to 60s for connection
             .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)   // up to 60s to send body
             .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)   // up to 120s for server to respond
-            .build();*/
+            .build();
 
     private static final MediaType JSON = MediaType.parse("application/json");
 

@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private Button signinBTN;
     private TextView signUpTextView;
 
+    private android.app.Dialog loadingDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void authenticateUser(String email, String password) {
+        showLoadingDialog("Signing in...");
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
 
         // Check teachers
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (storedPassword != null && storedPassword.equals(password)) {
                                     if ("active".equalsIgnoreCase(status)) {
+                                        hideLoadingDialog();
                                         saveUserSession("teacherId", teacher.getKey());
                                         saveUserSession("teacherEmail", email);
                                         Toast.makeText(MainActivity.this, "Teacher login successful", Toast.LENGTH_SHORT).show();
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                                         finish();
                                         return;
                                     } else {
+                                        hideLoadingDialog();
                                         Toast.makeText(MainActivity.this, "Account not active. Please verify.", Toast.LENGTH_SHORT).show();
                                         return;
                                     }
@@ -106,10 +111,12 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
                                         Toast.makeText(MainActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+                                        hideLoadingDialog();
                                     }
 
                                     @Override
                                     public void onCancelled(DatabaseError error) {
+                                        hideLoadingDialog();
                                         Toast.makeText(MainActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -117,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError error) {
+                        hideLoadingDialog();
                         Toast.makeText(MainActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -125,5 +133,26 @@ public class MainActivity extends AppCompatActivity {
     private void saveUserSession(String key, String id) {
         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         prefs.edit().putString(key, id).apply();
+    }
+
+    private void showLoadingDialog(String message) {
+        if (loadingDialog != null && loadingDialog.isShowing()) return;
+
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        android.view.LayoutInflater inflater = getLayoutInflater();
+        android.view.View dialogView = inflater.inflate(R.layout.dialog_creating_room_loading, null);
+        ((android.widget.TextView) dialogView.findViewById(R.id.tvLoadingMessage)).setText(message);
+
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+
+        loadingDialog = builder.create();
+        loadingDialog.show();
+    }
+
+    private void hideLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
     }
 }
