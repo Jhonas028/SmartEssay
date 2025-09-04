@@ -2,11 +2,14 @@ package com.example.smartessay.TeacherHomepage;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartessay.R;
@@ -28,8 +31,9 @@ public class AddRoom_Teacher extends AppCompatActivity {
     EditText etRoomName, etRubricContent, etRubricOrganization, etRubricDevelopment,
             etRubricGrammar, etRubricCritical, etRubricOther;
     Button btnCreate, btnCancel;
-
     DatabaseReference classroomsRef;
+
+    private AlertDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +55,22 @@ public class AddRoom_Teacher extends AppCompatActivity {
         btnCreate = findViewById(R.id.btnCreate);
         btnCancel = findViewById(R.id.btnCancel);
 
+
+
         btnCancel.setOnClickListener(v -> finish());
 
         btnCreate.setOnClickListener(v -> {
+
+            btnCreate.setEnabled(false);//disable immediately to prevent re-click
+
             String roomName = etRoomName.getText().toString().trim();
             if (roomName.isEmpty()) {
                 Toast.makeText(this, "Enter Room Name", Toast.LENGTH_SHORT).show();
+                btnCreate.setEnabled(true); // re-enable if validation fails
                 return;
             }
+
+
 
             // RUBRIC VALIDATION
             int content = parseEditText(etRubricContent);
@@ -71,8 +83,11 @@ public class AddRoom_Teacher extends AppCompatActivity {
 
             if (total != 100) {
                 Toast.makeText(this, "Rubrics must sum exactly to 100%", Toast.LENGTH_SHORT).show();
+                btnCreate.setEnabled(true);
                 return;
             }
+
+            showLoadingDialog();
 
 
             SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
@@ -107,12 +122,15 @@ public class AddRoom_Teacher extends AppCompatActivity {
                 // Save to Firebase
                 classroomsRef.child(roomId).setValue(classroomMap)
                         .addOnSuccessListener(aVoid -> {
+                            hideLoadingDialog();
                             Toast.makeText(this, "Room Created Successfully", Toast.LENGTH_SHORT).show();
                             finish();
                         })
-                        .addOnFailureListener(e ->
-                                Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                        );
+                        .addOnFailureListener(e -> {
+                            hideLoadingDialog();
+                            Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            btnCreate.setEnabled(true); // allow retry only if fail
+                        });
             });
         });
     }
@@ -160,6 +178,25 @@ public class AddRoom_Teacher extends AppCompatActivity {
             return Integer.parseInt(text);
         } catch (NumberFormatException e) {
             return 0;
+        }
+    }
+
+
+    private void showLoadingDialog() {
+        if (loadingDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            View view = getLayoutInflater().inflate(R.layout.dialog_creating_room_loading, null);
+            builder.setView(view);
+            builder.setCancelable(false);
+            loadingDialog = builder.create();
+        }
+        loadingDialog.show();
+    }
+
+
+    private void hideLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
         }
     }
 }

@@ -174,7 +174,7 @@ public class HomePage_Teacher extends Fragment {
         classroomsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // Do NOT clear the list
+
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     String roomId = ds.getKey();
                     boolean exists = false;
