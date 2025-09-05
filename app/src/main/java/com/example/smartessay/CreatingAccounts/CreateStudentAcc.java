@@ -14,8 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,56 +73,84 @@ public class CreateStudentAcc extends AppCompatActivity {
         });
 
         signupBTN.setOnClickListener(v -> {
-            if (true) {
-                otp = new OTPgenerator();
-                String myOTP = otp.generateOTP();
+            if (validateInputs()) {
                 email = emailET.getText().toString().trim();
-                fname = fnameET.getText().toString().trim();
-                lname = lnameET.getText().toString().trim();
-                stuNum = snumET.getText().toString().trim();
-                pass = passET.getText().toString().trim();
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
-                String formattedTime = sdf.format(new Date());
+                // Check if email already exists
+                DatabaseReference studentsRef = FirebaseDatabase.getInstance()
+                        .getReference("users")
+                        .child("students");
 
-                DatabaseReference pendingRef = FirebaseDatabase.getInstance()
-                        .getReference("pending_verification")
-                        .child("students")
-                        .child(stuNum);
+                studentsRef.orderByChild("email").equalTo(email)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    // Email already registered
+                                    emailTV.setHelperText("Email already exists.");
+                                    Toast.makeText(getApplicationContext(), "Email already registered.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // Proceed with registration
+                                    registerStudent(account);
+                                }
+                            }
 
-                HashMap<String, Object> pendingData = new HashMap<>();
-                pendingData.put("email", email);
-                pendingData.put("first_name", fname);
-                pendingData.put("last_name", lname);
-                pendingData.put("password", pass);
-                pendingData.put("status", "pending");
-                pendingData.put("otp", myOTP);
-                pendingData.put("created_at", formattedTime);
-                pendingData.put("updated_at", formattedTime);
-
-                pendingRef.setValue(pendingData)
-                        .addOnSuccessListener(aVoid -> {
-                            Intent intent = new Intent(CreateStudentAcc.this, OTPverifyStudent.class);
-                            intent.putExtra("account", account);
-                            intent.putExtra("email_student", email);
-                            intent.putExtra("otp_code_student", myOTP);
-                            intent.putExtra("first_name", fname);
-                            intent.putExtra("last_name", lname);
-                            intent.putExtra("studentNumber", stuNum);
-                            intent.putExtra("password", pass);
-                            intent.putExtra("created_at", formattedTime);
-                            startActivity(intent);
-                            Toast.makeText(getApplicationContext(), "OTP sent. Please verify.", Toast.LENGTH_SHORT).show();
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(getApplicationContext(), "Failed to start verification.", Toast.LENGTH_SHORT).show();
-                            Log.e("FirebaseError", e.getMessage());
+                            @Override
+                            public void onCancelled(DatabaseError error) {
+                                Toast.makeText(getApplicationContext(), "Error checking email.", Toast.LENGTH_SHORT).show();
+                            }
                         });
             } else {
-                Toast.makeText(getApplicationContext(), "Sign-in failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Validation failed", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void registerStudent(String account) {
+        otp = new OTPgenerator();
+        String myOTP = otp.generateOTP();
+        fname = fnameET.getText().toString().trim();
+        lname = lnameET.getText().toString().trim();
+        stuNum = snumET.getText().toString().trim();
+        pass = passET.getText().toString().trim();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
+        String formattedTime = sdf.format(new Date());
+
+        DatabaseReference pendingRef = FirebaseDatabase.getInstance()
+                .getReference("pending_verification")
+                .child("students")
+                .child(stuNum);
+
+        HashMap<String, Object> pendingData = new HashMap<>();
+        pendingData.put("email", email);
+        pendingData.put("first_name", fname);
+        pendingData.put("last_name", lname);
+        pendingData.put("password", pass);
+        pendingData.put("status", "pending");
+        pendingData.put("otp", myOTP);
+        pendingData.put("created_at", formattedTime);
+        pendingData.put("updated_at", formattedTime);
+
+        pendingRef.setValue(pendingData)
+                .addOnSuccessListener(aVoid -> {
+                    Intent intent = new Intent(CreateStudentAcc.this, OTPverifyStudent.class);
+                    intent.putExtra("account", account);
+                    intent.putExtra("email_student", email);
+                    intent.putExtra("otp_code_student", myOTP);
+                    intent.putExtra("first_name", fname);
+                    intent.putExtra("last_name", lname);
+                    intent.putExtra("studentNumber", stuNum);
+                    intent.putExtra("password", pass);
+                    intent.putExtra("created_at", formattedTime);
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "OTP sent. Please verify.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getApplicationContext(), "Failed to start verification.", Toast.LENGTH_SHORT).show();
+                    Log.e("FirebaseError", e.getMessage());
+                });
     }
 
     private boolean validateInputs() {
