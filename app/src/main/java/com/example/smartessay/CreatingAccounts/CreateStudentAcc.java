@@ -73,37 +73,56 @@ public class CreateStudentAcc extends AppCompatActivity {
         });
 
         signupBTN.setOnClickListener(v -> {
-            if (validateInputs()) {
+            if (true) {
                 email = emailET.getText().toString().trim();
 
-                // Check if email already exists
-                DatabaseReference studentsRef = FirebaseDatabase.getInstance()
-                        .getReference("users")
-                        .child("students");
-
-                studentsRef.orderByChild("email").equalTo(email)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot snapshot) {
-                                if (snapshot.exists()) {
-                                    // Email already registered
-                                    emailTV.setHelperText("Email already exists.");
-                                    Toast.makeText(getApplicationContext(), "Email already registered.", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    // Proceed with registration
-                                    registerStudent(account);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError error) {
-                                Toast.makeText(getApplicationContext(), "Error checking email.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                checkEmailExists(account, email);
             } else {
                 Toast.makeText(getApplicationContext(), "Validation failed", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void checkEmailExists(String account, String email) {
+        DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference("users").child("students");
+        DatabaseReference teachersRef = FirebaseDatabase.getInstance().getReference("users").child("teachers");
+
+        // First check in students
+        studentsRef.orderByChild("email").equalTo(email)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            emailTV.setHelperText("Email already exists (student).");
+                            Toast.makeText(getApplicationContext(), "Email already registered as Student.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // If not in students, check teachers
+                            teachersRef.orderByChild("email").equalTo(email)
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot snapshot2) {
+                                            if (snapshot2.exists()) {
+                                                emailTV.setHelperText("Email already exists (teacher).");
+                                                Toast.makeText(getApplicationContext(), "Email already registered as Teacher.", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                // Not found in both → proceed
+                                                registerStudent(account);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError error) {
+                                            Toast.makeText(getApplicationContext(), "Error checking teachers.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Toast.makeText(getApplicationContext(), "Error checking students.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void registerStudent(String account) {
