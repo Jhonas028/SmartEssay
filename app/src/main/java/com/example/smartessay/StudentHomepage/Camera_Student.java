@@ -61,60 +61,72 @@ public class Camera_Student extends AppCompatActivity {
         submitBtn = findViewById(R.id.submitBtn);
         cancelBtn = findViewById(R.id.cancelBtn);
 
-        // Get student and classroom info from intent
+        // ✅ Get student and classroom info passed from previous screen
         studentId = getIntent().getStringExtra("studentId");
         classroomId = getIntent().getStringExtra("classroomId");
 
+        // If missing studentId or classroomId, stop activity
         if (studentId == null || classroomId == null) {
             Toast.makeText(this, "Student or classroom info missing", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // Launch cropper when root view is clicked
+        // When user clicks the main layout → launch camera & cropper
         findViewById(R.id.mainLayout).setOnClickListener(v -> checkPermissionAndLaunch());
 
-        // Auto-launch on activity start
+        // Auto-launch cropper when activity starts
         checkPermissionAndLaunch();
 
+        // ✅ When submit button is clicked
         submitBtn.setOnClickListener(v -> {
             String essayText = ocrResultTextView.getText().toString().trim();
+
+            // If no essay text detected, show warning
             if (essayText.isEmpty()) {
                 Toast.makeText(this, "No essay detected!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+            // Connect to Firebase Realtime Database
             DatabaseReference db = FirebaseDatabase.getInstance(
                     "https://smartessay-79d91-default-rtdb.firebaseio.com/"
             ).getReference();
 
-            // ✅ Validate BEFORE AI grading
+            // 🔎 Check if student already submitted an essay in this classroom
             db.child("essay")
                     .orderByChild("student_id")
-                    .equalTo(studentId)
+                    .equalTo(studentId) // look for essays by this student
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
                             boolean alreadySubmitted = false;
+
+                            // Loop through essays found for this student
                             for (DataSnapshot essaySnap : snapshot.getChildren()) {
                                 String cid = essaySnap.child("classroom_id").getValue(String.class);
+
+                                // If essay classroomId == current classroomId → student already submitted
                                 if (cid != null && cid.equals(classroomId)) {
                                     alreadySubmitted = true;
                                     break;
                                 }
                             }
 
+                            // ✅ If already submitted → block submission
                             if (alreadySubmitted) {
                                 Toast.makeText(Camera_Student.this,
                                         "You already submitted an essay for this classroom!",
                                         Toast.LENGTH_SHORT).show();
-                            } else {
+                            }
+                            // ✅ Else → show confirmation dialog before submitting
+                            else {
                                 new androidx.appcompat.app.AlertDialog.Builder(Camera_Student.this)
                                         .setTitle("Submit Essay")
                                         .setMessage("Are you sure you want to submit this essay? You can only submit once.")
                                         .setPositiveButton("Yes", (dialog, which) -> {
                                             showLoadingDialog("Submitting essay...");
-                                            // ✅ Run AI grading first
+                                            // Grade essay using AI before uploading
                                             getRubricsFromTeacherAndGradeEssay(classroomId, essayText);
                                         })
                                         .setNegativeButton("Cancel", null)
@@ -124,6 +136,7 @@ public class Camera_Student extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(DatabaseError error) {
+                            // If Firebase query fails
                             Toast.makeText(Camera_Student.this,
                                     "Firebase error: " + error.getMessage(),
                                     Toast.LENGTH_LONG).show();
@@ -131,12 +144,16 @@ public class Camera_Student extends AppCompatActivity {
                     });
         });
 
+        // ✅ Cancel button clears image + essay text
         cancelBtn.setOnClickListener(v -> {
             imageView.setImageDrawable(null);
             ocrResultTextView.setText("");
         });
     }
 
+    /**
+     * Upload essay to Firebase Database after grading.
+     */
     private void uploadEssay(String convertedText, int score, String feedback) {
         DatabaseReference db = FirebaseDatabase.getInstance(
                 "https://smartessay-79d91-default-rtdb.firebaseio.com/"
@@ -144,7 +161,7 @@ public class Camera_Student extends AppCompatActivity {
 
         long timestamp = System.currentTimeMillis();
 
-        // ✅ Double-check validation before saving
+        // 🔎 Double-check if essay already exists before saving
         db.child("essay")
                 .orderByChild("student_id")
                 .equalTo(studentId)
@@ -152,6 +169,8 @@ public class Camera_Student extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         boolean alreadySubmitted = false;
+
+                        // Check if essay exists in the same classroom
                         for (DataSnapshot essaySnap : snapshot.getChildren()) {
                             String cid = essaySnap.child("classroom_id").getValue(String.class);
                             if (cid != null && cid.equals(classroomId)) {
@@ -160,6 +179,7 @@ public class Camera_Student extends AppCompatActivity {
                             }
                         }
 
+                        // If essay already submitted → block upload
                         if (alreadySubmitted) {
                             Toast.makeText(Camera_Student.this,
                                     "Essay already exists. Submission blocked.",
@@ -167,7 +187,7 @@ public class Camera_Student extends AppCompatActivity {
                             return;
                         }
 
-                        // ✅ Fetch student info
+                        // ✅ Fetch student info from Firebase
                         db.child("users").child("students").child(studentId)
                                 .get()
                                 .addOnSuccessListener(stuSnap -> {
@@ -175,16 +195,18 @@ public class Camera_Student extends AppCompatActivity {
                                     String lastName = stuSnap.child("last_name").getValue(String.class);
                                     String fullname = lastName + ", " + firstName;
 
-                                    // ✅ Fetch classroom_name
+                                    // ✅ Fetch classroom name
                                     db.child("classrooms").child(classroomId).child("classroom_name")
                                             .get()
                                             .addOnSuccessListener(classSnap -> {
                                                 String classroomName = classSnap.getValue(String.class);
 
-                                                // ✅ Generate essayId before creating object
+                                                // Generate unique essayId
                                                 String essayId = db.child("essay").push().getKey();
-                                                String status =  "pending";
+                                                String status = "pending";
+
                                                 if (essayId != null) {
+                                                    // Create Essay object
                                                     Essay essay = new Essay(
                                                             essayId,
                                                             studentId,
@@ -199,8 +221,10 @@ public class Camera_Student extends AppCompatActivity {
                                                             fullname
                                                     );
 
+                                                    // Save essay object in Firebase
                                                     db.child("essay").child(essayId).setValue(essay)
                                                             .addOnSuccessListener(aVoid -> {
+                                                                // Update classroom_members info
                                                                 DatabaseReference memberRef = db.child("classrooms")
                                                                         .child(classroomId)
                                                                         .child("classroom_members")
@@ -209,6 +233,7 @@ public class Camera_Student extends AppCompatActivity {
                                                                 memberRef.child("joined_at").setValue(timestamp);
                                                                 memberRef.child("fullname").setValue(fullname);
                                                                 memberRef.child("status").setValue(status);
+
                                                                 hideLoadingDialog();
                                                                 Toast.makeText(Camera_Student.this, "Essay uploaded successfully!", Toast.LENGTH_SHORT).show();
                                                                 finish();
@@ -234,7 +259,7 @@ public class Camera_Student extends AppCompatActivity {
                 });
     }
 
-    // ✅ Essay model class
+    // ✅ Essay model class for Firebase storage
     public static class Essay {
         public String essay_id;
         public String student_id;
@@ -248,7 +273,7 @@ public class Camera_Student extends AppCompatActivity {
         public long updated_at;
         public String fullname;
 
-        public Essay() {} // Required empty constructor
+        public Essay() {} // Empty constructor required by Firebase
 
         public Essay(String essay_id, String student_id, String classroom_id, String classroom_name,
                      String converted_text, int score, String essay_feedback,
@@ -268,7 +293,7 @@ public class Camera_Student extends AppCompatActivity {
         }
     }
 
-    // ✅ Camera + Cropper code (unchanged)
+    // ✅ Camera + Cropper code
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -297,10 +322,10 @@ public class Camera_Student extends AppCompatActivity {
                         return;
                     }
 
-                    // TODO: send to OCR API DO NOT REMOVE THIS
+                    // TODO: Send image to OCR API
                     //PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
 
-                    // For testing
+                    // For testing → show sample essay text
                     ocrResultTextView.setText(R.string.sample_essay);
 
                 } else {
@@ -308,6 +333,7 @@ public class Camera_Student extends AppCompatActivity {
                 }
             });
 
+    // ✅ Check camera permission
     private void checkPermissionAndLaunch() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -317,6 +343,7 @@ public class Camera_Student extends AppCompatActivity {
         }
     }
 
+    // ✅ Open camera + cropper
     private void launchCameraCropper() {
         CropImageOptions options = new CropImageOptions();
         options.imageSourceIncludeCamera = true;
@@ -334,6 +361,9 @@ public class Camera_Student extends AppCompatActivity {
         cropImageLauncher.launch(contractOptions);
     }
 
+    /**
+     * ✅ Get rubrics from Firebase → send essay to AI grading API → get score + feedback
+     */
     private void getRubricsFromTeacherAndGradeEssay(String classroomId, String essay) {
         DatabaseReference db = FirebaseDatabase.getInstance(
                 "https://smartessay-79d91-default-rtdb.firebaseio.com/"
@@ -343,6 +373,7 @@ public class Camera_Student extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     if (snapshot.exists()) {
+                        // Get each rubric criteria from Firebase
                         String contentIdeas = snapshot.child("Content and Ideas").getValue(String.class);
                         String developmentSupport = snapshot.child("Development and Support").getValue(String.class);
                         String grammarMechanics = snapshot.child("Grammar, Mechanics, and Formatting").getValue(String.class);
@@ -350,6 +381,7 @@ public class Camera_Student extends AppCompatActivity {
                         String organizationStructure = snapshot.child("Organization and Structure").getValue(String.class);
                         String notes = snapshot.child("Notes").getValue(String.class);
 
+                        // Send essay + rubrics to dummy AI API for grading
                         DUMMY_OpenAiAPI.gradeEssay(
                                 essay,
                                 contentIdeas,
@@ -371,6 +403,7 @@ public class Camera_Student extends AppCompatActivity {
                                             String rawResult = obj.optString("result", "");
 
                                             if (!rawResult.isEmpty()) {
+                                                // Extract score percentage using regex
                                                 java.util.regex.Matcher matcher = java.util.regex.Pattern
                                                         .compile("Score:\\s*([0-9.]+)%")
                                                         .matcher(rawResult);
@@ -380,6 +413,7 @@ public class Camera_Student extends AppCompatActivity {
                                                     score = Math.round(scoreFloat);
                                                 }
 
+                                                // Extract feedback (text after first line break)
                                                 int firstLineBreak = rawResult.indexOf("\n");
                                                 if (firstLineBreak != -1 && firstLineBreak + 1 < rawResult.length()) {
                                                     feedback = rawResult.substring(firstLineBreak + 1).trim();
@@ -392,6 +426,7 @@ public class Camera_Student extends AppCompatActivity {
                                             feedback = "Parsing error: " + e.getMessage();
                                         }
 
+                                        // Upload essay with score + feedback
                                         uploadEssay(essay, score, feedback);
                                     }
 
@@ -411,6 +446,7 @@ public class Camera_Student extends AppCompatActivity {
                 });
     }
 
+    // ✅ Show custom loading dialog
     private void showLoadingDialog(String message) {
         if (loadingDialog != null && loadingDialog.isShowing()) return;
 
@@ -426,6 +462,7 @@ public class Camera_Student extends AppCompatActivity {
         loadingDialog.show();
     }
 
+    // ✅ Hide loading dialog
     private void hideLoadingDialog() {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
