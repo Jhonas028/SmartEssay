@@ -73,6 +73,14 @@ public class CreateStudentAcc extends AppCompatActivity {
         });
 
         signupBTN.setOnClickListener(v -> {
+            //correct code
+            /*            if (validateInputs()) {
+                email = emailET.getText().toString().trim();
+
+                checkEmailExists(account, email);
+            } else {
+                Toast.makeText(getApplicationContext(), "Validation failed", Toast.LENGTH_SHORT).show();
+            }*/
             if (true) {
                 email = emailET.getText().toString().trim();
 

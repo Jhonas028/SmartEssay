@@ -11,14 +11,14 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.smartessay.API.EmailAPI;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.json.JSONException;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,63 +70,112 @@ public class CreateTeacherAcc extends AppCompatActivity {
         });
 
         signupBTN.setOnClickListener(v -> {
-            //use ur method heret o validate inputs
-            if (true) {
-                otp = new OTPgenerator();
-                String myOTP = otp.generateOTP();
-                String email = emailET.getText().toString().trim();
-                String firstName = fnameET.getText().toString().trim();
-                String lastName = lnameET.getText().toString().trim();
-                String pass = passET.getText().toString().trim();
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
-                String formattedTime = sdf.format(new Date());
-                long timestampRaw = System.currentTimeMillis();
+            //correct code
+            /*            if (validateInputs()) {
+                email = emailET.getText().toString().trim();
 
-                DatabaseReference pendingRef = FirebaseDatabase.getInstance()
-                        .getReference("pending_verification")
-                        .child("teachers")
-                        .push(); // Unique teacher OTP entry
-
-                HashMap<String, Object> pendingData = new HashMap<>();
-                pendingData.put("email", email);
-                pendingData.put("first_name", firstName);
-                pendingData.put("last_name", lastName);
-                pendingData.put("password", pass);
-                pendingData.put("status", "pending");
-                pendingData.put("otp", myOTP);
-                pendingData.put("created_at", formattedTime);
-                pendingData.put("updated_at", formattedTime);
-                pendingData.put("timestamp_raw", timestampRaw);
-
-                /* API FOR EMAIL, PLEASE DO NOT REMOVE THIS
-                try {
-                    EmailAPI.sendOtpEmail(myOTP,email);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }*/
-
-                pendingRef.setValue(pendingData)
-                        .addOnSuccessListener(aVoid -> {
-                            Intent intent = new Intent(CreateTeacherAcc.this, OTPverifyTeacher.class);
-                            intent.putExtra("account", account);
-                            intent.putExtra("email_teacher", email);
-                            intent.putExtra("otp_code_teacher", myOTP);
-                            intent.putExtra("first_name", firstName);
-                            intent.putExtra("last_name", lastName);
-                            intent.putExtra("password", pass);
-                            startActivity(intent);
-                            Toast.makeText(getApplicationContext(), "OTP sent. Please verify.", Toast.LENGTH_SHORT).show();
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(getApplicationContext(), "Failed to start verification.", Toast.LENGTH_SHORT).show();
-                            Log.e("FirebaseError", e.getMessage());
-                        });
+                checkEmailExists(account, email);
             } else {
-                Toast.makeText(getApplicationContext(), "Sign-in failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Validation failed", Toast.LENGTH_SHORT).show();
+            }*/
+            if (!validateInputs()) {
+                Toast.makeText(getApplicationContext(), "Validation failed", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            email = emailET.getText().toString().trim();
+            checkEmailExists(account, email);
         });
+    }
+
+    private void checkEmailExists(String account, String email) {
+        DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference("users").child("students");
+        DatabaseReference teachersRef = FirebaseDatabase.getInstance().getReference("users").child("teachers");
+
+        // First check in students
+        studentsRef.orderByChild("email").equalTo(email)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            emailTV.setHelperText("Email already exists (student).");
+                            Toast.makeText(getApplicationContext(), "Email already registered as Student.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // If not in students, check teachers
+                            teachersRef.orderByChild("email").equalTo(email)
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot snapshot2) {
+                                            if (snapshot2.exists()) {
+                                                emailTV.setHelperText("Email already exists (teacher).");
+                                                Toast.makeText(getApplicationContext(), "Email already registered as Teacher.", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                // Not found in both → proceed
+                                                registerTeacher(account);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError error) {
+                                            Toast.makeText(getApplicationContext(), "Error checking teachers.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Toast.makeText(getApplicationContext(), "Error checking students.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void registerTeacher(String account) {
+        otp = new OTPgenerator();
+        String myOTP = otp.generateOTP();
+
+        fname = fnameET.getText().toString().trim();
+        lname = lnameET.getText().toString().trim();
+        pass = passET.getText().toString().trim();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
+        String formattedTime = sdf.format(new Date());
+        long timestampRaw = System.currentTimeMillis();
+
+        DatabaseReference pendingRef = FirebaseDatabase.getInstance()
+                .getReference("pending_verification")
+                .child("teachers")
+                .push();
+
+        HashMap<String, Object> pendingData = new HashMap<>();
+        pendingData.put("email", email);
+        pendingData.put("first_name", fname);
+        pendingData.put("last_name", lname);
+        pendingData.put("password", pass);
+        pendingData.put("status", "pending");
+        pendingData.put("otp", myOTP);
+        pendingData.put("created_at", formattedTime);
+        pendingData.put("updated_at", formattedTime);
+        pendingData.put("timestamp_raw", timestampRaw);
+
+        pendingRef.setValue(pendingData)
+                .addOnSuccessListener(aVoid -> {
+                    Intent intent = new Intent(CreateTeacherAcc.this, OTPverifyTeacher.class);
+                    intent.putExtra("account", account);
+                    intent.putExtra("email_teacher", email);
+                    intent.putExtra("otp_code_teacher", myOTP);
+                    intent.putExtra("first_name", fname);
+                    intent.putExtra("last_name", lname);
+                    intent.putExtra("password", pass);
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "OTP sent. Please verify.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getApplicationContext(), "Failed to start verification.", Toast.LENGTH_SHORT).show();
+                    Log.e("FirebaseError", e.getMessage());
+                });
     }
 
     private boolean validateInputs() {
@@ -152,6 +201,7 @@ public class CreateTeacherAcc extends AppCompatActivity {
         } else {
             conpassTV.setHelperText(null);
         }
+
         return isValid;
     }
 
