@@ -69,7 +69,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:textColorHint="@color/white_hint_selector" />
+                        android:textColorHint="@color/white_hint_selector"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Firstname -->
@@ -90,7 +92,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:textColorHint="@color/white_hint_selector" />
+                        android:textColorHint="@color/white_hint_selector"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Lastname -->
@@ -111,7 +115,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:textColorHint="@color/white_hint_selector" />
+                        android:textColorHint="@color/white_hint_selector"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Password -->
@@ -133,7 +139,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
                         android:textColor="@android:color/white"
-                        android:textColorHint="@color/white_hint_selector" />
+                        android:textColorHint="@color/white_hint_selector"
+                        android:imeOptions="actionNext"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Confirm Password -->
@@ -155,7 +162,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
                         android:textColor="@android:color/white"
-                        android:textColorHint="@color/white_hint_selector" />
+                        android:textColorHint="@color/white_hint_selector"
+                        android:imeOptions="actionNext"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Sign Up Button -->
