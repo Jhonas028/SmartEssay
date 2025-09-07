@@ -2,6 +2,7 @@ package com.example.smartessay.TeacherHomepage;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -15,94 +16,163 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.smartessay.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-// This activity represents the Teacher Homepage with a navigation drawer and fragments
+/**
+ * Teacher Homepage Activity
+ * - Contains navigation drawer
+ * - Loads teacher fragments (Home, Camera, etc.)
+ * - Displays teacher profile info in drawer header
+ */
 public class FragmentHP_Teacher extends AppCompatActivity {
 
-    private DrawerLayout drawerLayout; // Drawer layout for side navigation
-    private NavigationView navView;    // The navigation menu inside the drawer
-    private Toolbar toolbar;           // Top toolbar
-    private FloatingActionButton fab;  // Button to open Camera fragment
-
+    // UI components
+    private DrawerLayout drawerLayout;
+    private NavigationView navView;
+    private Toolbar toolbar;
+    private FloatingActionButton fab;
+    TextView profileName;
+    TextView profileSubtitle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        EdgeToEdge.enable(this); // Enable modern edge-to-edge UI (status bar overlaps layout nicely)
-        setContentView(R.layout.fragment_hp_activity); // Set layout for this activity
+        // Enable full edge-to-edge layout (status bar overlap handling)
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.fragment_hp_activity);
 
-        fab = findViewById(R.id.fab); // Link FloatingActionButton from XML
+        // 🔗 Link FloatingActionButton
+        fab = findViewById(R.id.fab);
 
-        // Setup toolbar as the ActionBar
+        // 🔗 Setup Toolbar as ActionBar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Link DrawerLayout and NavigationView from XML
+        // 🔗 Link DrawerLayout and NavigationView
         drawerLayout = findViewById(R.id.drawer_layout);
         navView = findViewById(R.id.nav_view);
 
-        // Get the teacher email passed from MainActivity via Intent
-        String teacherEmail = getIntent().getStringExtra("teacherEmail");
+        // ==========================
+        // 🔹 NAV HEADER (Profile Info)
+        // ==========================
+        android.view.View headerView = navView.getHeaderView(0);
+        profileName = headerView.findViewById(R.id.profile_name);
+        profileSubtitle = headerView.findViewById(R.id.profile_subtitle);
+        String teacherEmail = getIntent().getStringExtra("teacherEmail");        // Get teacher email from login intent
+        profileSubtitle.setText(teacherEmail);
+
+        //call method to display teacher details
+        displayTeacherDetails(teacherEmail, profileName);
+
+        // Debugging toast (shows email)
         if (teacherEmail != null) {
-            // Just show a quick toast with teacher email
             Toast.makeText(this, "Teacher: " + teacherEmail, Toast.LENGTH_SHORT).show();
         }
 
-        // Configure hamburger menu toggle for DrawerLayout
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle); // Attach toggle to drawer
-        toggle.syncState(); // Synchronize the hamburger icon with drawer state
+        //call this method to setup drawer toggle
+        setupDrawerToggle();
 
-        // Create the HomePage_Teacher fragment and pass the teacher email
+        // ==========================
+        // 🔹 INITIAL FRAGMENT (Homepage)
+        // ==========================
         HomePage_Teacher homeFragment = new HomePage_Teacher();
         Bundle bundle = new Bundle();
-        bundle.putString("teacherEmail", teacherEmail); // Pass data to fragment
+        bundle.putString("teacherEmail", teacherEmail); // Pass email to fragment
         homeFragment.setArguments(bundle);
 
-        // Load the initial fragment (homepage) into the FrameLayout container
-        loadFragments(homeFragment);
+        loadFragments(homeFragment); // Load homepage on startup
 
-        // Handle navigation drawer item clicks
+        // ==========================
+        // 🔹 NAVIGATION ITEM SELECTION
+        // ==========================
         navView.setNavigationItemSelectedListener(item -> {
-            Fragment selectedFragment = null; // Placeholder for selected fragment
+            Fragment selectedFragment = null;
             int itemId = item.getItemId();
 
             if (itemId == R.id.home) {
-                // If Home clicked, load HomePage_Teacher fragment
                 selectedFragment = new HomePage_Teacher();
             } else if (itemId == R.id.logout) {
-                // If Logout clicked, show a toast (can later implement real logout)
                 Toast.makeText(this, "Logout Clicked", Toast.LENGTH_SHORT).show();
             }
 
-            // Replace fragment if a selection is made
             if (selectedFragment != null) {
-                loadFragments(selectedFragment); // Swap current fragment with selected
-                drawerLayout.closeDrawers(); // Close drawer after selection
+                loadFragments(selectedFragment);
+                drawerLayout.closeDrawers();
                 return true;
             }
             return false;
         });
 
-        // Handle Floating Action Button click
+        //call camera method
+        cameraFab();
+    }
+
+    private void setupDrawerToggle() {
+        // ==========================
+        // 🔹 DRAWER TOGGLE (Hamburger menu)
+        // ==========================
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+
+    private void displayTeacherDetails(String teacherEmail, TextView profileName){
+        // Fetch teacher full name from Firebase
+        DatabaseReference teachersRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child("teachers");
+
+        teachersRef.orderByChild("email").equalTo(teacherEmail)
+                .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                    @Override
+                    public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (com.google.firebase.database.DataSnapshot teacher : snapshot.getChildren()) {
+                                String firstName = teacher.child("first_name").getValue(String.class);
+                                String lastName = teacher.child("last_name").getValue(String.class);
+
+                                if (firstName != null && lastName != null) {
+                                    // 👇 Display full name in nav header
+                                    profileName.setText(firstName + " " + lastName);
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(com.google.firebase.database.DatabaseError error) {
+                        Log.e("FirebaseError", "Error: " + error.getMessage());
+                    }
+                });
+    }
+
+    private void cameraFab(){
+        // ==========================
+        // 🔹 FLOATING ACTION BUTTON (Open Camera Fragment)
+        // ==========================
+
         fab.setOnClickListener(v -> {
-            // Create CameraFragment_Teacher
             Fragment cameraFragment = new CameraFragment_Teacher();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.framelays, cameraFragment);  // Replace container with camera fragment
-            transaction.addToBackStack(null);  // Add transaction to back stack for back navigation
-            transaction.commit(); // Commit the fragment transaction
+            transaction.replace(R.id.framelays, cameraFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         });
     }
 
-    // Helper method to load any fragment into the FrameLayout container
+    // ==========================
+    // 🔹 HELPER: Load any fragment
+    // ==========================
     private void loadFragments(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.framelays, fragment) // Replace content in FrameLayout with new fragment
-                .commit(); // Commit changes
+                .replace(R.id.framelays, fragment)
+                .commit();
     }
 }

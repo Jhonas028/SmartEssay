@@ -1,4 +1,4 @@
-package com.example.smartessay.Student_Fragments;
+package com.example.smartessay.StudentHomepage;
 
 import android.os.Bundle;
 import android.widget.TextView;

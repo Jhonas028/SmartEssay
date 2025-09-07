@@ -131,7 +131,9 @@
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
-                    app:hintTextColor="@color/white_hint_selector">
+                    app:hintTextColor="@color/white_hint_selector"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="@android:color/white">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/passET"
@@ -154,7 +156,9 @@
                     app:boxBackgroundMode="outline"
                     app:helperTextTextColor="#FF0000"
                     app:boxStrokeColor="@color/white_hint_selector"
-                    app:hintTextColor="@color/white_hint_selector">
+                    app:hintTextColor="@color/white_hint_selector"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="@android:color/white">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/conpassET"

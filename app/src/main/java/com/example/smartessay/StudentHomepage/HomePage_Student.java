@@ -408,7 +408,7 @@ public class HomePage_Student extends Fragment {
                             Toast.LENGTH_SHORT).show();
                 } else {
                     // ELSE → open EssayResult_Student to show result
-                    Intent intent = new Intent(v.getContext(), com.example.smartessay.Student_Fragments.EssayResult_Student.class);
+                    Intent intent = new Intent(v.getContext(), EssayResult_Student.class);
                     intent.putExtra("essayId", essay.getEssayId());
                     v.getContext().startActivity(intent);
                 }

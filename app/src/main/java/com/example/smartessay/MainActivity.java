@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Link XML UI elements to Java code
-        usernameEditText = findViewById(R.id.editTextText);
-        passwordEditText = findViewById(R.id.editTextText2);
+        usernameEditText = findViewById(R.id.emailLoginTV);
+        passwordEditText = findViewById(R.id.passwordLoginTV);
         signinBTN = findViewById(R.id.signinBTN);
         signUpTextView = findViewById(R.id.signupTV);
 

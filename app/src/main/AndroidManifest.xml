@@ -25,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartEssay"
         tools:targetApi="31">
-        <activity android:name=".Student_Fragments.EssayResult_Student"
+        <activity android:name=".StudentHomepage.EssayResult_Student"
             android:exported="false" />
 
         <activity

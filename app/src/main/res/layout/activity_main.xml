@@ -9,46 +9,65 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="336dp"
-        android:layout_height="253dp"
+        android:layout_width="339dp"
+        android:layout_height="268dp"
         android:layout_marginTop="23dp"
         android:layout_marginBottom="68dp"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintHorizontal_bias="0.523"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2"
         app:layout_constraintVertical_bias="0.0">
 
 
-        <EditText
-            android:id="@+id/editTextText"
-            android:layout_width="290dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passTV"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/round_all_white"
-            android:drawableStart="@drawable/baseline_account_circle_24"
-            android:drawablePadding="10dp"
-            android:hint="Username"
-            android:inputType="text"
-            android:minHeight="48dp"
-            android:padding="10dp"
-            android:paddingLeft="10dp" />
+            android:layout_marginTop="5dp"
+            android:hint="Email"
+            android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white_hint_selector"
+            app:helperTextTextColor="#FF0000"
+            app:hintTextColor="@color/white_hint_selector">
 
-        <EditText
-            android:id="@+id/editTextText2"
-            android:layout_width="290dp"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailLoginTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/white_hint_selector" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passTV2"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/round_all_white"
-            android:drawableStart="@drawable/baseline_lock_24"
-            android:drawablePadding="10dp"
             android:hint="Password"
-            android:inputType="textPassword"
-            android:minHeight="48dp"
-            android:padding="10dp"
-            android:paddingLeft="10dp" />
+            android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white_hint_selector"
+            app:helperTextTextColor="#FF0000"
+            app:hintTextColor="@color/white_hint_selector"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@android:color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordLoginTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/white_hint_selector" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/signinBTN"
