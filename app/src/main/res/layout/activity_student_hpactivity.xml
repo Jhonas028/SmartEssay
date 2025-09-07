@@ -20,7 +20,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/blue"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:title="Student Homepage"
             app:titleTextColor="@color/white" />
 
         <!-- Main fragment container -->

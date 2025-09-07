@@ -1,99 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
+    android:orientation="vertical"
     android:fitsSystemWindows="true"
     android:background="@drawable/bg">
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp"
+        >
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/roundall_white_blueside">
 
-        <!-- Header Section -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Smart Essay"
+            android:textColor="@color/back_blue"
+            android:textSize="35sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Scrollable content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="15dp"
+        >
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvRoomName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Smart Essay"
-                android:textColor="@color/white"
-                android:textSize="40sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <!-- Room Info Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_vertical">
-            <!-- You can add more room info here if needed -->
-        </LinearLayout>
-
-        <!-- Scrollable Content Section -->
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="650dp"
-            android:background="@drawable/yellow_border"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp">
-
+            <!--Score-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="10dp"
+                android:background="@drawable/roundall_white_blueside">
                 <TextView
                     android:id="@+id/tvScore"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Score"
-                    android:textSize="25sp"
+                    android:layout_weight="1"
+                    android:text="Score: "
                     android:textColor="@color/black"
-                    android:layout_marginBottom="12dp"/>
+                    android:textSize="20sp"
+                     />
+            </LinearLayout>
+
+            <!--Status-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/roundall_white_blueside">
 
                 <TextView
                     android:id="@+id/tvStatus"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Status"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="12dp"/>
+                    android:layout_weight="1"
+                    android:text="Status: "
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                     />
+
+            </LinearLayout>
+
+            <!--Feedback-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/roundall_white_blueside">
 
                 <TextView
                     android:id="@+id/tvEssayFeedback"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Essay Feedback"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:background="#EFEFEF"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_weight="1"
+                    android:text="Feedack: "
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:justificationMode="inter_word"
+                     />
+
+            </LinearLayout>
+
+            <!--Converted Text-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/roundall_white_blueside">
 
                 <TextView
                     android:id="@+id/tvConvertedText"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Converted Text"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:background="#EFEFEF"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_weight="1"
+                    android:text="Student Essay: "
+                    android:textSize="15sp"
+                    android:justificationMode="inter_word"
+                     />
 
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
 
+
+        </LinearLayout>
+    </ScrollView>
     </LinearLayout>
-</ScrollView>
+</LinearLayout>
