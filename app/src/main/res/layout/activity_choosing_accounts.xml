@@ -12,6 +12,7 @@
 
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_marginStart="21dp"
@@ -66,10 +67,15 @@
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="338dp"
-        android:layout_height="533dp"
-        app:srcCompat="@drawable/smart_essaylogo"
-        tools:layout_editor_absoluteX="36dp"
-        tools:layout_editor_absoluteY="-114dp" />
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="300dp"
+        android:clipToOutline="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/smart_essaylogo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

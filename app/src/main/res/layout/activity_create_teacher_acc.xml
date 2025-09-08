@@ -6,13 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/create_educator"
+
     tools:context=".CreatingAccounts.CreateTeacherAcc">
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="136dp"
-        android:layout_height="147dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="30dp"
         android:clipToOutline="true"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,23 +25,23 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/imageView3"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/imageView3">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:paddingTop="50dp"
-            android:paddingBottom="300dp"
-            android:orientation="vertical">
+            android:paddingBottom="300dp">
 
             <LinearLayout
                 android:layout_width="276dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textView2"
@@ -68,10 +69,10 @@
                         android:id="@+id/emailET"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
-                        android:textColorHint="@color/white_hint_selector"
+                        android:imeOptions="actionNext"
                         android:inputType="text"
-                        android:imeOptions="actionNext"/>
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@color/white_hint_selector" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Firstname -->
@@ -81,20 +82,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:hint="First name"
-                    app:helperTextTextColor="#FF0000"
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
+                    app:helperTextTextColor="#FF0000"
                     app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/fnameET"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
-                        android:textColorHint="@color/white_hint_selector"
+                        android:imeOptions="actionNext"
                         android:inputType="text"
-                        android:imeOptions="actionNext"/>
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@color/white_hint_selector" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Lastname -->
@@ -104,20 +105,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:hint="Last name"
-                    app:helperTextTextColor="#FF0000"
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
+                    app:helperTextTextColor="#FF0000"
                     app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/lnameET"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
-                        android:textColorHint="@color/white_hint_selector"
+                        android:imeOptions="actionNext"
                         android:inputType="text"
-                        android:imeOptions="actionNext"/>
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@color/white_hint_selector" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Password -->
@@ -127,22 +128,22 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:hint="Password"
-                    app:helperTextTextColor="#FF0000"
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
-                    app:hintTextColor="@color/white_hint_selector"
                     app:endIconMode="password_toggle"
-                    app:endIconTint="@android:color/white">
+                    app:endIconTint="@android:color/white"
+                    app:helperTextTextColor="#FF0000"
+                    app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/passET"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
                         android:inputType="textPassword"
                         android:textColor="@android:color/white"
-                        android:textColorHint="@color/white_hint_selector"
-                        android:imeOptions="actionNext"/>
+                        android:textColorHint="@color/white_hint_selector" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Confirm Password -->
@@ -154,20 +155,20 @@
                     android:hint="Confirm password"
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
-                    app:helperTextTextColor="#FF0000"
                     app:boxStrokeColor="@color/white_hint_selector"
-                    app:hintTextColor="@color/white_hint_selector"
                     app:endIconMode="password_toggle"
-                    app:endIconTint="@android:color/white">
+                    app:endIconTint="@android:color/white"
+                    app:helperTextTextColor="#FF0000"
+                    app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/conpassET"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
                         android:inputType="textPassword"
                         android:textColor="@android:color/white"
-                        android:textColorHint="@color/white_hint_selector"
-                        android:imeOptions="actionNext"/>
+                        android:textColorHint="@color/white_hint_selector" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Sign Up Button -->
