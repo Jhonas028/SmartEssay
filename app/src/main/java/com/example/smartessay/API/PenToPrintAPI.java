@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -22,7 +23,11 @@ import okhttp3.Response;
 public class PenToPrintAPI {
 
     // OkHttp client used to send HTTP requests
-    private static final OkHttpClient client = new OkHttpClient();
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(120, TimeUnit.SECONDS)
+            .build();
 
     // API endpoint (where the request will be sent)
     private static final String API_URL = "https://pen-to-print-handwriting-ocr.p.rapidapi.com/recognize/";
