@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -45,6 +46,7 @@ public class CameraFragment_Teacher extends Fragment {
     EditText contentPercentage,organizationPercentage,grammarPercentage,languageStyle,otherTV;
 
     Button submitBtn,addPageBtn;
+    private AlertDialog loadingDialog;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,6 +96,8 @@ public class CameraFragment_Teacher extends Fragment {
                 return;
             }
 
+            showLoadingDialog("Grading essay...");
+
             // ✅ If valid, proceed with API
             Teacher_OpenAiAPI.gradeEssay(
                     essay,
@@ -106,6 +110,7 @@ public class CameraFragment_Teacher extends Fragment {
                         @Override
                         public void onSuccess(String result) {
                             try {
+                                hideLoadingDialog();
                                 JSONObject jsonObject = new JSONObject(result);
                                 String rawText = jsonObject.getString("result");
 
@@ -125,6 +130,7 @@ public class CameraFragment_Teacher extends Fragment {
 
                         @Override
                         public void onError(String error) {
+                            hideLoadingDialog(); // ✅ Hide on error
                             scoresTV.setText("Error: " + error);
                         }
                     }
@@ -209,6 +215,27 @@ public class CameraFragment_Teacher extends Fragment {
 
         CropImageContractOptions contractOptions = new CropImageContractOptions(null, options);
         cropImageLauncher.launch(contractOptions);
+    }
+
+    private void showLoadingDialog(String message) {
+        if (loadingDialog != null && loadingDialog.isShowing()) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_creating_room_loading, null);
+        ((TextView) dialogView.findViewById(R.id.tvLoadingMessage)).setText(message);
+
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+
+        loadingDialog = builder.create();
+        loadingDialog.show();
+    }
+
+    private void hideLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
     }
 
 
