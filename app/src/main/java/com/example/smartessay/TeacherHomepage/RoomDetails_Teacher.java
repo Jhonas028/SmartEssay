@@ -2,6 +2,8 @@ package com.example.smartessay.TeacherHomepage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartessay.R;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DataSnapshot;
@@ -43,10 +46,11 @@ public class RoomDetails_Teacher extends AppCompatActivity {
     RecyclerView rvStudents;
     StudentAdapter adapter;
     List<EssayTeacher> essayList = new ArrayList<>();
+    List<EssayTeacher> filteredList = new ArrayList<>();
 
-    String classroomId; // Passed from previous activity
-
+    String classroomId;
     Button btn_post_scoree;
+    TextInputEditText editSearchStudent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +60,18 @@ public class RoomDetails_Teacher extends AppCompatActivity {
         tvRoomName = findViewById(R.id.tvRoomName);
         tvRoomCode = findViewById(R.id.tvRoomCode);
         rvStudents = findViewById(R.id.recycler_view_rooms);
-
         btn_post_scoree = findViewById(R.id.btn_post_scoree);
+        editSearchStudent = findViewById(R.id.edit_search_student);
 
         String roomName = getIntent().getStringExtra("roomName");
         String roomCode = getIntent().getStringExtra("roomCode");
-        classroomId = getIntent().getStringExtra("roomId"); // 🔑 from intent
+        classroomId = getIntent().getStringExtra("roomId");
 
         tvRoomName.setText(roomName);
         tvRoomCode.setText("Room Code: " + roomCode);
 
         rvStudents.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new StudentAdapter(essayList, classroomId);
+        adapter = new StudentAdapter(filteredList, classroomId);
         rvStudents.setAdapter(adapter);
 
         btn_post_scoree.setOnClickListener(v -> {
@@ -78,28 +82,26 @@ public class RoomDetails_Teacher extends AppCompatActivity {
             );
         });
 
-
+        // Swipe to delete
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,
                                   @NonNull RecyclerView.ViewHolder target) {
-                return false; // We don’t support drag & drop
+                return false;
             }
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                EssayTeacher essay = essayList.get(position);
+                EssayTeacher essay = filteredList.get(position);
 
-                // Use custom Yes/No dialog instead of default AlertDialog
                 showYesNoDialog(
                         "Delete Student",
                         "Are you sure you want to remove this student and their essay?",
-                        () -> deleteStudentEssay(essay, position)  // Yes action
+                        () -> deleteStudentEssay(essay, position)
                 );
 
-                // If user cancels or touches outside, restore the item
                 adapter.notifyItemChanged(position);
             }
 
@@ -113,18 +115,16 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && dX < 0) {
                     View itemView = viewHolder.itemView;
 
-                    // 🔴 Red background
                     Paint paint = new Paint();
                     paint.setColor(Color.RED);
                     c.drawRect(
-                            (float) itemView.getRight() + dX, // left bound
-                            (float) itemView.getTop(),        // top
-                            (float) itemView.getRight(),      // right bound
-                            (float) itemView.getBottom(),     // bottom
+                            (float) itemView.getRight() + dX,
+                            (float) itemView.getTop(),
+                            (float) itemView.getRight(),
+                            (float) itemView.getBottom(),
                             paint
                     );
 
-                    // 🗑 Delete icon
                     Drawable icon = ContextCompat.getDrawable(RoomDetails_Teacher.this, R.drawable.ic_delete);
                     if (icon != null) {
                         int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
@@ -138,22 +138,47 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                     }
                 }
 
-                // let RecyclerView draw the foreground (the actual card moving)
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
         });
-
-// 🔗 Attach to RecyclerView
         itemTouchHelper.attachToRecyclerView(rvStudents);
 
-
+        // 🔍 Search function
+        editSearchStudent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterList(s.toString());
+            }
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
 
         loadEssaysFromFirebase();
     }
 
+    private void filterList(String query) {
+        filteredList.clear();
+        if (query.isEmpty()) {
+            filteredList.addAll(essayList);
+        } else {
+            String lowerQuery = query.toLowerCase().trim();
+            for (EssayTeacher essay : essayList) {
+                String fullname = essay.getFullname().toLowerCase().replaceAll("[,]", " "); // replace comma with space
+                String studentId = essay.getStudentId().toLowerCase();
+
+                if (fullname.contains(lowerQuery) || studentId.contains(lowerQuery)) {
+                    filteredList.add(essay);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+
     private void deleteStudentEssay(EssayTeacher essay, int position) {
         if (essay.getEssayId() != null) {
-            // Delete essay from Firebase
             DatabaseReference essayRef = FirebaseDatabase.getInstance()
                     .getReference("classrooms")
                     .child(classroomId)
@@ -163,16 +188,15 @@ public class RoomDetails_Teacher extends AppCompatActivity {
 
             essayRef.removeValue().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    essayList.remove(position);
-                    adapter.notifyItemRemoved(position);
+                    essayList.remove(essay);
+                    filterList(editSearchStudent.getText().toString());
                     Toast.makeText(RoomDetails_Teacher.this, "Essay deleted", Toast.LENGTH_SHORT).show();
                 } else {
-                    adapter.notifyItemChanged(position); // restore if error
+                    filterList(editSearchStudent.getText().toString());
                     Toast.makeText(RoomDetails_Teacher.this, "Failed to delete essay", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
-            // If essayId is null → remove student only
             DatabaseReference memberRef = FirebaseDatabase.getInstance()
                     .getReference("classrooms")
                     .child(classroomId)
@@ -181,17 +205,16 @@ public class RoomDetails_Teacher extends AppCompatActivity {
 
             memberRef.removeValue().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    essayList.remove(position);
-                    adapter.notifyItemRemoved(position);
+                    essayList.remove(essay);
+                    filterList(editSearchStudent.getText().toString());
                     Toast.makeText(RoomDetails_Teacher.this, "Student removed", Toast.LENGTH_SHORT).show();
                 } else {
-                    adapter.notifyItemChanged(position);
+                    filterList(editSearchStudent.getText().toString());
                     Toast.makeText(RoomDetails_Teacher.this, "Failed to remove student", Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
-
 
     private void loadEssaysFromFirebase() {
         DatabaseReference membersRef = FirebaseDatabase.getInstance()
@@ -205,7 +228,6 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                 essayList.clear();
 
                 if (!snapshot.exists()) {
-                    Log.d("FirebaseDebug", "No classroom_members found for room " + classroomId);
                     adapter.notifyDataSetChanged();
                     return;
                 }
@@ -214,7 +236,6 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                     String studentId = studentSnap.getKey();
                     String fullname = studentSnap.child("fullname").getValue(String.class);
                     String stats = studentSnap.child("status").getValue(String.class);
-                    Log.i("statusDebug", "This is a status: " + stats);
 
                     DatabaseReference essayRef = FirebaseDatabase.getInstance()
                             .getReference("classrooms")
@@ -231,11 +252,9 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                                     String essayId = essayEntry.getKey();
                                     if (essay != null) {
                                         essay.setEssayId(essayId);
-                                        // ✅ attach essayId
                                         essay.setStudentId(studentId);
                                         essay.setFullname(fullname);
                                         essay.setStatus(stats);
-                                        Log.d("FirebaseDebug2", "Loaded EssayId: " + essayId + " for Student: " + studentId);
                                         essayList.add(essay);
                                     }
                                 }
@@ -247,26 +266,19 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                                 noEssay.setScore(0);
                                 noEssay.setCreatedAt(System.currentTimeMillis());
                                 noEssay.setStatus(stats);
-                                // ⚠️ no essayId here, so it will be skipped in postScores
                                 essayList.add(noEssay);
-
-                                Log.d("FirebaseDebug", "No essay found for student: " + studentId);
                             }
-                            adapter.notifyDataSetChanged();
+                            filterList(editSearchStudent.getText().toString());
                         }
 
                         @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("FirebaseDebug", "Error: " + error.getMessage());
-                        }
+                        public void onCancelled(@NonNull DatabaseError error) { }
                     });
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseDebug", "Error: " + error.getMessage());
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
     }
 
@@ -294,6 +306,7 @@ public class RoomDetails_Teacher extends AppCompatActivity {
             EssayTeacher essay = essays.get(position);
 
             holder.tvStudentName.setText("Student no.: " + essay.getStudentId());
+            holder.tvFullname.setText(essay.getFullname());
 
             Date date = new Date(essay.getCreatedAt());
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
@@ -301,16 +314,13 @@ public class RoomDetails_Teacher extends AppCompatActivity {
 
             holder.tvDateCreated.setText("Submitted: " + dateFormat.format(date));
             holder.tvTimeCreated.setText("Time: " + timeFormat.format(date));
-            holder.tvFullname.setText(essay.getFullname());
-
             holder.text_status.setText("Status: " + essay.getStatus());
-
 
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), EssayDetails_Teacher.class);
                 intent.putExtra("roomId", classroomId);
                 intent.putExtra("studentId", essay.getStudentId());
-                intent.putExtra("essayId", essay.getEssayId()); // ✅ send essayId
+                intent.putExtra("essayId", essay.getEssayId());
                 v.getContext().startActivity(intent);
             });
         }
@@ -335,10 +345,8 @@ public class RoomDetails_Teacher extends AppCompatActivity {
     }
 
     private void postScoresToFirebase() {
-
         String classroomId2 = getIntent().getStringExtra("roomId");
 
-        // 1️⃣ Update essay statuses
         DatabaseReference essayRef = FirebaseDatabase.getInstance().getReference("essay");
         Query query = essayRef.orderByChild("classroom_id").equalTo(classroomId2);
 
@@ -349,7 +357,6 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                     snapshot.getRef().child("status").setValue("posted");
                 }
 
-                // 2️⃣ Update classroom_members statuses
                 DatabaseReference membersRef = FirebaseDatabase.getInstance()
                         .getReference("classrooms")
                         .child(classroomId2)
@@ -364,57 +371,42 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                                 membersRef.child(studentId).child("status").setValue("posted");
                             }
                         }
-
                         Toast.makeText(getApplicationContext(), "All essays and classroom members updated to posted!", Toast.LENGTH_SHORT).show();
-                        loadEssaysFromFirebase(); // refresh UI
+                        loadEssaysFromFirebase();
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Error updating members: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                    public void onCancelled(@NonNull DatabaseError error) { }
                 });
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), "Error updating essays: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
     }
 
     private void showYesNoDialog(String title, String message, Runnable onYes) {
-        // Inflate the custom layout
         LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_yes_no, null); // make sure this XML exists
+        View dialogView = inflater.inflate(R.layout.dialog_yes_no, null);
 
-        // Find views
         TextView tvTitle = dialogView.findViewById(R.id.tvDialogTitle);
         TextView tvMessage = dialogView.findViewById(R.id.tvDialogMessage);
         Button btnYes = dialogView.findViewById(R.id.btnYes);
         Button btnNo = dialogView.findViewById(R.id.btnNo);
 
-        // Set title and message
         tvTitle.setText(title);
         tvMessage.setText(message);
 
-        // Create dialog
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setView(dialogView)
                 .create();
 
-        // Button actions
         btnNo.setOnClickListener(v -> dialog.dismiss());
         btnYes.setOnClickListener(v -> {
-            onYes.run();  // execute the action
+            onYes.run();
             dialog.dismiss();
         });
 
         dialog.show();
     }
-
-
-
-
-
 }

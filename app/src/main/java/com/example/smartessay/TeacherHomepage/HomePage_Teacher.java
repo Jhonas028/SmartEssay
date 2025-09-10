@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,13 +40,14 @@ import java.util.Map;
 // Fragment showing the teacher's classrooms in a RecyclerView
 public class HomePage_Teacher extends Fragment {
 
-    private RecyclerView recyclerView; // List of classrooms
-    private RoomAdapter roomAdapter;   // RecyclerView Adapter
-    private List<Room> roomList;       // Data for the Adapter
-    private DatabaseReference classroomsRef; // Firebase reference to classrooms
-    private Button btnAddRoom;         // Button to add new classroom
+    private RecyclerView recyclerView; // RecyclerView to show classroom list
+    private RoomAdapter roomAdapter;   // Adapter for RecyclerView
+    private List<Room> roomList;       // Local list of rooms for adapter
+    private DatabaseReference classroomsRef; // Firebase reference to "classrooms" node
+    private Button btnAddRoom;         // Button to add a new classroom
+    private EditText editSearch;       // Search input field
 
-    String teacherEmail; // Will hold teacher email passed from previous fragment/activity
+    String teacherEmail; // Teacher's email passed from previous fragment/activity
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,24 +67,38 @@ public class HomePage_Teacher extends Fragment {
         roomAdapter = new RoomAdapter(roomList);
         recyclerView.setAdapter(roomAdapter);
 
-        // Add Room button
+        // Button to add a new room
         btnAddRoom = view.findViewById(R.id.btn_add_room);
 
-        // Get arguments passed from parent FragmentHP_Teacher/activity
+        // Search input
+        editSearch = view.findViewById(R.id.edit_search_prompt);
+        editSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                roomAdapter.filter(s.toString()); // Filter rooms by input text
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        // Get teacher email from parent fragment/activity
         Bundle args = getArguments();
-        if (args != null) {
-            teacherEmail = args.getString("teacherEmail"); // teacher email
+        if (args != null) { // Check if arguments exist
+            teacherEmail = args.getString("teacherEmail"); // store teacher email
             Log.d("HomePage_Teacher", "Email: " + teacherEmail);
         }
 
-
-        //  click listener launching AddRoom_Teacher activity
+        // Click listener: open AddRoom_Teacher activity when button is clicked
         btnAddRoom.setOnClickListener(v -> startActivity(new Intent(requireContext(), AddRoom_Teacher.class)));
 
         // Load classrooms from Firebase
         loadRoomsFromFirebase();
 
-        // Handle clicks on each room and pass it to the next activity
+        // Click listener for each room item to open RoomDetails_Teacher activity
         roomAdapter.setOnItemClickListener(room -> {
             Intent intent = new Intent(requireContext(), RoomDetails_Teacher.class);
             intent.putExtra("roomName", room.getRoomName());
@@ -90,9 +107,8 @@ public class HomePage_Teacher extends Fragment {
             startActivity(intent);
         });
 
-        //calling this method for deleting recycler view.
+        // Enable swipe-to-delete feature
         swipeDelete();
-
 
         return view;
     }
@@ -100,15 +116,15 @@ public class HomePage_Teacher extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // This code will be executed when the fragment is resumed. Helps the code displays the updated data.
-        // Clear old data safely
+        // Clear old data to avoid duplicates when fragment resumes
         roomList.clear();
-        roomAdapter.notifyDataSetChanged(); // notify adapter before loading new data
+        roomAdapter.notifyDataSetChanged();
 
-        // Reload from Firebase
+        // Reload classrooms from Firebase
         loadRoomsFromFirebase();
     }
 
+    // Custom Yes/No dialog
     private void showYesNoDialog(String title, String message, Runnable onYes, Runnable onCancel) {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_yes_no, null);
@@ -125,74 +141,69 @@ public class HomePage_Teacher extends Fragment {
                 .setView(dialogView)
                 .create();
 
+        // Cancel button clicked
         btnNo.setOnClickListener(v -> {
-            if (onCancel != null) onCancel.run();
+            if (onCancel != null) onCancel.run(); // run cancel action if exists
             dialog.dismiss();
         });
 
+        // Yes button clicked
         btnYes.setOnClickListener(v -> {
-            onYes.run();
+            onYes.run(); // run yes action
             dialog.dismiss();
         });
 
         dialog.setOnCancelListener(d -> {
-            if (onCancel != null) onCancel.run();
+            if (onCancel != null) onCancel.run(); // handle if dialog canceled
         });
 
         dialog.show();
     }
 
-
+    // Swipe-to-delete method
     public void swipeDelete(){
-        // Swipe left to delete a room
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,
                                   @NonNull RecyclerView.ViewHolder target) {
-                // No drag & drop, so return false
+                // Drag & drop not used
                 return false;
             }
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-               // Check if position is valid
                 if (position < 0 || position >= roomList.size()) {
-                    roomAdapter.notifyDataSetChanged(); // Reset swipe
+                    // If position is invalid, reset swipe
+                    roomAdapter.notifyDataSetChanged();
                     return;
                 }
-                Log.d("SwipeDelete", "Swiped position: " + position);
-                Log.d("RoomList", "RoomList: " + roomList.size());
-                // Get room to delete
+
                 Room roomToDelete = roomList.get(position);
 
-                // Confirm deletion
+                // Show confirmation dialog
                 showYesNoDialog(
                         "Delete Room",
                         "Are you sure you want to delete this room?",
                         () -> {
-                            // ✅ Yes → delete room
+                            // Yes → remove room from Firebase
                             classroomsRef.child(roomToDelete.getRoomId()).removeValue()
                                     .addOnSuccessListener(aVoid -> {
-                                        if (position < roomList.size()) {
-                                            roomList.remove(position);
-                                            roomAdapter.notifyItemRemoved(position);
-                                            loadRoomsFromFirebase();
+                                        if (position < roomList.size()) { // Check position is valid
+                                            roomList.remove(position); // remove locally
+                                            roomAdapter.notifyItemRemoved(position); // update UI
+                                            loadRoomsFromFirebase(); // reload updated data
                                             Toast.makeText(requireContext(), "Room deleted", Toast.LENGTH_SHORT).show();
                                         }
                                     })
                                     .addOnFailureListener(e -> {
-                                        roomAdapter.notifyItemChanged(position);
+                                        roomAdapter.notifyItemChanged(position); // restore item visually
                                         Toast.makeText(requireContext(), "Delete failed", Toast.LENGTH_SHORT).show();
                                     });
                         },
-                        () -> {
-                            // ❌ No or canceled → restore item visually
-                            roomAdapter.notifyItemChanged(position);
-                        }
+                        () -> roomAdapter.notifyItemChanged(position) // No → restore item visually
                 );
-
             }
 
             @Override
@@ -203,15 +214,13 @@ public class HomePage_Teacher extends Fragment {
                                     int actionState, boolean isCurrentlyActive) {
 
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && dX < 0) {
+                    // Draw red background and trash icon when swiping left
                     View itemView = viewHolder.itemView;
-
-                    // Draw red background when swiping left
                     Paint paint = new Paint();
                     paint.setColor(Color.RED);
                     c.drawRect(itemView.getRight() + dX, itemView.getTop(),
                             itemView.getRight(), itemView.getBottom(), paint);
 
-                    // Draw trash icon
                     Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_delete);
                     if (icon != null) {
                         int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
@@ -230,43 +239,43 @@ public class HomePage_Teacher extends Fragment {
 
             @Override
             public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
-                return 0.7f; // Must swipe 70% to trigger delete
+                return 0.7f; // 70% swipe required to trigger delete
             }
         };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
-    // 🔹 Load classrooms owned by this teacher from Firebase
+
+    // Load classrooms from Firebase where classroom_owner equals teacherEmail
     private void loadRoomsFromFirebase() {
-        // Query classrooms where classroom_owner equals teacherEmail
         classroomsRef.orderByChild("classroom_owner").equalTo(teacherEmail)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        // Clear current list before reloading
-                        roomList.clear();
+                        roomList.clear(); // Clear current list
 
-                        // Loop through each classroom
                         for (DataSnapshot ds : snapshot.getChildren()) {
-                            String roomId = ds.getKey();
-                            String roomName = ds.child("classroom_name").getValue(String.class);
-                            String roomCode = ds.child("room_code").getValue(String.class);
-                            String createdAt = ds.child("created_at").getValue(String.class);
-                            String updatedAt = ds.child("updated_at").getValue(String.class);
+                            String roomId = ds.getKey(); // Firebase key
+                            String roomName = ds.child("classroom_name").getValue(String.class); // get name
+                            String roomCode = ds.child("room_code").getValue(String.class); // get code
+                            String createdAt = ds.child("created_at").getValue(String.class); // get created date
+                            String updatedAt = ds.child("updated_at").getValue(String.class); // get updated date
 
-                            // Optional: rubrics stored as Map in Firebase
                             Map<String, String> rubrics = null;
-                            if (ds.child("rubrics").exists()) {
+                            if (ds.child("rubrics").exists()) { // Check if rubrics exist
                                 rubrics = (Map<String, String>) ds.child("rubrics").getValue();
                             }
 
-                            // Add to local list
+                            // Add room to local list
                             roomList.add(new Room(roomId, roomName, roomCode, createdAt, updatedAt, rubrics));
                         }
 
-                        // ✅ Refresh the whole adapter once after all items are added
-                        roomAdapter.notifyDataSetChanged();
+                        // Update fullRoomList in adapter for search functionality
+                        roomAdapter.fullRoomList.clear();
+                        roomAdapter.fullRoomList.addAll(roomList);
+
+                        roomAdapter.notifyDataSetChanged(); // refresh UI
                     }
 
                     @Override
@@ -276,10 +285,9 @@ public class HomePage_Teacher extends Fragment {
                 });
     }
 
-
-    // 🔹 Room model class representing a classroom
+    // Room model class
     public static class Room {
-        private String roomId;   // Firebase key
+        private String roomId;
         private String roomName;
         private String roomCode;
         private String createdAt;
@@ -288,7 +296,6 @@ public class HomePage_Teacher extends Fragment {
 
         public Room() {} // Empty constructor required by Firebase
 
-        // Full constructor
         public Room(String roomId, String roomName, String roomCode,
                     String createdAt, String updatedAt, Map<String, String> rubrics) {
             this.roomId = roomId;
@@ -299,7 +306,6 @@ public class HomePage_Teacher extends Fragment {
             this.rubrics = rubrics;
         }
 
-        // Getters
         public String getRoomId() { return roomId; }
         public String getRoomName() { return roomName; }
         public String getRoomCode() { return roomCode; }
@@ -308,18 +314,20 @@ public class HomePage_Teacher extends Fragment {
         public Map<String, String> getRubrics() { return rubrics; }
     }
 
-    // 🔹 RecyclerView Adapter for Room list
+    // RecyclerView Adapter
     public static class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
-        private final List<Room> roomList;
+        private final List<Room> fullRoomList; // Full copy for search
+        private final List<Room> roomList;     // Displayed list
         private OnItemClickListener listener;
 
-        public interface OnItemClickListener {
-            void onItemClick(Room room);
-        }
+        public interface OnItemClickListener { void onItemClick(Room room); }
 
         public void setOnItemClickListener(OnItemClickListener listener) { this.listener = listener; }
 
-        public RoomAdapter(List<Room> roomList) { this.roomList = roomList; }
+        public RoomAdapter(List<Room> roomList) {
+            this.roomList = roomList;
+            this.fullRoomList = new ArrayList<>(roomList); // Copy for filtering
+        }
 
         @NonNull
         @Override
@@ -333,34 +341,32 @@ public class HomePage_Teacher extends Fragment {
         public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
             Room room = roomList.get(position);
 
-            // Display room info
             holder.textRoomName.setText(room.getRoomName());
             holder.textRoomCode.setText("Code: " + room.getRoomCode());
             holder.textCreatedAt.setText("Created: " + room.getCreatedAt());
 
-            // Toggle rubrics visibility
+            // Toggle rubrics visibility when button clicked
             holder.btnShowRubrics.setOnClickListener(v -> {
-                if (holder.textRubrics.getVisibility() == View.GONE) {
-                    holder.textRubrics.setVisibility(View.VISIBLE);
+                if (holder.textRubrics.getVisibility() == View.GONE) { // If hidden
+                    holder.textRubrics.setVisibility(View.VISIBLE); // show
                     holder.btnShowRubrics.setText("Hide Rubrics");
-                } else {
-                    holder.textRubrics.setVisibility(View.GONE);
+                } else { // If visible
+                    holder.textRubrics.setVisibility(View.GONE); // hide
                     holder.btnShowRubrics.setText("Show Rubrics");
                 }
             });
 
-            // Show rubrics text
-            if (room.getRubrics() != null) {
+            if (room.getRubrics() != null) { // If rubrics exist
                 StringBuilder summary = new StringBuilder();
                 for (Map.Entry<String, String> e : room.getRubrics().entrySet()) {
                     summary.append(e.getKey()).append(": ").append(e.getValue()).append("\n");
                 }
                 holder.textRubrics.setText(summary.toString().trim());
-            } else {
+            } else { // No rubrics
                 holder.textRubrics.setText("No Rubrics");
             }
 
-            // 🔹 Count submitted essays (members) using Firebase
+            // Count classroom members using Firebase
             DatabaseReference membersRef = FirebaseDatabase.getInstance()
                     .getReference("classrooms")
                     .child(room.getRoomId())
@@ -369,7 +375,7 @@ public class HomePage_Teacher extends Fragment {
             membersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    long memberCount = snapshot.getChildrenCount();
+                    long memberCount = snapshot.getChildrenCount(); // Count children
                     holder.textUploads.setText("Submitted Essays: " + memberCount);
                 }
 
@@ -388,7 +394,23 @@ public class HomePage_Teacher extends Fragment {
         @Override
         public int getItemCount() { return roomList.size(); }
 
-        // ViewHolder class
+        // Filter method for search
+        public void filter(String query) {
+            roomList.clear();
+            if (query.isEmpty()) { // If search is empty
+                roomList.addAll(fullRoomList); // show all rooms
+            } else {
+                query = query.toLowerCase();
+                for (Room room : fullRoomList) {
+                    // Check if roomName contains query (ignore case)
+                    if (room.getRoomName() != null && room.getRoomName().toLowerCase().contains(query)) {
+                        roomList.add(room); // add matching room
+                    }
+                }
+            }
+            notifyDataSetChanged(); // refresh UI
+        }
+
         public static class RoomViewHolder extends RecyclerView.ViewHolder {
             TextView textRoomName, textRoomCode, textCreatedAt, textUpdatedAt, textRubrics, textUploads;
             Button btnShowRubrics;
@@ -405,5 +427,4 @@ public class HomePage_Teacher extends Fragment {
             }
         }
     }
-
 }

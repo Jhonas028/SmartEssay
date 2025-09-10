@@ -37,34 +37,55 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+// Fragment that shows student's essays and allows joining classrooms
 public class HomePage_Student extends Fragment {
 
-    private RecyclerView recyclerView;
-    private RoomAdapter roomAdapter;
-    private List<EssayInfo> roomList;
-    private Button btnJoinRoom;
+    private RecyclerView recyclerView;       // RecyclerView showing essays
+    private RoomAdapter roomAdapter;         // Adapter for RecyclerView
+    private List<EssayInfo> roomList;        // List holding essay data
+    private Button btnJoinRoom;              // Button to join new classroom
+
+    private EditText editSearch;             // 🔹 Search input
+    private List<EssayInfo> fullRoomList;    // 🔹 Full copy for search filtering
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_home__student, container, false);
 
-        // 🔹 Setup RecyclerView (list of essays joined by student)
+        // 🔹 Setup RecyclerView
         recyclerView = view.findViewById(R.id.recycler_view_rooms);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // 🔹 Initialize the list + adapter
+        // 🔹 Initialize list and adapter
         roomList = new ArrayList<>();
+        fullRoomList = new ArrayList<>();
         roomAdapter = new RoomAdapter(roomList);
         recyclerView.setAdapter(roomAdapter);
 
-        // 🔹 Load essays from Firebase when screen starts
+        // 🔹 Setup search input
+        editSearch = view.findViewById(R.id.edit_search_prompt);
+        editSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 🔹 Filter RecyclerView whenever user types
+                filterSearch(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
+        // 🔹 Load essays from Firebase when fragment opens
         loadStudentEssays();
 
-        // 🔹 Join Room button (student enters a code to join)
+        // 🔹 Join Room button opens dialog to input room code
         btnJoinRoom = view.findViewById(R.id.btn_add_room);
         btnJoinRoom.setOnClickListener(v -> {
-            // Custom dialog where student types the room code
             View dialogView = LayoutInflater.from(requireContext())
                     .inflate(R.layout.dialog_add_classroom_student, null);
 
@@ -77,79 +98,77 @@ public class HomePage_Student extends Fragment {
                     .setCancelable(false)
                     .create();
 
+            // Cancel button closes dialog
             btnCancel.setOnClickListener(view1 -> dialog.dismiss());
 
+            // Join button checks input and queries Firebase
             btnJoin.setOnClickListener(view12 -> {
                 String roomCode = etRoomCode.getText().toString().trim();
 
-                // IF input is not empty
+                // 🔹 IF input is not empty
                 if (!roomCode.isEmpty()) {
-                    // 🔹 Reference the "classrooms" node in Firebase
+                    // 🔹 Reference Firebase "classrooms" node
                     DatabaseReference classroomsRef = FirebaseDatabase.getInstance(
                             "https://smartessay-79d91-default-rtdb.firebaseio.com/"
                     ).getReference("classrooms");
 
-                    // 🔹 Firebase query: search classrooms where "room_code" equals the input
+                    // 🔹 Query Firebase for classrooms with matching "room_code"
                     classroomsRef.orderByChild("room_code").equalTo(roomCode)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    // IF at least one classroom with that code exists
+                                    // 🔹 IF classroom exists
                                     if (snapshot.exists()) {
                                         dialog.dismiss();
 
-                                        // Move student to Camera_Student activity
                                         Intent intent = new Intent(getContext(), Camera_Student.class);
 
-                                        // Loop through matching classrooms
+                                        // Loop through classrooms found (usually 1)
                                         for (DataSnapshot classroom : snapshot.getChildren()) {
-                                            // Get classroom details from Firebase
                                             String roomName = classroom.child("classroom_name").getValue(String.class);
                                             String code = classroom.child("room_code").getValue(String.class);
 
-                                            // Get current student ID from SharedPreferences
+                                            // Get studentId from SharedPreferences
                                             SharedPreferences prefs = requireContext().getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
                                             String currentStudentId = prefs.getString("studentId", null);
 
-                                            // IF studentId is not found → show error
+                                            // 🔹 IF student not logged in
                                             if (currentStudentId == null) {
                                                 Toast.makeText(getContext(), "Student not logged in", Toast.LENGTH_SHORT).show();
                                                 return;
                                             }
 
-                                            // Pass data to Camera_Student
+                                            // 🔹 Pass data to Camera_Student
                                             intent.putExtra("roomName", roomName);
                                             intent.putExtra("roomCode", code);
                                             intent.putExtra("studentId", currentStudentId);
-                                            intent.putExtra("classroomId", classroom.getKey()); // Firebase key
+                                            intent.putExtra("classroomId", classroom.getKey());
                                         }
 
                                         startActivity(intent);
 
                                     } else {
-                                        // ELSE → No classroom found with that code
+                                        // 🔹 ELSE → room code not found
                                         Toast.makeText(getContext(), "Invalid Room Code", Toast.LENGTH_SHORT).show();
                                     }
                                 }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {
-                                    // Called if Firebase fails (ex: no internet)
                                     Log.e("FirebaseError", error.getMessage());
                                 }
                             });
 
                 } else {
-                    // ELSE → Input is empty
+                    // 🔹 ELSE → input is empty
                     Toast.makeText(getContext(), "Please enter a room code", Toast.LENGTH_SHORT).show();
                 }
-
             });
 
             dialog.show();
         });
 
-        //calling swipe to delete function
+        // 🔹 Swipe to delete essays
         swipeDelete();
 
         return view;
@@ -158,39 +177,53 @@ public class HomePage_Student extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadStudentEssays(); // refresh essays when coming back
+        loadStudentEssays(); // refresh essays on return
+    }
+
+    // 🔹 Filter method for search bar
+    private void filterSearch(String query) {
+        roomList.clear();
+        if (query.isEmpty()) {
+            roomList.addAll(fullRoomList); // show all if empty
+        } else {
+            query = query.toLowerCase();
+            for (EssayInfo essay : fullRoomList) {
+                // 🔹 match classroom name with query
+                if (essay.getClassroomName().toLowerCase().contains(query)) {
+                    roomList.add(essay);
+                }
+            }
+        }
+        roomAdapter.notifyDataSetChanged();
     }
 
     public void swipeDelete(){
-        // 🔹 Swipe-to-delete essay logic
+        // 🔹 Swipe-to-delete logic (left/right)
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,
                                   @NonNull RecyclerView.ViewHolder target) {
-                return false; // not supporting drag & drop
+                return false; // drag & drop not supported
             }
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
 
-                // IF invalid position, cancel swipe
+                // 🔹 If invalid swipe position
                 if (position < 0 || position >= roomList.size()) {
                     roomAdapter.notifyDataSetChanged();
                     return;
                 }
 
-                // Essay chosen for deletion
                 EssayInfo essayToDelete = roomList.get(position);
 
-                // Confirm dialog
-                // Confirm deletion using custom dialog
+                // 🔹 Confirm delete dialog
                 showYesNoDialog(
                         "Delete Essay",
                         "Are you sure you want to delete this essay?",
                         () -> {
-                            // ✅ Yes → delete essay
                             DatabaseReference rootRef = FirebaseDatabase.getInstance(
                                     "https://smartessay-79d91-default-rtdb.firebaseio.com/"
                             ).getReference();
@@ -198,7 +231,7 @@ public class HomePage_Student extends Fragment {
                             // Delete essay from "essay" node
                             rootRef.child("essay").child(essayToDelete.getEssayId()).removeValue()
                                     .addOnSuccessListener(aVoid -> {
-                                        // Remove student from classroom_members
+                                        // Also remove student from classroom_members
                                         rootRef.child("classrooms")
                                                 .child(essayToDelete.getClassroomId())
                                                 .child("classroom_members")
@@ -214,19 +247,15 @@ public class HomePage_Student extends Fragment {
                                                 });
                                     })
                                     .addOnFailureListener(e -> {
-                                        roomAdapter.notifyItemChanged(position); // restore swipe
+                                        roomAdapter.notifyItemChanged(position);
                                         Toast.makeText(requireContext(), "Delete failed", Toast.LENGTH_SHORT).show();
                                     });
                         },
-                        () -> {
-                            // ❌ No / canceled → restore swipe
-                            roomAdapter.notifyItemChanged(position);
-                        }
+                        () -> roomAdapter.notifyItemChanged(position)
                 );
-
             }
 
-            // 🔹 Draw red background + trash icon while swiping left
+            @Override
             public void onChildDraw(@NonNull Canvas c,
                                     @NonNull RecyclerView recyclerView,
                                     @NonNull RecyclerView.ViewHolder viewHolder,
@@ -236,13 +265,13 @@ public class HomePage_Student extends Fragment {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && dX < 0) {
                     View itemView = viewHolder.itemView;
 
-                    // Red background
+                    // Draw red background
                     Paint paint = new Paint();
                     paint.setColor(Color.RED);
                     c.drawRect(itemView.getRight() + dX, itemView.getTop(),
                             itemView.getRight(), itemView.getBottom(), paint);
 
-                    // Trash icon
+                    // Draw trash icon
                     Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_delete);
                     if (icon != null) {
                         int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
@@ -275,14 +304,11 @@ public class HomePage_Student extends Fragment {
             }
         };
 
-        // Attach swipe-to-delete to RecyclerView
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
     }
 
     private void showYesNoDialog(String title, String message, Runnable onYes, Runnable onCancel) {
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_yes_no, null); // your custom layout
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_yes_no, null);
 
         TextView tvTitle = dialogView.findViewById(R.id.tvDialogTitle);
         TextView tvMessage = dialogView.findViewById(R.id.tvDialogMessage);
@@ -296,29 +322,17 @@ public class HomePage_Student extends Fragment {
                 .setView(dialogView)
                 .create();
 
-        btnYes.setOnClickListener(v -> {
-            if (onYes != null) onYes.run();
-            dialog.dismiss();
-        });
-
-        btnNo.setOnClickListener(v -> {
-            if (onCancel != null) onCancel.run();
-            dialog.dismiss();
-        });
-
-        dialog.setOnCancelListener(d -> {
-            if (onCancel != null) onCancel.run();
-        });
+        btnYes.setOnClickListener(v -> { if (onYes != null) onYes.run(); dialog.dismiss(); });
+        btnNo.setOnClickListener(v -> { if (onCancel != null) onCancel.run(); dialog.dismiss(); });
+        dialog.setOnCancelListener(d -> { if (onCancel != null) onCancel.run(); });
 
         dialog.show();
     }
 
-
-    // 🔹 Load essays for current student from Firebase
+    // 🔹 Load essays from Firebase for the current student
     private void loadStudentEssays() {
         roomList.clear();
 
-        // Get logged-in studentId
         SharedPreferences prefs = requireContext().getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         String currentStudentId = prefs.getString("studentId", null);
 
@@ -327,19 +341,16 @@ public class HomePage_Student extends Fragment {
             return;
         }
 
-        // 🔹 Reference "essay" node in Firebase
         DatabaseReference essayRef = FirebaseDatabase.getInstance(
                 "https://smartessay-79d91-default-rtdb.firebaseio.com/"
         ).getReference("essay");
 
-        // 🔹 Firebase query: get essays where "student_id" equals currentStudentId
+        // 🔹 Query Firebase for essays of this student
         essayRef.orderByChild("student_id").equalTo(currentStudentId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         roomList.clear();
-
-                        // Loop through each essay found
                         for (DataSnapshot essaySnap : snapshot.getChildren()) {
                             String essayId = essaySnap.getKey();
                             String classroomId = essaySnap.child("classroom_id").getValue(String.class);
@@ -348,7 +359,6 @@ public class HomePage_Student extends Fragment {
                             Long createdAt = essaySnap.child("created_at").getValue(Long.class);
                             String status = essaySnap.child("status").getValue(String.class);
 
-                            // Build EssayInfo object
                             EssayInfo essayInfo = new EssayInfo(
                                     essayId,
                                     classroomId != null ? classroomId : "",
@@ -361,7 +371,10 @@ public class HomePage_Student extends Fragment {
                             roomList.add(essayInfo);
                         }
 
-                        // Refresh RecyclerView
+                        // 🔹 Save full list for search filtering
+                        fullRoomList.clear();
+                        fullRoomList.addAll(roomList);
+
                         roomAdapter.notifyDataSetChanged();
                     }
 
@@ -372,7 +385,7 @@ public class HomePage_Student extends Fragment {
                 });
     }
 
-    // 🔹 Essay model (represents data from Firebase)
+    // 🔹 Essay model
     public static class EssayInfo {
         private String essayId;
         private String classroomId;
@@ -401,7 +414,7 @@ public class HomePage_Student extends Fragment {
         public String getStatus() { return status; }
     }
 
-    // 🔹 RecyclerView adapter for showing essays
+    // 🔹 RecyclerView adapter
     public static class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
         private List<EssayInfo> roomList;
 
@@ -421,26 +434,20 @@ public class HomePage_Student extends Fragment {
         public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
             EssayInfo essay = roomList.get(position);
 
-            // Set classroom name
             holder.textRoomName.setText(essay.getClassroomName());
 
-            // Format creation date
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM dd, yyyy hh:mm a");
             String created = (essay.getCreatedAt() > 0) ? sdf.format(new java.util.Date(essay.getCreatedAt())) : "N/A";
             holder.textDateCreated.setText("created: " + created);
 
-            // Show essay status
             holder.textStatus.setText("status: " + essay.getStatus());
 
-            // 🔹 When student clicks essay
             holder.itemView.setOnClickListener(v -> {
-                // IF status is "pending"
                 if ("pending".equalsIgnoreCase(essay.getStatus())) {
                     Toast.makeText(v.getContext(),
                             "Your essay is still under review. Please wait for the teacher to post your score.",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    // ELSE → open EssayResult_Student to show result
                     Intent intent = new Intent(v.getContext(), EssayResult_Student.class);
                     intent.putExtra("essayId", essay.getEssayId());
                     v.getContext().startActivity(intent);
