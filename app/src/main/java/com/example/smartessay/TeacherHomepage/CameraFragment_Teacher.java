@@ -25,7 +25,7 @@ import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
-import com.example.smartessay.API.OpenAiAPI;
+import com.example.smartessay.API.Teacher_OpenAiAPI;
 import com.example.smartessay.API.PenToPrintAPI;
 import com.example.smartessay.R;
 
@@ -80,22 +80,35 @@ public class CameraFragment_Teacher extends Fragment {
                 return;
             }
 
-            OpenAiAPI.gradeEssay(
+            // 🔹 Parse rubric values
+            int content = parseEditText(contentPercentage);
+            int organization = parseEditText(organizationPercentage);
+            int grammar = parseEditText(grammarPercentage);
+            int language = parseEditText(languageStyle);
+
+            int total = content + organization + grammar + language;
+
+            // 🔹 Validation: must equal 100
+            if (total != 100) {
+                Toast.makeText(getContext(), "Rubrics must sum exactly to 100%", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // ✅ If valid, proceed with API
+            Teacher_OpenAiAPI.gradeEssay(
                     essay,
                     contentPercentage.getText().toString(),
                     organizationPercentage.getText().toString(),
                     grammarPercentage.getText().toString(),
                     languageStyle.getText().toString(),
                     otherTV.getText().toString(),
-                    new OpenAiAPI.GradeCallback() {
+                    new Teacher_OpenAiAPI.GradeCallback() {
                         @Override
-
                         public void onSuccess(String result) {
                             try {
                                 JSONObject jsonObject = new JSONObject(result);
                                 String rawText = jsonObject.getString("result");
 
-                                // Clean up escaped sequences
                                 String formatted = rawText
                                         .replace("\\n", "\n")
                                         .replace("\\t", "\t")
@@ -110,8 +123,6 @@ public class CameraFragment_Teacher extends Fragment {
                             }
                         }
 
-
-
                         @Override
                         public void onError(String error) {
                             scoresTV.setText("Error: " + error);
@@ -120,8 +131,20 @@ public class CameraFragment_Teacher extends Fragment {
             );
         });
 
+
         return view;
     }
+
+    private int parseEditText(EditText et) {
+        String text = et.getText().toString().trim();
+        if (text.isEmpty()) return 0;
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
 
     // Camera permission request
     private final ActivityResultLauncher<String> requestPermissionLauncher =
