@@ -372,7 +372,7 @@ public class Camera_Student extends AppCompatActivity {
                     PenToPrintAPI.sendImage(imageFile, ocrResultTextView, this::hideLoadingDialog);
 
                     // For testing → show sample essay text
-                    ocrResultTextView.setText(R.string.sample_essay);
+                    //ocrResultTextView.setText(R.string.sample_essay);
 
                 } else {
                     Toast.makeText(this, "Image cropping failed", Toast.LENGTH_SHORT).show();

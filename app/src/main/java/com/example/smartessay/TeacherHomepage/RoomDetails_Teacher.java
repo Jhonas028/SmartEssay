@@ -92,22 +92,15 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                 int position = viewHolder.getAdapterPosition();
                 EssayTeacher essay = essayList.get(position);
 
-                // Show confirm dialog before deleting
-                new AlertDialog.Builder(RoomDetails_Teacher.this)
-                        .setTitle("Delete Student")
-                        .setMessage("Are you sure you want to remove this student and their essay?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            deleteStudentEssay(essay, position);
-                        })
-                        .setNegativeButton("No", (dialog, which) -> {
-                            // Restore the item if cancel
-                            adapter.notifyItemChanged(position);
-                        })
-                        .setOnCancelListener(dialog -> {
-                            // Handles outside touch or back button
-                            adapter.notifyItemChanged(position); // restore item
-                        })
-                        .show();
+                // Use custom Yes/No dialog instead of default AlertDialog
+                showYesNoDialog(
+                        "Delete Student",
+                        "Are you sure you want to remove this student and their essay?",
+                        () -> deleteStudentEssay(essay, position)  // Yes action
+                );
+
+                // If user cancels or touches outside, restore the item
+                adapter.notifyItemChanged(position);
             }
 
             @Override
