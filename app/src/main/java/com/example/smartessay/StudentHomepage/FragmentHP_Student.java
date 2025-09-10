@@ -1,5 +1,7 @@
 package com.example.smartessay.StudentHomepage;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -13,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -83,8 +86,21 @@ public class FragmentHP_Student extends AppCompatActivity {
                 selectedFragment.setArguments(b);
 
             } else if (itemId == R.id.logoutStudent) {
-                Toast.makeText(this, "Logout clicked", Toast.LENGTH_SHORT).show();
-                // TODO: clear SharedPreferences + go back to LoginActivity
+                // ✅ Clear saved session
+                SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+                prefs.edit().clear().apply();
+
+                // ✅ Redirect to login
+                Intent intent = new Intent(FragmentHP_Student.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+                Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
+
+                // ✅ Finish current activity
+                finish();
+
+                return true;
             }
 
             if (selectedFragment != null) {

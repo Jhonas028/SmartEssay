@@ -50,39 +50,44 @@ public class CameraFragment_Teacher extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate UI layout
         View view = inflater.inflate(R.layout.camera_fragment_teacher, container, false);
+
+        // UI elements
         imageView = view.findViewById(R.id.imageView);
         ocrResultTextView = view.findViewById(R.id.ocr_result);
 
-        //Rubrics
+        // Rubrics inputs
         contentPercentage = view.findViewById(R.id.contentPercentage);
         organizationPercentage = view.findViewById(R.id.organizationPercentage);
         grammarPercentage = view.findViewById(R.id.grammarPercentage);
         languageStyle = view.findViewById(R.id.languageStyle);
         otherTV = view.findViewById(R.id.otherTV);
 
-        //Ai
+        // AI output
         scoresTV = view.findViewById(R.id.scoresTV);
         submitBtn = view.findViewById(R.id.submitBtn);
 
         addPageBtn = view.findViewById(R.id.addPageBtn);
 
+        // Click to add page → check camera permission
         addPageBtn.setOnClickListener(v -> checkPermissionAndLaunch());
 
-        // Launch cropper when root view clicked
+        // Click anywhere in view → also open camera
         view.setOnClickListener(v -> checkPermissionAndLaunch());
 
-        // Auto-launch on fragment start
+        // Auto-launch when fragment starts
         checkPermissionAndLaunch();
 
+        // Submit essay for grading
         submitBtn.setOnClickListener(v -> {
             String essay = ocrResultTextView.getText().toString();
-            if (essay.isEmpty()) {
+            if (essay.isEmpty()) { // IF OCR result is empty
                 Toast.makeText(getContext(), "No essay detected!", Toast.LENGTH_SHORT).show();
-                return;
+                return; // stop execution
             }
 
-            // 🔹 Parse rubric values
+            // Parse rubric values from EditText
             int content = parseEditText(contentPercentage);
             int organization = parseEditText(organizationPercentage);
             int grammar = parseEditText(grammarPercentage);
@@ -90,15 +95,16 @@ public class CameraFragment_Teacher extends Fragment {
 
             int total = content + organization + grammar + language;
 
-            // 🔹 Validation: must equal 100
+            // IF rubrics don’t add up to 100 → show error
             if (total != 100) {
                 Toast.makeText(getContext(), "Rubrics must sum exactly to 100%", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+            // Show loading screen while grading
             showLoadingDialog("Grading essay...");
 
-            // ✅ If valid, proceed with API
+            // Call the OpenAI grading API
             Teacher_OpenAiAPI.gradeEssay(
                     essay,
                     contentPercentage.getText().toString(),
@@ -110,15 +116,18 @@ public class CameraFragment_Teacher extends Fragment {
                         @Override
                         public void onSuccess(String result) {
                             try {
-                                hideLoadingDialog();
+                                hideLoadingDialog(); // hide spinner
+                                // Response is JSON → extract result
                                 JSONObject jsonObject = new JSONObject(result);
                                 String rawText = jsonObject.getString("result");
 
+                                // Replace escaped characters with actual formatting
                                 String formatted = rawText
                                         .replace("\\n", "\n")
                                         .replace("\\t", "\t")
                                         .trim();
 
+                                // Show formatted score
                                 scoresTV.setText(formatted);
                                 Log.i("resultOpenAI", formatted);
 
@@ -130,46 +139,45 @@ public class CameraFragment_Teacher extends Fragment {
 
                         @Override
                         public void onError(String error) {
-                            hideLoadingDialog(); // ✅ Hide on error
+                            hideLoadingDialog(); // Hide loading if error
                             scoresTV.setText("Error: " + error);
                         }
                     }
             );
         });
 
-
         return view;
     }
 
+    // Converts EditText input into an integer (if empty/invalid → 0)
     private int parseEditText(EditText et) {
         String text = et.getText().toString().trim();
-        if (text.isEmpty()) return 0;
+        if (text.isEmpty()) return 0; // IF no input → return 0
         try {
             return Integer.parseInt(text);
         } catch (NumberFormatException e) {
-            return 0;
+            return 0; // IF not a number → return 0
         }
     }
 
-
-    // Camera permission request
+    // Request camera permission
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
+                if (isGranted) { // IF user allows camera
                     launchCameraCropper();
-                } else {
+                } else { // ELSE user denies camera
                     Toast.makeText(getContext(), "Camera permission is required.", Toast.LENGTH_SHORT).show();
                 }
             });
 
-    // Crop image result
+    // Handle cropped image result
     private final ActivityResultLauncher<CropImageContractOptions> cropImageLauncher =
             registerForActivityResult(new CropImageContract(), result -> {
-                if (result.isSuccessful() && result.getUriContent() != null) {
+                if (result.isSuccessful() && result.getUriContent() != null) { // IF cropping success
                     Uri croppedUri = result.getUriContent();
                     imageView.setImageURI(croppedUri);
 
-                    // Save cropped image to a file
+                    // Save cropped image to cache
                     File imageFile = new File(requireContext().getCacheDir(), "cropped_image.jpg");
                     try (InputStream in = requireContext().getContentResolver().openInputStream(croppedUri);
                          OutputStream out = new FileOutputStream(imageFile)) {
@@ -183,14 +191,14 @@ public class CameraFragment_Teacher extends Fragment {
                         return;
                     }
 
-                    // Send image to OCR API
-                    //This is an API PLEASE DO NOT REMOVE THIS
+                    // Send image to OCR API → convert handwriting to text
                     PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
-                } else {
+                } else { // ELSE cropping failed
                     Toast.makeText(getContext(), "Image cropping failed", Toast.LENGTH_SHORT).show();
                 }
             });
 
+    // Check camera permission before launching cropper
     private void checkPermissionAndLaunch() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -200,10 +208,11 @@ public class CameraFragment_Teacher extends Fragment {
         }
     }
 
+    // Launch the camera cropper tool
     private void launchCameraCropper() {
         CropImageOptions options = new CropImageOptions();
-        options.imageSourceIncludeCamera = true;
-        options.imageSourceIncludeGallery = false;
+        options.imageSourceIncludeCamera = true;   // only camera
+        options.imageSourceIncludeGallery = false; // no gallery
         options.allowFlipping = true;
         options.allowRotation = true;
         options.fixAspectRatio = false;
@@ -217,6 +226,7 @@ public class CameraFragment_Teacher extends Fragment {
         cropImageLauncher.launch(contractOptions);
     }
 
+    // Show a loading dialog with a message
     private void showLoadingDialog(String message) {
         if (loadingDialog != null && loadingDialog.isShowing()) return;
 
@@ -232,13 +242,10 @@ public class CameraFragment_Teacher extends Fragment {
         loadingDialog.show();
     }
 
+    // Hide the loading dialog if visible
     private void hideLoadingDialog() {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
     }
-
-
-
-
 }
