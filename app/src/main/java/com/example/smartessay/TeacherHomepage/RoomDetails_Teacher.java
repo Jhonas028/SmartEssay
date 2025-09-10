@@ -71,20 +71,13 @@ public class RoomDetails_Teacher extends AppCompatActivity {
         rvStudents.setAdapter(adapter);
 
         btn_post_scoree.setOnClickListener(v -> {
-            // Create the AlertDialog
-            new AlertDialog.Builder(this)
-                    .setTitle("Confirm Post")
-                    .setMessage("Are you sure you want to post the scores of students?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        // User confirmed, post scores
-                        postScoresToFirebase();
-                    })
-                    .setNegativeButton("No", (dialog, which) -> {
-                        // User canceled, dismiss dialog
-                        dialog.dismiss();
-                    })
-                    .show();
+            showYesNoDialog(
+                    "Confirm Post",
+                    "Are you sure you want to post the scores of students?",
+                    this::postScoresToFirebase
+            );
         });
+
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
@@ -395,6 +388,36 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Error updating essays: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void showYesNoDialog(String title, String message, Runnable onYes) {
+        // Inflate the custom layout
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_yes_no, null); // make sure this XML exists
+
+        // Find views
+        TextView tvTitle = dialogView.findViewById(R.id.tvDialogTitle);
+        TextView tvMessage = dialogView.findViewById(R.id.tvDialogMessage);
+        Button btnYes = dialogView.findViewById(R.id.btnYes);
+        Button btnNo = dialogView.findViewById(R.id.btnNo);
+
+        // Set title and message
+        tvTitle.setText(title);
+        tvMessage.setText(message);
+
+        // Create dialog
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create();
+
+        // Button actions
+        btnNo.setOnClickListener(v -> dialog.dismiss());
+        btnYes.setOnClickListener(v -> {
+            onYes.run();  // execute the action
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
 

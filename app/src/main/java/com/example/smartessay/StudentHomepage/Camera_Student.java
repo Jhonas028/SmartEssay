@@ -126,16 +126,20 @@ public class Camera_Student extends AppCompatActivity {
                             }
                             // ✅ Else → show confirmation dialog before submitting
                             else {
-                                new androidx.appcompat.app.AlertDialog.Builder(Camera_Student.this)
-                                        .setTitle("Submit Essay")
-                                        .setMessage("Are you sure you want to submit this essay? You can only submit once.")
-                                        .setPositiveButton("Yes", (dialog, which) -> {
+                                showYesNoDialog(
+                                        "Submit Essay",
+                                        "Are you sure you want to submit this essay? You can only submit once.",
+                                        () -> {
+                                            // ✅ User pressed Yes
                                             showLoadingDialog("Submitting essay...");
-                                            // Grade essay using AI before uploading
                                             getRubricsFromTeacherAndGradeEssay(classroomId, essayText);
-                                        })
-                                        .setNegativeButton("Cancel", null)
-                                        .show();
+                                        },
+                                        () -> {
+                                            // ❌ User pressed No / canceled → just dismiss
+                                            Toast.makeText(Camera_Student.this, "Submission canceled", Toast.LENGTH_SHORT).show();
+                                        }
+                                );
+
                             }
                         }
 
@@ -155,6 +159,40 @@ public class Camera_Student extends AppCompatActivity {
             ocrResultTextView.setText("");
         });
     }
+
+    private void showYesNoDialog(String title, String message, Runnable onYes, Runnable onCancel) {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_yes_no, null); // your custom layout XML
+
+        TextView tvTitle = dialogView.findViewById(R.id.tvDialogTitle);
+        TextView tvMessage = dialogView.findViewById(R.id.tvDialogMessage);
+        Button btnYes = dialogView.findViewById(R.id.btnYes);
+        Button btnNo = dialogView.findViewById(R.id.btnNo);
+
+        tvTitle.setText(title);
+        tvMessage.setText(message);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create();
+
+        btnYes.setOnClickListener(v -> {
+            if (onYes != null) onYes.run();
+            dialog.dismiss();
+        });
+
+        btnNo.setOnClickListener(v -> {
+            if (onCancel != null) onCancel.run();
+            dialog.dismiss();
+        });
+
+        dialog.setOnCancelListener(d -> {
+            if (onCancel != null) onCancel.run();
+        });
+
+        dialog.show();
+    }
+
 
     /**
      * Upload essay to Firebase Database after grading.
@@ -334,7 +372,7 @@ public class Camera_Student extends AppCompatActivity {
                     PenToPrintAPI.sendImage(imageFile, ocrResultTextView, this::hideLoadingDialog);
 
                     // For testing → show sample essay text
-                    //ocrResultTextView.setText(R.string.sample_essay);
+                    ocrResultTextView.setText(R.string.sample_essay);
 
                 } else {
                     Toast.makeText(this, "Image cropping failed", Toast.LENGTH_SHORT).show();

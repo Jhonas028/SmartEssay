@@ -185,18 +185,20 @@ public class HomePage_Student extends Fragment {
                 EssayInfo essayToDelete = roomList.get(position);
 
                 // Confirm dialog
-                new AlertDialog.Builder(requireContext())
-                        .setTitle("Delete Essay")
-                        .setMessage("Are you sure you want to delete this essay?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
+                // Confirm deletion using custom dialog
+                showYesNoDialog(
+                        "Delete Essay",
+                        "Are you sure you want to delete this essay?",
+                        () -> {
+                            // ✅ Yes → delete essay
                             DatabaseReference rootRef = FirebaseDatabase.getInstance(
                                     "https://smartessay-79d91-default-rtdb.firebaseio.com/"
                             ).getReference();
 
-                            // 🔹 First delete essay from "essay" node
+                            // Delete essay from "essay" node
                             rootRef.child("essay").child(essayToDelete.getEssayId()).removeValue()
                                     .addOnSuccessListener(aVoid -> {
-                                        // 🔹 Then remove student from classroom_members
+                                        // Remove student from classroom_members
                                         rootRef.child("classrooms")
                                                 .child(essayToDelete.getClassroomId())
                                                 .child("classroom_members")
@@ -212,19 +214,16 @@ public class HomePage_Student extends Fragment {
                                                 });
                                     })
                                     .addOnFailureListener(e -> {
-                                        // Essay delete failed → restore swipe
-                                        roomAdapter.notifyItemChanged(position);
+                                        roomAdapter.notifyItemChanged(position); // restore swipe
                                         Toast.makeText(requireContext(), "Delete failed", Toast.LENGTH_SHORT).show();
                                     });
-                        })
-                        .setNegativeButton("No", (dialog, which) -> {
-                            roomAdapter.notifyItemChanged(position); // cancel swipe
-                            dialog.dismiss();
-                        })
-                        .setOnCancelListener(dialog -> {
-                            roomAdapter.notifyItemChanged(position); // restore item
-                        })
-                        .show();
+                        },
+                        () -> {
+                            // ❌ No / canceled → restore swipe
+                            roomAdapter.notifyItemChanged(position);
+                        }
+                );
+
             }
 
             // 🔹 Draw red background + trash icon while swiping left
@@ -280,6 +279,40 @@ public class HomePage_Student extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
+
+    private void showYesNoDialog(String title, String message, Runnable onYes, Runnable onCancel) {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_yes_no, null); // your custom layout
+
+        TextView tvTitle = dialogView.findViewById(R.id.tvDialogTitle);
+        TextView tvMessage = dialogView.findViewById(R.id.tvDialogMessage);
+        Button btnYes = dialogView.findViewById(R.id.btnYes);
+        Button btnNo = dialogView.findViewById(R.id.btnNo);
+
+        tvTitle.setText(title);
+        tvMessage.setText(message);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .create();
+
+        btnYes.setOnClickListener(v -> {
+            if (onYes != null) onYes.run();
+            dialog.dismiss();
+        });
+
+        btnNo.setOnClickListener(v -> {
+            if (onCancel != null) onCancel.run();
+            dialog.dismiss();
+        });
+
+        dialog.setOnCancelListener(d -> {
+            if (onCancel != null) onCancel.run();
+        });
+
+        dialog.show();
+    }
+
 
     // 🔹 Load essays for current student from Firebase
     private void loadStudentEssays() {

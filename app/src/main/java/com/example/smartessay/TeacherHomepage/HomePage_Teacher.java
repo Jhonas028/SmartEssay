@@ -109,6 +109,40 @@ public class HomePage_Teacher extends Fragment {
         loadRoomsFromFirebase();
     }
 
+    private void showYesNoDialog(String title, String message, Runnable onYes, Runnable onCancel) {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_yes_no, null);
+
+        TextView tvTitle = dialogView.findViewById(R.id.tvDialogTitle);
+        TextView tvMessage = dialogView.findViewById(R.id.tvDialogMessage);
+        Button btnYes = dialogView.findViewById(R.id.btnYes);
+        Button btnNo = dialogView.findViewById(R.id.btnNo);
+
+        tvTitle.setText(title);
+        tvMessage.setText(message);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .create();
+
+        btnNo.setOnClickListener(v -> {
+            if (onCancel != null) onCancel.run();
+            dialog.dismiss();
+        });
+
+        btnYes.setOnClickListener(v -> {
+            onYes.run();
+            dialog.dismiss();
+        });
+
+        dialog.setOnCancelListener(d -> {
+            if (onCancel != null) onCancel.run();
+        });
+
+        dialog.show();
+    }
+
+
     public void swipeDelete(){
         // Swipe left to delete a room
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -134,16 +168,17 @@ public class HomePage_Teacher extends Fragment {
                 Room roomToDelete = roomList.get(position);
 
                 // Confirm deletion
-                new AlertDialog.Builder(requireContext())
-                        .setTitle("Delete Room")
-                        .setMessage("Are you sure you want to delete this room?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            // Remove room from Firebase
+                showYesNoDialog(
+                        "Delete Room",
+                        "Are you sure you want to delete this room?",
+                        () -> {
+                            // ✅ Yes → delete room
                             classroomsRef.child(roomToDelete.getRoomId()).removeValue()
                                     .addOnSuccessListener(aVoid -> {
                                         if (position < roomList.size()) {
                                             roomList.remove(position);
                                             roomAdapter.notifyItemRemoved(position);
+                                            loadRoomsFromFirebase();
                                             Toast.makeText(requireContext(), "Room deleted", Toast.LENGTH_SHORT).show();
                                         }
                                     })
@@ -151,16 +186,13 @@ public class HomePage_Teacher extends Fragment {
                                         roomAdapter.notifyItemChanged(position);
                                         Toast.makeText(requireContext(), "Delete failed", Toast.LENGTH_SHORT).show();
                                     });
-                        })
-                        .setNegativeButton("No", (dialog, which) -> {
+                        },
+                        () -> {
+                            // ❌ No or canceled → restore item visually
                             roomAdapter.notifyItemChanged(position);
-                            dialog.dismiss();
-                        })
-                        .setOnCancelListener(dialog -> {
-                            // Handles outside touch or back button
-                            roomAdapter.notifyItemChanged(position);
-                        })
-                        .show();
+                        }
+                );
+
             }
 
             @Override
