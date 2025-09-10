@@ -44,7 +44,7 @@ public class Camera_Student extends AppCompatActivity {
 
     private ImageView imageView;
     private TextView ocrResultTextView;
-    private Button submitBtn, cancelBtn;
+    private Button submitBtn, cancelBtn, addPageBtn;
 
     private String studentId;
     private String classroomId;
@@ -64,6 +64,10 @@ public class Camera_Student extends AppCompatActivity {
         // ✅ Get student and classroom info passed from previous screen
         studentId = getIntent().getStringExtra("studentId");
         classroomId = getIntent().getStringExtra("classroomId");
+
+
+        addPageBtn = findViewById(R.id.addPageBtn);
+        addPageBtn.setOnClickListener(v -> checkPermissionAndLaunch());
 
         // If missing studentId or classroomId, stop activity
         if (studentId == null || classroomId == null) {
@@ -386,7 +390,6 @@ public class Camera_Student extends AppCompatActivity {
                                 essay,
                                 contentIdeas,
                                 organizationStructure,
-                                developmentSupport,
                                 grammarMechanics,
                                 languageStyle,
                                 notes,

@@ -46,6 +46,16 @@
                 android:adjustViewBounds="true" />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/addPageBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Page"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/text_title_yellow"
+            android:textColor="@color/back_blue"
+            android:textStyle="bold"/>
+
         <!-- ================= OCR RESULT ================= -->
         <TextView
             android:layout_width="wrap_content"
@@ -54,6 +64,7 @@
             android:textColor="@color/back_blue"
             android:textSize="22sp"
             android:textStyle="bold"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp" />
 
         <LinearLayout
@@ -89,7 +100,7 @@
                 android:layout_weight="1"
                 android:text="Submit"
                 android:backgroundTint="@color/button_yellow"
-                android:textColor="@color/black"
+                android:textColor="@color/back_blue"
                 android:textStyle="bold"
                 android:layout_marginEnd="8dp" />
 

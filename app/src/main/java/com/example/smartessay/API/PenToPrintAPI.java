@@ -59,7 +59,11 @@ public class PenToPrintAPI {
                                 .replaceAll("\\n+", " ")
                                 .replaceAll("\\s{2,}", " ")
                                 .trim();
-                        resultView.post(() -> resultView.setText(value));
+                        resultView.post(() -> {
+                            String oldText = resultView.getText().toString();
+                            String newText = oldText.isEmpty() ? value : oldText + "\n\n" + value;
+                            resultView.setText(newText);
+                        });
                     } else {
                         resultView.post(() -> resultView.setText("No 'value' in response: " + result));
                     }

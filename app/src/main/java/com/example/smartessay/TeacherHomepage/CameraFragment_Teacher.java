@@ -42,9 +42,9 @@ public class CameraFragment_Teacher extends Fragment {
 
     private ImageView imageView;
     private TextView ocrResultTextView,scoresTV;
-    EditText contentPercentage,organizationPercentage,developmentPercentage,grammarPercentage,criticalPercentage,otherTV;
+    EditText contentPercentage,organizationPercentage,grammarPercentage,languageStyle,otherTV;
 
-    Button submitBtn;
+    Button submitBtn,addPageBtn;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,15 +55,17 @@ public class CameraFragment_Teacher extends Fragment {
         //Rubrics
         contentPercentage = view.findViewById(R.id.contentPercentage);
         organizationPercentage = view.findViewById(R.id.organizationPercentage);
-        developmentPercentage = view.findViewById(R.id.developmentPercentage);
         grammarPercentage = view.findViewById(R.id.grammarPercentage);
-        criticalPercentage = view.findViewById(R.id.criticalPercentage);
+        languageStyle = view.findViewById(R.id.languageStyle);
         otherTV = view.findViewById(R.id.otherTV);
 
         //Ai
         scoresTV = view.findViewById(R.id.scoresTV);
         submitBtn = view.findViewById(R.id.submitBtn);
 
+        addPageBtn = view.findViewById(R.id.addPageBtn);
+
+        addPageBtn.setOnClickListener(v -> checkPermissionAndLaunch());
 
         // Launch cropper when root view clicked
         view.setOnClickListener(v -> checkPermissionAndLaunch());
@@ -82,9 +84,8 @@ public class CameraFragment_Teacher extends Fragment {
                     essay,
                     contentPercentage.getText().toString(),
                     organizationPercentage.getText().toString(),
-                    developmentPercentage.getText().toString(),
                     grammarPercentage.getText().toString(),
-                    criticalPercentage.getText().toString(),
+                    languageStyle.getText().toString(),
                     otherTV.getText().toString(),
                     new OpenAiAPI.GradeCallback() {
                         @Override

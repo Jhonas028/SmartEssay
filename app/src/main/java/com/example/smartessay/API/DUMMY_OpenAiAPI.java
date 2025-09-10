@@ -39,7 +39,7 @@ public class DUMMY_OpenAiAPI {
     private static final MediaType JSON = MediaType.parse("application/json");
 
     public static void gradeEssay(String essayText,
-                                  String content, String organization, String development,
+                                  String content, String organization,
                                   String grammar, String critical, String others,
                                   GradeCallback callback) {
 
@@ -61,7 +61,6 @@ public class DUMMY_OpenAiAPI {
                 "Rubric Percentages:\n" +
                 "Content: " + content + "%\n" +
                 "Organization: " + organization + "%\n" +
-                "Development: " + development + "%\n" +
                 "Grammar: " + grammar + "%\n" +
                 "Critical Thinking: " + critical + "%\n" +
                 "Teacher Notes: " + others;

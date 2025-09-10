@@ -43,7 +43,7 @@ public class OpenAiAPI {
     private static final MediaType JSON = MediaType.parse("application/json");
 
     public static void gradeEssay(String essayText,
-                                  String content, String organization, String development,
+                                  String content, String organization,
                                   String grammar, String critical, String others,
                                   GradeCallback callback) {
 
@@ -51,23 +51,25 @@ public class OpenAiAPI {
         String prompt = "Grade the following essay based on these rubrics. " +
                 "Provide the result EXACTLY in the following format with proper spacing and indentation:\n\n" +
                 "Score: [overall_score]%\n\n" +
+
                 "Content / Ideas, [score]\n" +
                 "\t* [feedback]\n" +
+
                 "Organization / Structure, [score]\n" +
                 "\t* [feedback]\n" +
-                "Development & Support, [score]\n" +
-                "\t* [feedback]\n" +
+
                 "Language Use / Style, [score]\n" +
                 "\t* [feedback]\n" +
+
                 "Grammar, Mechanics, and Formatting, [score]\n" +
                 "\t* [feedback]\n\n" +
+
                 "Essay:\n" + essayText + "\n\n" +
                 "Rubric Percentages:\n" +
                 "Content: " + content + "%\n" +
                 "Organization: " + organization + "%\n" +
-                "Development: " + development + "%\n" +
+                "Language Use / Style" + critical + "%\n" +
                 "Grammar: " + grammar + "%\n" +
-                "Critical Thinking: " + critical + "%\n" +
                 "Teacher Notes: " + others;
 
 
