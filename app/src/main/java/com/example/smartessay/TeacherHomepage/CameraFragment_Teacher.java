@@ -192,7 +192,9 @@ public class CameraFragment_Teacher extends Fragment {
                     }
 
                     // Send image to OCR API → convert handwriting to text
-                    PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
+                    showLoadingDialog("Analyzing handwriting...");
+
+                    PenToPrintAPI.sendImage(imageFile, ocrResultTextView, this::hideLoadingDialog);
                 } else { // ELSE cropping failed
                     Toast.makeText(getContext(), "Image cropping failed", Toast.LENGTH_SHORT).show();
                 }

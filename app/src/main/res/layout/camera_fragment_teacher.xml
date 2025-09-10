@@ -43,12 +43,13 @@
                 <ImageView
                     android:id="@+id/imageView"
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
+                    android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:contentDescription="Cropped Image"
-                    android:scaleType="centerCrop"
-                    android:clipToOutline="true"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
                     android:elevation="4dp" />
+
             </LinearLayout>
 
             <!-- ================= OCR RESULT ================= -->

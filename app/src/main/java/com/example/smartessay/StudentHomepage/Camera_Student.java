@@ -327,8 +327,11 @@ public class Camera_Student extends AppCompatActivity {
                         return;
                     }
 
-                    // TODO: Send image to OCR API
-                    PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
+                    // ✅ Show loading while OCR runs
+                    showLoadingDialog("Analyzing handwriting...");
+
+                    // ✅ Send image to OCR API
+                    PenToPrintAPI.sendImage(imageFile, ocrResultTextView, this::hideLoadingDialog);
 
                     // For testing → show sample essay text
                     //ocrResultTextView.setText(R.string.sample_essay);
