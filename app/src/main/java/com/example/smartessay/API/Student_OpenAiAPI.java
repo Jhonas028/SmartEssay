@@ -19,7 +19,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class DUMMY_OpenAiAPI {
+public class Student_OpenAiAPI {
 
     public interface GradeCallback {
         void onSuccess(String result);
@@ -27,7 +27,7 @@ public class DUMMY_OpenAiAPI {
     }
 
     private static final String API_URL = "https://open-ai21.p.rapidapi.com/conversationllama";
-    private static final String API_KEY = "201fcac069msh9aaef522fadd289p1863f9jsn3d4ac7d1a1f7";
+    private static final String API_KEY = "5d6b0c84c3msh8935cfeb2995b5fp15496djsnac76059af8ce";
     private static final String API_HOST = "open-ai21.p.rapidapi.com";
 
     private static final OkHttpClient client = new OkHttpClient.Builder()
@@ -43,21 +43,29 @@ public class DUMMY_OpenAiAPI {
                                   String grammar, String critical, String others,
                                   GradeCallback callback) {
 
-        // ✅ Prepare prompt like before
-        String prompt = "Grade the following essay based on these rubrics. " +
-                "Provide the result EXACTLY in the following format with proper spacing and indentation:\n\n" +
-                "Score: [overall_score]%\n\n" +
-                "Content / Ideas, [score]\n" +
-                "\t* [feedback]\n" +
-                "Organization / Structure, [score]\n" +
-                "\t* [feedback]\n" +
-                "Development & Support, [score]\n" +
-                "\t* [feedback]\n" +
-                "Language Use / Style, [score]\n" +
-                "\t* [feedback]\n" +
-                "Grammar, Mechanics, and Formatting, [score]\n" +
-                "\t* [feedback]\n\n" +
-                "Essay:\n" + essayText + "\n\n" +
+        String prompt = "Grade the following essay ONLY on the rubrics provided by the teacher. " +
+                "Do NOT generate feedback for rubrics that are blank or not included.\n\n" +
+                "Provide the result EXACTLY in this format:\n\n" +
+                "Score: [overall_score]%\n\n";
+
+        // Dynamically build sections
+        if (!content.isEmpty()) {
+            prompt += "Content / Ideas, [score]\n\t* [feedback]\n";
+        }
+        if (!organization.isEmpty()) {
+            prompt += "Organization / Structure, [score]\n\t* [feedback]\n";
+        }
+        if (!grammar.isEmpty()) {
+            prompt += "Grammar, Mechanics, and Formatting, [score]\n\t* [feedback]\n";
+        }
+        if (!critical.isEmpty()) {
+            prompt += "Critical Thinking, [score]\n\t* [feedback]\n";
+        }
+        if (!others.isEmpty()) {
+            prompt += "Teacher Notes: " + others + "\n";
+        }
+
+        prompt += "\nEssay:\n" + essayText + "\n\n" +
                 "Rubric Percentages:\n" +
                 "Content: " + content + "%\n" +
                 "Organization: " + organization + "%\n" +

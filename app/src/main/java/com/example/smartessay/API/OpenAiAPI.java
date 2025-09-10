@@ -47,29 +47,34 @@ public class OpenAiAPI {
                                   String grammar, String critical, String others,
                                   GradeCallback callback) {
 
-        // Prepare prompt
-        String prompt = "Grade the following essay based on these rubrics. " +
-                "Provide the result EXACTLY in the following format with proper spacing and indentation:\n\n" +
-                "Score: [overall_score]%\n\n" +
+        String prompt = "Grade the following essay ONLY on the rubrics provided by the teacher. " +
+                "Do NOT generate feedback for rubrics that are blank or not included.\n\n" +
+                "Provide the result EXACTLY in this format:\n\n" +
+                "Score: [overall_score]%\n\n";
 
-                "Content / Ideas, [score]\n" +
-                "\t* [feedback]\n" +
+        // Dynamically build sections
+        if (!content.isEmpty()) {
+            prompt += "Content / Ideas, [score]\n\t* [feedback]\n";
+        }
+        if (!organization.isEmpty()) {
+            prompt += "Organization / Structure, [score]\n\t* [feedback]\n";
+        }
+        if (!grammar.isEmpty()) {
+            prompt += "Grammar, Mechanics, and Formatting, [score]\n\t* [feedback]\n";
+        }
+        if (!critical.isEmpty()) {
+            prompt += "Critical Thinking, [score]\n\t* [feedback]\n";
+        }
+        if (!others.isEmpty()) {
+            prompt += "Teacher Notes: " + others + "\n";
+        }
 
-                "Organization / Structure, [score]\n" +
-                "\t* [feedback]\n" +
-
-                "Language Use / Style, [score]\n" +
-                "\t* [feedback]\n" +
-
-                "Grammar, Mechanics, and Formatting, [score]\n" +
-                "\t* [feedback]\n\n" +
-
-                "Essay:\n" + essayText + "\n\n" +
+        prompt += "\nEssay:\n" + essayText + "\n\n" +
                 "Rubric Percentages:\n" +
                 "Content: " + content + "%\n" +
                 "Organization: " + organization + "%\n" +
-                "Language Use / Style" + critical + "%\n" +
                 "Grammar: " + grammar + "%\n" +
+                "Critical Thinking: " + critical + "%\n" +
                 "Teacher Notes: " + others;
 
 

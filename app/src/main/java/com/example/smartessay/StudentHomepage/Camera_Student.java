@@ -24,7 +24,8 @@ import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
-import com.example.smartessay.API.DUMMY_OpenAiAPI;
+import com.example.smartessay.API.PenToPrintAPI;
+import com.example.smartessay.API.Student_OpenAiAPI;
 import com.example.smartessay.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -327,10 +328,10 @@ public class Camera_Student extends AppCompatActivity {
                     }
 
                     // TODO: Send image to OCR API
-                    //PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
+                    PenToPrintAPI.sendImage(imageFile, ocrResultTextView);
 
                     // For testing → show sample essay text
-                    ocrResultTextView.setText(R.string.sample_essay);
+                    //ocrResultTextView.setText(R.string.sample_essay);
 
                 } else {
                     Toast.makeText(this, "Image cropping failed", Toast.LENGTH_SHORT).show();
@@ -386,14 +387,14 @@ public class Camera_Student extends AppCompatActivity {
                         String notes = snapshot.child("Notes").getValue(String.class);
 
                         // Send essay + rubrics to dummy AI API for grading
-                        DUMMY_OpenAiAPI.gradeEssay(
+                        Student_OpenAiAPI.gradeEssay(
                                 essay,
                                 contentIdeas,
                                 organizationStructure,
                                 grammarMechanics,
                                 languageStyle,
                                 notes,
-                                new DUMMY_OpenAiAPI.GradeCallback() {
+                                new Student_OpenAiAPI.GradeCallback() {
                                     @Override
                                     public void onSuccess(String result) {
                                         Log.i("AI_RESULT", "Grading result: " + result);
