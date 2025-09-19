@@ -29,8 +29,14 @@ public class Teacher_OpenAiAPI {
     }
 
     // API endpoint, key, and host (needed by RapidAPI)
+
+    /*JhonasGmail
     private static final String API_URL = "https://open-ai21.p.rapidapi.com/conversationllama";
     private static final String API_KEY = "5d6b0c84c3msh8935cfeb2995b5fp15496djsnac76059af8ce";
+    private static final String API_HOST = "open-ai21.p.rapidapi.com";*/
+
+    private static final String API_URL = "https://open-ai21.p.rapidapi.com/conversationllama";
+    private static final String API_KEY = "f44f1619fcmsh442a09b23a4c5fcp1950b5jsn98559570e89b";
     private static final String API_HOST = "open-ai21.p.rapidapi.com";
 
     // Default HTTP client

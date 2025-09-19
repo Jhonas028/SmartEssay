@@ -30,10 +30,20 @@ public class PenToPrintAPI {
             .build();
 
     // API endpoint (where the request will be sent)
-    private static final String API_URL = "https://pen-to-print-handwriting-ocr.p.rapidapi.com/recognize/";
+    //jhonasgmail
+    /*private static final String API_URL = "https://pen-to-print-handwriting-ocr.p.rapidapi.com/recognize/";
 
     // Your API key (used to access the OCR service)
     private static final String API_KEY = "5d6b0c84c3msh8935cfeb2995b5fp15496djsnac76059af8ce";
+
+    // API host name (required by RapidAPI)
+    private static final String API_HOST = "pen-to-print-handwriting-ocr.p.rapidapi.com";*/
+
+    //anagmail
+    private static final String API_URL = "https://pen-to-print-handwriting-ocr.p.rapidapi.com/recognize/";
+
+    // Your API key (used to access the OCR service)
+    private static final String API_KEY = "c6ec12d84dmshbd0aeebc6972b1cp17c901jsnf23c8f080543";
 
     // API host name (required by RapidAPI)
     private static final String API_HOST = "pen-to-print-handwriting-ocr.p.rapidapi.com";
