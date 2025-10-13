@@ -104,6 +104,11 @@ public class EssayDetails_Teacher extends AppCompatActivity {
             if (!newScore.isEmpty()) {
                 try {
                     long scoreValue = Long.parseLong(newScore); // convert to number
+
+                    if (scoreValue < 0 || scoreValue > 100) {
+                        Toast.makeText(getApplicationContext(), "Score must be between 0 and 100", Toast.LENGTH_SHORT).show();
+                        return; // stop saving
+                    }
                     dbRef.orderByChild("student_id").equalTo(studentId)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -112,6 +117,7 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                                         String essayRoomId = essaySnap.child("classroom_id").getValue(String.class);
                                         if (roomId.equals(essayRoomId)) {
                                             essaySnap.getRef().child("score").setValue(scoreValue); // store as Long
+                                            Toast.makeText(getApplicationContext(), "Save Successfully", Toast.LENGTH_SHORT).show();
                                             break;
                                         }
                                     }
