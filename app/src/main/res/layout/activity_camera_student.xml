@@ -74,13 +74,24 @@
             android:padding="8dp"
             android:layout_marginBottom="16dp">
 
-            <TextView
+            <EditText
                 android:id="@+id/ocr_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:padding="8dp" />
+                android:background="@android:color/transparent"
+                android:hint="Your essay will appear here..."
+                android:padding="8dp"
+                android:inputType="textMultiLine|textCapSentences"
+                android:gravity="top"
+                android:minLines="6"
+                android:maxLines="20"
+                android:overScrollMode="always"
+                android:scrollbars="vertical"
+                android:importantForAutofill="no"
+                android:imeOptions="flagNoExtractUi"
+                android:longClickable="false"/>
         </LinearLayout>
 
         <!-- ================= BUTTONS ================= -->

@@ -33,6 +33,7 @@
             android:exported="false" />
         <activity
             android:name=".StudentHomepage.Camera_Student"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".CreatingAccounts.OTPverifyTeacher"
