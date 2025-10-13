@@ -54,15 +54,18 @@
                 android:gravity="center"
                 android:padding="10dp"
                 android:background="@drawable/roundall_white_blueside">
-                <TextView
+
+                <EditText
                     android:id="@+id/tvScore"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Score: "
+                    android:inputType="number"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                      />
+
             </LinearLayout>
 
             <!--Status-->
@@ -132,6 +135,16 @@
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/text_title_yellow"
+                android:textColor="@color/back_blue"
+                android:padding="12dp"
+                android:textStyle="bold"/>
 
         </LinearLayout>
     </ScrollView>

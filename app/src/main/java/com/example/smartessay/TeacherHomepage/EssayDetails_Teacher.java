@@ -1,11 +1,15 @@
 package com.example.smartessay.TeacherHomepage;
 
+import static java.security.AccessController.getContext;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -20,7 +24,11 @@ import com.google.firebase.database.ValueEventListener;
 
 public class EssayDetails_Teacher extends AppCompatActivity {
 
-    private TextView tvConvertedText, tvEssayFeedback, tvScore, tvStatus;
+    private TextView tvConvertedText, tvEssayFeedback, tvStatus;
+    private EditText tvScore;
+
+    Button btnSave;
+    DatabaseReference dbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +42,13 @@ public class EssayDetails_Teacher extends AppCompatActivity {
         tvScore = findViewById(R.id.tvScore);
         tvStatus = findViewById(R.id.tvStatus);
 
+        btnSave = findViewById(R.id.btnSave);
+
         // Get data passed from previous activity
         String studentId = getIntent().getStringExtra("studentId");
         String roomId = getIntent().getStringExtra("roomId");
 
-        DatabaseReference dbRef = FirebaseDatabase.getInstance()
+        dbRef = FirebaseDatabase.getInstance()
                 .getReference("essay");
 
         // ✅ Query essays by studentId + roomId
@@ -82,7 +92,41 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                         Log.e("EssayDetails", "Database error: " + error.getMessage());
                     }
                 });
+
+        saveChanges(studentId,roomId);
     }
+
+    // Inside EssayResult_Student.java
+    private void saveChanges(String studentId, String roomId) {
+        btnSave.setOnClickListener(v -> {
+            String newScore = tvScore.getText().toString().replace("Score: ", "").trim();
+
+            if (!newScore.isEmpty()) {
+                try {
+                    long scoreValue = Long.parseLong(newScore); // convert to number
+                    dbRef.orderByChild("student_id").equalTo(studentId)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                                        String essayRoomId = essaySnap.child("classroom_id").getValue(String.class);
+                                        if (roomId.equals(essayRoomId)) {
+                                            essaySnap.getRef().child("score").setValue(scoreValue); // store as Long
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError error) { }
+                            });
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getApplicationContext(), "Invalid score format", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 
 
 
