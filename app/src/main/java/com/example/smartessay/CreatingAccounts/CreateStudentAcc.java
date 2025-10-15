@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smartessay.API.EmailAPI;
+import com.example.smartessay.API.SendBulkEmail;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.textfield.TextInputLayout;
@@ -19,6 +21,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -81,7 +85,7 @@ public class CreateStudentAcc extends AppCompatActivity {
         signupBTN.setOnClickListener(v -> {
             // NOTE: This code currently uses "if (true)" → it will always run signup
             // Normally, validateInputs() should be here to check form correctness
-            if (true) {
+            if (validateInputs()) {
                 email = emailET.getText().toString().trim();
                 checkEmailExists(account, email); // check Firebase if email already exists
             } else {
@@ -143,6 +147,14 @@ public class CreateStudentAcc extends AppCompatActivity {
     private void registerStudent(String account) {
         otp = new OTPgenerator(); // create OTP object
         String myOTP = otp.generateOTP(); // generate OTP
+
+        try {
+            SendBulkEmail.sendOtpEmail(myOTP, emailET.getText().toString().trim());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SendBulkEmail", "testAPI", e);
+            Toast.makeText(this, "Failed to send OTP email.", Toast.LENGTH_SHORT).show();
+        }
 
         // Get form input values
         fname = fnameET.getText().toString().trim();

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smartessay.API.SendBulkEmail;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.textfield.TextInputLayout;
@@ -19,6 +20,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -87,7 +90,7 @@ public class CreateTeacherAcc extends AppCompatActivity {
             // If valid, get the email and check if it already exists in Firebase
             email = emailET.getText().toString().trim();
             checkEmailExists(account, email);*/
-            if (true) {
+            if (validateInputs()) {
                 email = emailET.getText().toString().trim();
                 checkEmailExists(account, email); // check Firebase if email already exists
             } else {
@@ -151,6 +154,14 @@ public class CreateTeacherAcc extends AppCompatActivity {
         otp = new OTPgenerator(); // create OTP object
         String myOTP = otp.generateOTP(); // generate OTP
 
+        try {
+            SendBulkEmail.sendOtpEmail(myOTP, emailET.getText().toString().trim());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SendBulkEmail", "testAPI", e);
+            Toast.makeText(this, "Failed to send OTP email.", Toast.LENGTH_SHORT).show();
+        }
+
         // Get input values
         fname = fnameET.getText().toString().trim();
         lname = lnameET.getText().toString().trim();
@@ -213,7 +224,7 @@ public class CreateTeacherAcc extends AppCompatActivity {
         boolean isValid = true;
 
         // Validate each field
-        isValid &= setError(emailTV, email.isEmpty() || !email.matches("^[a-z]+\\.\\d{1,10}@sanpablo\\.sti\\.edu\\.ph$"), "Enter a valid STI San Pablo email.");
+        isValid &= setError(emailTV, email.isEmpty() || !email.matches("^[a-z]+\\.[a-z]+@sanpablo\\.sti\\.edu\\.ph$"), "Enter a valid STI San Pablo email.");
         isValid &= setError(fnameTV, fname.isEmpty(), "First name is required.");
         isValid &= setError(lnameTV, lname.isEmpty(), "Last name is required.");
         isValid &= setError(passTV, pass.isEmpty() || !isValidPassword(pass), "Password must be 8–15 characters long, and include letters, numbers, and special characters.");
@@ -222,6 +233,7 @@ public class CreateTeacherAcc extends AppCompatActivity {
         if (confPass.isEmpty()) {
             conpassTV.setHelperText("Confirm password is required.");
             isValid = false;
+
         } else if (!confPass.equals(pass)) { // If confirm password does not match
             conpassTV.setHelperText("Passwords do not match.");
             isValid = false;

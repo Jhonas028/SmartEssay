@@ -44,9 +44,9 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_add_room"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add Room"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:text="Add Activity"
                 android:textColor="@color/back_blue"
                 android:background="@drawable/round_all_yellow_button"
                 android:textSize="12sp"
