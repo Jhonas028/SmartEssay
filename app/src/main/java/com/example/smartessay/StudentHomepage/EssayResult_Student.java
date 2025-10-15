@@ -71,10 +71,10 @@ public class EssayResult_Student extends AppCompatActivity {
 
                             // Update the UI with the data from Firebase
                             // (Use default text if the value is missing)
-                            tvEssayTitle.setText("Essay Result - " + (classroomName != null ? classroomName : ""));
+                            tvEssayTitle.setText((classroomName != null ? classroomName : ""));
                             tvEssayText.setText(essayText != null ? essayText : "No essay text");
-                            tvScore.setText("Score: " + (score != null ? score : 0));
-                            tvFeedback.setText("Feedback: " + (feedback != null ? feedback : "No feedback"));
+                            tvScore.setText("" + (score != null ? score : 0) + "%");
+                            tvFeedback.setText("" + (feedback != null ? feedback : "No feedback"));
                         }
                         // If the essayId does NOT exist in Firebase
                         else {

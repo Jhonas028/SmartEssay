@@ -1,123 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true"
-    android:background="@drawable/bg">
+    tools:context=".MainActivity">
 
-    <LinearLayout
+    <!-- ScrollView for long content -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="10dp"
-            android:background="@drawable/roundall_white_blueside">
+            android:orientation="vertical"
+            android:paddingBottom="12dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Smart Essay"
-                android:textColor="@color/back_blue"
-                android:textSize="35sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Scrollable content -->
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="15dp">
-
+            <!-- Header -->
             <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="50dp"
+                android:background="@color/blue"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
 
-                <!-- Essay Title -->
-                <LinearLayout
+
+
+                <!-- Title -->
+                <TextView
+                    android:id="@+id/header_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="10dp"
-                    android:background="@drawable/roundall_white_blueside">
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Smart Essay"
+                    android:textColor="@color/yellow"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Profile Section -->
+            <LinearLayout
+                android:id="@+id/profile"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/round_border_bg">
+
+                <!-- Left side: Name + Date + Status -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tvEssayTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Your Essay Result"
+                        android:text="Title"
+                        android:textColor="@color/black"
                         android:textSize="20sp"
-                        android:textColor="@color/black" />
+                        android:textStyle="bold" />
+
                 </LinearLayout>
 
-                <!-- Score -->
+                <!-- Right side: Score Circle -->
+                <TextView
+                    android:id="@+id/tvScore"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="@drawable/circle_blue_border"
+                    android:gravity="center"
+                    android:text="95"
+                    android:textColor="@color/blue"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Feedback & Criteria Section -->
+            <LinearLayout
+                android:id="@+id/feedback_criteria_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="10dp"
+                android:background="@drawable/round_corner_bg">
+
+                <TextView
+                    android:id="@+id/FeedBack_Criteria_Header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Feedback and Criteria"
+                    android:textColor="@color/yellow"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:padding="8dp" />
+
+                <!-- Criteria Container -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="10dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/roundall_white_blueside">
-
-                    <TextView
-                        android:id="@+id/tvScore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Score: "
-                        android:textSize="20sp"
-                        android:textColor="@color/black" />
-                </LinearLayout>
-
-                <!-- Feedback -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="10dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/roundall_white_blueside">
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/round_border_bg">
 
                     <TextView
                         android:id="@+id/tvFeedback"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Feedback: -"
+                        android:text="Feedback: Strong arguments and well-developed points. A little more detail would make it flawless."
                         android:textColor="@color/black"
-                        android:textSize="15sp"
+                        android:textSize="14sp"
                         android:justificationMode="inter_word"
-                        />
-                </LinearLayout>
+                        android:layout_marginBottom="8dp" />
 
-                <!-- Essay Text -->
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Essay Section -->
+            <LinearLayout
+                android:id="@+id/essay_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="10dp"
+                android:background="@drawable/round_corner_bg">
+
+                <TextView
+                    android:id="@+id/essay_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Essay"
+                    android:textColor="@color/yellow"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:padding="8dp" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="10dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/roundall_white_blueside">
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/round_border_bg">
 
                     <TextView
                         android:id="@+id/tvEssayText"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Essay will appear here"
-                        android:textSize="15sp"
+                        android:text="This is a sample essay content. The student presents clear and well-structured arguments, demonstrates critical thinking, and uses examples effectively to support their ideas."
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
                         android:justificationMode="inter_word"
-                        />
+                        android:lineSpacingExtra="4dp" />
                 </LinearLayout>
             </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
-</LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
