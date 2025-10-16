@@ -24,7 +24,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create Room"
+            android:text="Create Activity"
             android:textColor="@color/back_blue"
             android:textSize="30sp"
             android:textStyle="bold"
@@ -193,7 +193,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Other Rubrics (Optional)"
+                android:text="Other Criteria (Optional)"
                 android:textSize="16sp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
@@ -219,7 +219,7 @@
             android:id="@+id/btnCreate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create Room"
+            android:text="Create Activity"
             android:layout_marginTop="24dp"
             android:backgroundTint="@color/text_title_yellow"
             android:textColor="@color/back_blue"

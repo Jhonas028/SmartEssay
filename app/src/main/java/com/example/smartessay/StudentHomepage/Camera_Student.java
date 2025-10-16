@@ -78,7 +78,7 @@ public class Camera_Student extends AppCompatActivity {
 
         // If missing studentId or classroomId, stop activity
         if (studentId == null || classroomId == null) {
-            Toast.makeText(this, "Student or classroom info missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Student or Activity info missing", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }

@@ -69,7 +69,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
 
             // 🔹 Validation: Room name must not be empty
             if (roomName.isEmpty()) {
-                Toast.makeText(this, "Enter Room Name", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Enter Activity Name", Toast.LENGTH_SHORT).show();
                 btnCreate.setEnabled(true); // re-enable button
                 return; // stop execution
             }
