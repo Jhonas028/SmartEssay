@@ -68,6 +68,16 @@ public class Camera_Student extends AppCompatActivity {
         classroomId = getIntent().getStringExtra("classroomId");
 
 
+        //++>> this method allows this field scrollable
+        ocrResultTextView.setMovementMethod(new android.text.method.ScrollingMovementMethod());
+        ocrResultTextView.setVerticalScrollBarEnabled(true);
+        ocrResultTextView.setOnTouchListener((v, event) -> {
+            // Allow the EditText to handle its own scroll
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
+
+
         addPageBtn = findViewById(R.id.addPageBtn);
         addPageBtn.setOnClickListener(v -> checkPermissionAndLaunch());
 
