@@ -44,7 +44,7 @@ public class Student_OpenAiAPI {
 
     public static void gradeEssay(String essayText,
                                   String content, String organization,
-                                  String grammar, String critical, String others,
+                                  String grammar, String critical, String otherCriteria, String others,
                                   GradeCallback callback) {
 
         String prompt = "Grade the following essay ONLY on the rubrics provided by the teacher. " +
@@ -54,19 +54,22 @@ public class Student_OpenAiAPI {
 
         // Dynamically build sections
         if (!content.isEmpty()) {
-            prompt += "Content / Ideas, [score]\n\t* [feedback]\n";
+            prompt += "Content / Ideas, [score]\n\t→ [feedback]\n\n";
         }
         if (!organization.isEmpty()) {
-            prompt += "Organization / Structure, [score]\n\t* [feedback]\n";
+            prompt += "Organization / Structure, [score]\n\t→ [feedback]\n\n";
         }
         if (!grammar.isEmpty()) {
-            prompt += "Grammar, Mechanics, and Formatting, [score]\n\t* [feedback]\n";
+            prompt += "Grammar, Mechanics, and Formatting, [score]\n\t→ [feedback]\n\n";
         }
         if (!critical.isEmpty()) {
-            prompt += "Critical Thinking, [score]\n\t* [feedback]\n";
+            prompt += "Critical Thinking, [score]\n\t→ [feedback]\n\n";
+        }
+        if (!otherCriteria.isEmpty()) {
+            prompt += "Other Criteria, [score]\n\t→ [feedback]\n\n";
         }
         if (!others.isEmpty()) {
-            prompt += "Teacher Notes: " + others + "\n";
+            prompt += "Teacher Notes: " + others + "\n\n";
         }
 
         prompt += "\nEssay:\n" + essayText + "\n\n" +
@@ -74,8 +77,14 @@ public class Student_OpenAiAPI {
                 "Content: " + content + "%\n" +
                 "Organization: " + organization + "%\n" +
                 "Grammar: " + grammar + "%\n" +
-                "Critical Thinking: " + critical + "%\n" +
-                "Teacher Notes: " + others;
+                "Critical Thinking: " + critical + "%\n";
+
+        if (!otherCriteria.isEmpty()) {
+            prompt += "Other Criteria: " + otherCriteria + "%\n";
+        }
+
+        prompt += "Teacher Notes: " + others;
+
 
         try {
             // ✅ Build JSON exactly like raw API example

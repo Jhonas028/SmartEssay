@@ -21,7 +21,6 @@ import java.io.IOException;
 public class EmailAPI {
 
     private static final OkHttpClient client = new OkHttpClient();
-
     public static void sendOtpEmail(String otp, String toEmail) throws JSONException {
         MediaType mediaType = MediaType.parse("application/json");
 
@@ -40,7 +39,6 @@ public class EmailAPI {
         Log.i("json request: ", jsonString);
 
         RequestBody requestBody = RequestBody.create(mediaType, jsonString);
-
         Log.i("requestBody: ", requestBody.toString());
 
         Request request = new Request.Builder()

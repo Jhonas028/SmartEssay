@@ -100,7 +100,7 @@ public class HomePage_Teacher extends Fragment {
         // Load classrooms from Firebase
         loadRoomsFromFirebase();
 
-        // Click listener for each room item to open RoomDetails_Teacher activity
+        // Click listener for each room item to open RoomDetails_Teacher activity //
         roomAdapter.setOnItemClickListener(room -> {
             Intent intent = new Intent(requireContext(), RoomDetails_Teacher.class);
             intent.putExtra("roomName", room.getRoomName());

@@ -432,6 +432,7 @@ public class Camera_Student extends AppCompatActivity {
                         String languageStyle = snapshot.child("Language Use and Style").getValue(String.class);
                         String organizationStructure = snapshot.child("Organization and Structure").getValue(String.class);
                         String notes = snapshot.child("Notes").getValue(String.class);
+                        String otherCriteria = snapshot.child("Other Criteria").getValue(String.class);
 
                         // Send essay + rubrics to dummy AI API for grading
                         Student_OpenAiAPI.gradeEssay(
@@ -440,6 +441,7 @@ public class Camera_Student extends AppCompatActivity {
                                 organizationStructure,
                                 grammarMechanics,
                                 languageStyle,
+                                otherCriteria,
                                 notes,
                                 new Student_OpenAiAPI.GradeCallback() {
                                     @Override

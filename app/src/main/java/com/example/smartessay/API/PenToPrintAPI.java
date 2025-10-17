@@ -86,17 +86,39 @@ public class PenToPrintAPI {
 
                     if (jsonObject.has("value")) {
                         String value = jsonObject.getString("value")
-                                .replaceAll("\\n+", " ")
+                                // Normalize Windows/Mac newlines
+                                .replaceAll("\\r", "")
+                                // Replace 3 or more newlines with just 2
+                                .replaceAll("\\n{3,}", "\n\n")
+                                // Preserve the first newline (after the title)
+                                .replaceFirst("\\n", "<TITLE_BREAK>")
+                                // Fix unwanted single newlines inside sentences (join them)
+                                .replaceAll("(?<!\\n)\\n(?!\\n)", " ")
+                                // Restore the title break
+                                .replace("<TITLE_BREAK>", "\n\n")
+                                // Ensure each paragraph ends with a double newline
+                                .replaceAll("([^\\n])\\n(?!\\n)", "$1\n\n")
+                                // Clean up extra spaces
                                 .replaceAll("\\s{2,}", " ")
                                 .trim();
 
                         resultView.post(() -> {
                             String oldText = resultView.getText().toString();
-                            String newText = oldText.isEmpty() ? value : oldText + "\n\n" + value;
+                            String newText = oldText.isEmpty() ? value : oldText + "\n" + value;
                             resultView.setText(newText);
                             if (onFinish != null) onFinish.run(); // hide loading
                         });
-                    } else {
+                    }
+
+
+
+
+
+
+
+
+
+                    else {
                         resultView.post(() -> {
                             resultView.setText("No 'value' in response: " + result);
                             if (onFinish != null) onFinish.run(); // hide loading

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:text="Enter Room Name"
+        android:text="Enter Activity Code"
         android:textSize="18sp"
         android:textColor="@color/blue"
         android:textStyle="bold"
@@ -15,7 +15,7 @@
 
     <EditText
         android:id="@+id/etRoomCode"
-        android:hint="Room Name"
+        android:hint="Enter code here"
         android:layout_marginTop="10dp"
         android:background="@drawable/rounded_edittext_bg"
         android:padding="12dp"

@@ -12,41 +12,38 @@
         android:padding="16dp"
         android:background="@color/dirty_white">
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/blue_border"
-        android:layout_marginTop="24dp">
-
-        <!-- Header -->
-        <TextView
+        <!-- ================= ROOM SECTION ================= -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create Activity"
-            android:textColor="@color/back_blue"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:paddingVertical="16dp"
-            />
+            android:orientation="vertical"
+            android:background="@drawable/blue_border"
+            android:layout_marginTop="24dp">
 
-        <!-- Room Name -->
-        <EditText
-            android:id="@+id/etRoomName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter Room Name"
+            <!-- Header -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create Activity"
+                android:textColor="@color/back_blue"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:paddingVertical="16dp" />
 
-            android:background="@drawable/edittext_background"
-            android:padding="14dp"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:inputType="textCapWords" />
-    </LinearLayout>
+            <!-- Room Name -->
+            <EditText
+                android:id="@+id/etRoomName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter Activity Name"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:inputType="textCapWords" />
+        </LinearLayout>
 
-
-        <!-- Rubrics Section (Inside Yellow Border) -->
+        <!-- ================= RUBRICS SECTION ================= -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,7 +51,7 @@
             android:background="@drawable/yellow_border"
             android:layout_marginTop="12dp">
 
-            <!-- Rubrics Input Fields -->
+            <!-- Rubrics Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,19 +61,16 @@
                 android:background="@color/back_blue"
                 android:orientation="vertical">
 
-                <!-- Rubrics Section Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="RUBRICS"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@color/white"/>
-
+                    android:textColor="@color/white" />
             </LinearLayout>
 
-
-            <!-- Rubrics Input Fields -->
+            <!-- Rubric Fields -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -134,8 +128,6 @@
                         android:inputType="number" />
                 </LinearLayout>
 
-
-
                 <!-- Grammar and Formatting -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -187,34 +179,49 @@
                         android:background="@drawable/edittext_background"
                         android:inputType="number" />
                 </LinearLayout>
+
+                <!-- Other Rubrics -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Other Criteria (Optional)"
+                        android:textSize="16sp"
+                        android:textColor="@color/back_blue" />
+
+                    <EditText
+                        android:id="@+id/etRubricOtherScore"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:hint="%"
+                        android:background="@drawable/edittext_background"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/etRubricOther"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:hint="Enter your criteria (e.g., Creativity, Accuracy, Effort etc...)"
+                    android:inputType="textMultiLine"
+                    android:gravity="top|start"
+                    android:scrollbars="vertical"
+                    android:textSize="13dp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp" />
             </LinearLayout>
-
-            <!-- Other Rubrics -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Other Criteria (Optional)"
-                android:textSize="16sp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:textColor="@color/back_blue"/>
-
-            <EditText
-                android:id="@+id/etRubricOther"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:hint="Enter custom rubric or prompt here..."
-                android:inputType="textMultiLine"
-                android:gravity="top|start"
-                android:scrollbars="vertical"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp"/>
         </LinearLayout>
 
-
-
-
-        <!-- Buttons -->
+        <!-- ================= BUTTONS ================= -->
         <Button
             android:id="@+id/btnCreate"
             android:layout_width="match_parent"
@@ -224,7 +231,7 @@
             android:backgroundTint="@color/text_title_yellow"
             android:textColor="@color/back_blue"
             android:padding="12dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnCancel"
@@ -235,6 +242,7 @@
             android:backgroundTint="@color/back_blue"
             android:textColor="@color/white"
             android:padding="12dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
+
     </LinearLayout>
 </ScrollView>

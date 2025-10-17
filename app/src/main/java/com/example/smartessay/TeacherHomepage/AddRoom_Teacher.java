@@ -30,7 +30,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
 
     // Input fields for room name and rubric criteria
     EditText etRoomName, etRubricContent, etRubricOrganization, etRubricGrammar,
-            etRubricCritical, etRubricOther;
+            etRubricCritical, etRubricOther,etRubricOtherScore;
 
     Button btnCreate, btnCancel; // Create and Cancel buttons
     DatabaseReference classroomsRef; // Firebase reference to "classrooms"
@@ -53,11 +53,16 @@ public class AddRoom_Teacher extends AppCompatActivity {
         etRubricCritical = findViewById(R.id.etRubricCritical);
         etRubricOther = findViewById(R.id.etRubricOther);
 
+        etRubricOtherScore = findViewById(R.id.etRubricOtherScore);
+
         btnCreate = findViewById(R.id.btnCreate);
         btnCancel = findViewById(R.id.btnCancel);
 
         // Cancel button simply closes activity
         btnCancel.setOnClickListener(v -> finish());
+
+        //Hides the etRubricOther field if there is no  value in input in etRubricOtherScore
+        setupOtherFieldVisibility();
 
         // Create button logic
         btnCreate.setOnClickListener(v -> {
@@ -79,8 +84,9 @@ public class AddRoom_Teacher extends AppCompatActivity {
             int organization = parseEditText(etRubricOrganization);
             int grammar = parseEditText(etRubricGrammar);
             int critical = parseEditText(etRubricCritical);
+            int other = parseEditText(etRubricOtherScore);
 
-            int total = content + organization + grammar + critical;
+            int total = content + organization + grammar + critical + other;
 
             // 🔹 Rubrics must sum exactly to 100
             if (total != 100) {
@@ -104,13 +110,15 @@ public class AddRoom_Teacher extends AppCompatActivity {
             generateUniqueRoomCode(roomCode -> {
                 String roomId = classroomsRef.push().getKey(); // generate unique Firebase key
 
-                // 🔹 Prepare Rubrics map (Firebase-safe keys)
+                // 🔹 Prepare Rubrics map (Firebase-safe keys) // pass this to firebase
                 Map<String, Object> rubrics = new HashMap<>();
                 rubrics.put("Content and Ideas", etRubricContent.getText().toString().trim());
                 rubrics.put("Organization and Structure", etRubricOrganization.getText().toString().trim());
                 rubrics.put("Language Use and Style", etRubricGrammar.getText().toString().trim());
                 rubrics.put("Grammar, Mechanics, and Formatting", etRubricCritical.getText().toString().trim());
+                rubrics.put("Other Criteria", String.valueOf(other));
                 rubrics.put("Notes", etRubricOther.getText().toString().trim());
+
 
                 // 🔹 Prepare Classroom map for Firebase
                 Map<String, Object> classroomMap = new HashMap<>();
@@ -119,13 +127,13 @@ public class AddRoom_Teacher extends AppCompatActivity {
                 classroomMap.put("status", "active"); // default active
                 classroomMap.put("created_at", dateTime);
                 classroomMap.put("room_code", roomCode);
-                classroomMap.put("rubrics", rubrics);
+                classroomMap.put("rubrics", rubrics); //add your rubrics here
 
                 // 🔹 Save classroom to Firebase
                 classroomsRef.child(roomId).setValue(classroomMap)
                         .addOnSuccessListener(aVoid -> {
                             hideLoadingDialog();
-                            Toast.makeText(this, "Room Created Successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Activity Created Successfully", Toast.LENGTH_SHORT).show();
                             finish(); // close activity
                         })
                         .addOnFailureListener(e -> {
@@ -203,5 +211,29 @@ public class AddRoom_Teacher extends AppCompatActivity {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
+    }
+
+    //hides the other criteria if theres no value
+    private void setupOtherFieldVisibility() {
+        // Initially hide "Other" EditText
+        etRubricOther.setVisibility(View.GONE);
+
+        // Listen for changes in "OtherScore"
+        etRubricOtherScore.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().trim().isEmpty()) {
+                    etRubricOther.setVisibility(View.GONE);
+                } else {
+                    etRubricOther.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) { }
+        });
     }
 }

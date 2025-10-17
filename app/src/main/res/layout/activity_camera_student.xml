@@ -86,9 +86,10 @@
                 android:inputType="textMultiLine|textCapSentences"
                 android:gravity="top"
                 android:minLines="6"
+                android:lineSpacingExtra="6dp"
+                android:scrollbars="vertical"
                 android:maxLines="20"
                 android:overScrollMode="always"
-                android:scrollbars="vertical"
                 android:importantForAutofill="no"
                 android:imeOptions="flagNoExtractUi"
                 android:longClickable="false"/>
