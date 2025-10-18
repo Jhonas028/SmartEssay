@@ -211,13 +211,13 @@
                     android:id="@+id/etRubricOther"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
+                    android:background="@drawable/edittext_background"
+                    android:gravity="top|start"
                     android:hint="Enter your criteria (e.g., Creativity, Accuracy, Effort etc...)"
                     android:inputType="textMultiLine"
-                    android:gravity="top|start"
+                    android:padding="12dp"
                     android:scrollbars="vertical"
-                    android:textSize="13dp"
-                    android:background="@drawable/edittext_background"
-                    android:padding="12dp" />
+                    android:textSize="13dp" />
             </LinearLayout>
         </LinearLayout>
 

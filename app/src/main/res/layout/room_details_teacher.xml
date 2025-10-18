@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:paddingBottom="300dp"
+    android:fitsSystemWindows="true"
     android:background="@drawable/bg"
     >
     <LinearLayout

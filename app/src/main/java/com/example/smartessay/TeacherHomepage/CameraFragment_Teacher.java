@@ -43,7 +43,7 @@ public class CameraFragment_Teacher extends Fragment {
 
     private ImageView imageView;
     private TextView ocrResultTextView,scoresTV;
-    EditText contentPercentage,organizationPercentage,grammarPercentage,languageStyle,otherTV;
+    EditText contentPercentage,organizationPercentage,grammarPercentage,languageStyle,otherTV,etRubricOtherScore;
 
     Button submitBtn,addPageBtn;
     private AlertDialog loadingDialog;
@@ -63,6 +63,9 @@ public class CameraFragment_Teacher extends Fragment {
         grammarPercentage = view.findViewById(R.id.grammarPercentage);
         languageStyle = view.findViewById(R.id.languageStyle);
         otherTV = view.findViewById(R.id.otherTV);
+        etRubricOtherScore = view.findViewById(R.id.etRubricOtherScore);
+
+        setupOtherFieldVisibility();
 
         // AI output
         scoresTV = view.findViewById(R.id.scoresTV);
@@ -92,8 +95,9 @@ public class CameraFragment_Teacher extends Fragment {
             int organization = parseEditText(organizationPercentage);
             int grammar = parseEditText(grammarPercentage);
             int language = parseEditText(languageStyle);
+            int other = parseEditText(etRubricOtherScore);
 
-            int total = content + organization + grammar + language;
+            int total = content + organization + grammar + language + other;
 
             // IF rubrics don’t add up to 100 → show error
             if (total != 100) {
@@ -105,29 +109,28 @@ public class CameraFragment_Teacher extends Fragment {
             showLoadingDialog("Grading essay...");
 
             // Call the OpenAI grading API
+
             Teacher_OpenAiAPI.gradeEssay(
                     essay,
-                    contentPercentage.getText().toString(),
-                    organizationPercentage.getText().toString(),
-                    grammarPercentage.getText().toString(),
-                    languageStyle.getText().toString(),
-                    otherTV.getText().toString(),
+                    contentPercentage.getText().toString(),         // Content %
+                    organizationPercentage.getText().toString(),    // Organization %
+                    grammarPercentage.getText().toString(),         // Grammar %
+                    languageStyle.getText().toString(),             // Critical thinking / Language style %
+                    etRubricOtherScore.getText().toString(),        // ✅ Other Criteria %
+                    otherTV.getText().toString(),                   // Teacher notes
                     new Teacher_OpenAiAPI.GradeCallback() {
                         @Override
                         public void onSuccess(String result) {
                             try {
                                 hideLoadingDialog(); // hide spinner
-                                // Response is JSON → extract result
                                 JSONObject jsonObject = new JSONObject(result);
                                 String rawText = jsonObject.getString("result");
 
-                                // Replace escaped characters with actual formatting
                                 String formatted = rawText
                                         .replace("\\n", "\n")
                                         .replace("\\t", "\t")
                                         .trim();
 
-                                // Show formatted score
                                 scoresTV.setText(formatted);
                                 Log.i("resultOpenAI", formatted);
 
@@ -139,11 +142,12 @@ public class CameraFragment_Teacher extends Fragment {
 
                         @Override
                         public void onError(String error) {
-                            hideLoadingDialog(); // Hide loading if error
+                            hideLoadingDialog();
                             scoresTV.setText("Error: " + error);
                         }
                     }
             );
+
         });
 
         return view;
@@ -249,5 +253,28 @@ public class CameraFragment_Teacher extends Fragment {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
+    }
+
+    private void setupOtherFieldVisibility() {
+        // Initially hide "Other" EditText
+        otherTV.setVisibility(View.GONE);
+
+        // Listen for changes in "OtherScore"
+        etRubricOtherScore.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().trim().isEmpty()) {
+                    otherTV.setVisibility(View.GONE);
+                } else {
+                    otherTV.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) { }
+        });
     }
 }

@@ -3,6 +3,7 @@ package com.example.smartessay.API;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -21,107 +22,102 @@ import okhttp3.Response;
 
 public class Teacher_OpenAiAPI {
 
-    // This interface is used as a "callback".
-    // Instead of returning immediately, the API will call onSuccess or onError later.
     public interface GradeCallback {
-        void onSuccess(String result);   // called when API works
-        void onError(String error);      // called when API fails
+        void onSuccess(String result);
+        void onError(String error);
     }
-
-    // API endpoint, key, and host (needed by RapidAPI)
 
     /*JhonasGmail
     private static final String API_URL = "https://open-ai21.p.rapidapi.com/conversationllama";
     private static final String API_KEY = "5d6b0c84c3msh8935cfeb2995b5fp15496djsnac76059af8ce";
-    private static final String API_HOST = "open-ai21.p.rapidapi.com";*/
+    private static final String API_HOST = "open-ai21.p.rapidapi.com";
+    */
 
     private static final String API_URL = "https://open-ai21.p.rapidapi.com/conversationllama";
     private static final String API_KEY = "f44f1619fcmsh442a09b23a4c5fcp1950b5jsn98559570e89b";
     private static final String API_HOST = "open-ai21.p.rapidapi.com";
 
-    // Default HTTP client
-    private static final OkHttpClient client = new OkHttpClient();
-
-    // Another HTTP client with longer timeouts (in case requests take longer)
-    private static final OkHttpClient client2 = new OkHttpClient.Builder()
-            .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)  // wait up to 60s for connection
-            .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)   // wait up to 60s to send body
-            .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)   // wait up to 120s for server reply
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+            .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
             .build();
 
-    // Tell API we are sending JSON type
     private static final MediaType JSON = MediaType.parse("application/json");
 
-    // Main function to grade the essay
     public static void gradeEssay(String essayText,
                                   String content, String organization,
-                                  String grammar, String critical, String others,
+                                  String grammar, String critical, String otherCriteria, String others,
                                   GradeCallback callback) {
 
-        // First, create a "prompt" message that explains how the AI should grade
         String prompt = "Grade the following essay ONLY on the rubrics provided by the teacher. " +
                 "Do NOT generate feedback for rubrics that are blank or not included.\n\n" +
                 "Provide the result EXACTLY in this format:\n\n" +
                 "Score: [overall_score]%\n\n";
 
-        // Dynamically add grading sections ONLY if they are not empty
+        // ✅ Dynamically include sections based on provided rubrics
         if (!content.isEmpty()) {
-            prompt += "Content / Ideas, [score]\n\t* [feedback]\n";
+            prompt += "Content / Ideas, [score]\n\t→ [feedback]\n\n";
         }
         if (!organization.isEmpty()) {
-            prompt += "Organization / Structure, [score]\n\t* [feedback]\n";
+            prompt += "Organization / Structure, [score]\n\t→ [feedback]\n\n";
         }
         if (!grammar.isEmpty()) {
-            prompt += "Grammar, Mechanics, and Formatting, [score]\n\t* [feedback]\n";
+            prompt += "Grammar, Mechanics, and Formatting, [score]\n\t→ [feedback]\n\n";
         }
         if (!critical.isEmpty()) {
-            prompt += "Critical Thinking, [score]\n\t* [feedback]\n";
+            prompt += "Critical Thinking, [score]\n\t→ [feedback]\n\n";
+        }
+        if (!otherCriteria.isEmpty()) {
+            prompt += "Other Criteria, [score]\n\t→ [feedback]\n\n";
         }
         if (!others.isEmpty()) {
-            prompt += "Teacher Notes: " + others + "\n";
+            prompt += "Teacher Notes: " + others + "\n\n";
         }
 
-        // Append the actual essay text and rubric percentages
+        // ✅ Add essay and rubric weight percentages
         prompt += "\nEssay:\n" + essayText + "\n\n" +
                 "Rubric Percentages:\n" +
                 "Content: " + content + "%\n" +
                 "Organization: " + organization + "%\n" +
                 "Grammar: " + grammar + "%\n" +
-                "Critical Thinking: " + critical + "%\n" +
-                "Teacher Notes: " + others;
+                "Critical Thinking: " + critical + "%\n";
+
+        if (!otherCriteria.isEmpty()) {
+            prompt += "Other Criteria: " + otherCriteria + "%\n";
+        }
+
+        prompt += "Teacher Notes: " + others;
 
         try {
-            // Build JSON request for the API
+            // ✅ Construct request JSON payload
             JSONObject messageObj = new JSONObject();
-            messageObj.put("role", "user");      // who is speaking
-            messageObj.put("content", prompt);   // the actual message
+            messageObj.put("role", "user");
+            messageObj.put("content", prompt);
 
             JSONArray messagesArray = new JSONArray();
-            messagesArray.put(messageObj);       // put the message into an array
+            messagesArray.put(messageObj);
 
             JSONObject requestObj = new JSONObject();
-            requestObj.put("messages", messagesArray); // send messages array
-            requestObj.put("web_access", false);       // no web search
+            requestObj.put("messages", messagesArray);
+            requestObj.put("web_access", false);
 
-            String requestJson = requestObj.toString(); // convert to string
-
-            // Create request body with JSON data
+            String requestJson = requestObj.toString();
             RequestBody body = RequestBody.create(JSON, requestJson);
 
-            // Create the HTTP request with headers
             Request request = new Request.Builder()
-                    .url(API_URL)                        // where to send
-                    .post(body)                          // attach body
-                    .addHeader("x-rapidapi-key", API_KEY) // API key
-                    .addHeader("x-rapidapi-host", API_HOST) // API host
-                    .addHeader("Content-Type", "application/json") // JSON type
+                    .url(API_URL)
+                    .post(body)
+                    .addHeader("x-rapidapi-key", API_KEY)
+                    .addHeader("x-rapidapi-host", API_HOST)
+                    .addHeader("Content-Type", "application/json")
                     .build();
 
-            // Send the request asynchronously (non-blocking)
+            // ✅ Async API call with error handling
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    // IF request fails (no internet, timeout, etc.)
+                    Log.e("TeacherOpenAI", "Failure details", e);
                     new Handler(Looper.getMainLooper()).post(() ->
                             callback.onError("API request failed: " + e.getMessage())
                     );
@@ -129,18 +125,14 @@ public class Teacher_OpenAiAPI {
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                    // IF response is not successful (status code not 200 OK)
                     if (!response.isSuccessful()) {
                         new Handler(Looper.getMainLooper()).post(() ->
                                 callback.onError("Unexpected code: " + response.code())
                         );
-                        return; // stop here if failed
+                        return;
                     }
 
-                    // ELSE: response is successful
-                    String responseBody = response.body().string(); // get body as string
-
-                    // Pass the result back to the main thread (UI)
+                    String responseBody = response.body().string();
                     new Handler(Looper.getMainLooper()).post(() ->
                             callback.onSuccess(responseBody)
                     );
@@ -148,7 +140,6 @@ public class Teacher_OpenAiAPI {
             });
 
         } catch (Exception e) {
-            // IF something goes wrong when building JSON
             callback.onError("JSON build error: " + e.getMessage());
         }
     }

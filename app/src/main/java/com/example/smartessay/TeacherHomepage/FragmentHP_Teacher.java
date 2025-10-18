@@ -94,7 +94,11 @@ public class FragmentHP_Teacher extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.home) {
+                //the code will be executed when the home button is clicked, it displays the and refresh the room details
                 selectedFragment = new HomePage_Teacher();
+                Bundle b = new Bundle();
+                b.putString("teacherEmail", teacherEmail);
+                selectedFragment.setArguments(bundle);
             } else if (itemId == R.id.logout) {
                 // ✅ Clear saved session
                 SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
