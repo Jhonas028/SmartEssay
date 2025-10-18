@@ -38,6 +38,7 @@
             android:textColor="@android:color/black"
             android:hint="Score" />
 
+        <!--
         <TextView
             android:id="@+id/text_score"
             android:layout_width="match_parent"
@@ -46,7 +47,7 @@
             android:text="Score:"
             android:textSize="12sp"
             android:textColor="@android:color/black"
-            android:hint="Score" />
+            android:hint="Score" />Score -->
 
 
 

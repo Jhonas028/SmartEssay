@@ -30,8 +30,10 @@ public class Student_OpenAiAPI {
     private static final String API_KEY = "5d6b0c84c3msh8935cfeb2995b5fp15496djsnac76059af8ce";
     private static final String API_HOST = "open-ai21.p.rapidapi.com"; */
 
+    // Ana Gmail
+    //    private static final String API_KEY = "f44f1619fcmsh442a09b23a4c5fcp1950b5jsn98559570e89b";
     private static final String API_URL = "https://open-ai21.p.rapidapi.com/conversationllama";
-    private static final String API_KEY = "f44f1619fcmsh442a09b23a4c5fcp1950b5jsn98559570e89b";
+    private static final String API_KEY = "5d6b0c84c3msh8935cfeb2995b5fp15496djsnac76059af8ce";
     private static final String API_HOST = "open-ai21.p.rapidapi.com";
 
     private static final OkHttpClient client = new OkHttpClient.Builder()
@@ -54,19 +56,24 @@ public class Student_OpenAiAPI {
 
         // Dynamically build sections
         if (!content.isEmpty()) {
-            prompt += "Content / Ideas, [score]\n\t→ [feedback]\n\n";
+            prompt += "Content / Ideas\n\t→ [feedback]\n";
+            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
         if (!organization.isEmpty()) {
-            prompt += "Organization / Structure, [score]\n\t→ [feedback]\n\n";
+            prompt += "Organization / Structure\n\t→ [feedback]\n\n ";
+            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
         if (!grammar.isEmpty()) {
-            prompt += "Grammar, Mechanics, and Formatting, [score]\n\t→ [feedback]\n\n";
+            prompt += "Grammar, Mechanics, and Formatting\n\t→ [feedback]\n\n ";
+            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
         if (!critical.isEmpty()) {
-            prompt += "Critical Thinking, [score]\n\t→ [feedback]\n\n";
+            prompt += "Critical Thinking\n\t→ [feedback]\n\n ";
+            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
         if (!otherCriteria.isEmpty()) {
-            prompt += "Other Criteria, [score]\n\t→ [feedback]\n\n";
+            prompt += "Other Criteria\n\t→ [feedback]\n\n ";
+
         }
         if (!others.isEmpty()) {
             prompt += "Teacher Notes: " + others + "\n\n";
@@ -84,7 +91,6 @@ public class Student_OpenAiAPI {
         }
 
         prompt += "Teacher Notes: " + others;
-
 
         try {
             // ✅ Build JSON exactly like raw API example
@@ -121,7 +127,6 @@ public class Student_OpenAiAPI {
                             callback.onError("API request failed: " + e.getMessage())
                     );
                 }
-
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
