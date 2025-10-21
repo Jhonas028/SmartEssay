@@ -151,7 +151,7 @@ public class CameraFragment_Teacher extends Fragment {
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                scoresTV.setText("Error parsing result");
+                                scoresTV.setText("Connection error. Please try again.");
                             }
                         }
 

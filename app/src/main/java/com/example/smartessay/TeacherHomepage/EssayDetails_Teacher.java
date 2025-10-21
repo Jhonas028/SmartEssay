@@ -82,7 +82,7 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                                     tvConvertedText.setText(convertedText != null ? convertedText : "No text");
                                     tvEssayFeedback.setText(essayFeedback != null ? essayFeedback : "No feedback");
                                     fullname.setText(fullName != null ? fullName : "No name exist");
-                                    tvScore.setText(score != null ? score : "No score");
+                                    tvScore.setText(score != null ? score: "No score");
                                     tvStatus.setText(status != null ? status : "No status");
 
                                     // ✅ Change color based on status
