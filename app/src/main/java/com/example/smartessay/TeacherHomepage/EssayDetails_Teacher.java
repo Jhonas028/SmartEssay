@@ -2,6 +2,7 @@ package com.example.smartessay.TeacherHomepage;
 
 import static java.security.AccessController.getContext;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class EssayDetails_Teacher extends AppCompatActivity {
 
-    private TextView tvConvertedText, tvEssayFeedback, tvStatus;
+    private TextView tvConvertedText, tvEssayFeedback, tvStatus,fullname;
     private EditText tvScore;
 
     Button btnSave;
@@ -41,6 +42,7 @@ public class EssayDetails_Teacher extends AppCompatActivity {
         tvEssayFeedback = findViewById(R.id.tvEssayFeedback);
         tvScore = findViewById(R.id.tvScore);
         tvStatus = findViewById(R.id.tvStatus);
+        fullname = findViewById(R.id.fullname);
 
         btnSave = findViewById(R.id.btnSave);
 
@@ -66,6 +68,8 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                                     String essayFeedback = essaySnap.child("essay_feedback").getValue(String.class);
                                     String score = String.valueOf(essaySnap.child("score").getValue());
                                     String status = essaySnap.child("status").getValue(String.class);
+                                    String fullName = essaySnap.child("fullname").getValue(String.class);
+
 
                                     Log.d("EssayDetails", "ConvertedText=" + convertedText);
                                     Log.d("EssayDetails", "EssayFeedback=" + essayFeedback);
@@ -73,11 +77,22 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                                     Log.d("EssayDetails", "Status=" + status);
                                     Log.d("EssayDetails", "Student ID=" + studentId);
                                     Log.d("EssayDetails", "RoomID=" + roomId);
+                                    Log.d("EssayDetails","fullnamee" + fullName);
 
                                     tvConvertedText.setText(convertedText != null ? convertedText : "No text");
                                     tvEssayFeedback.setText(essayFeedback != null ? essayFeedback : "No feedback");
+                                    fullname.setText(fullName != null ? fullName : "No name exist");
                                     tvScore.setText(score != null ? score : "No score");
-                                    tvStatus.setText(status != null ? "Status: " + status : "No status");
+                                    tvStatus.setText(status != null ? status : "No status");
+
+                                    // ✅ Change color based on status
+                                    if ("pending".equalsIgnoreCase(status)) {
+                                        tvStatus.setTextColor(Color.parseColor("#D32F2F")); // 🔴 Red for pending
+                                    } else if ("posted".equalsIgnoreCase(status)) {
+                                        tvStatus.setTextColor(Color.parseColor("#00C853")); // 🟢 Green for posted
+                                    } else {
+                                        tvStatus.setTextColor(Color.parseColor("#000000")); // ⚫ Default black
+                                    }
 
                                     break; // stop after finding the essay for this room
                                 }
