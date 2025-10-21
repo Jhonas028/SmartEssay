@@ -61,16 +61,24 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/ocr_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="8dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:elevation="2dp"
-                android:layout_marginBottom="8dp" />
+                android:background="@android:color/transparent"
+                android:hint="Your essay will appear here..."
+                android:padding="8dp"
+                android:inputType="textMultiLine|textCapSentences"
+                android:gravity="top"
+                android:minLines="6"
+                android:maxLines="25"
+                android:lineSpacingExtra="6dp"
+                android:scrollbars="vertical"
+                android:importantForAutofill="no"
+                android:imeOptions="flagNoExtractUi"
+                android:longClickable="false" />
 
             <Button
                 android:id="@+id/addPageBtn"

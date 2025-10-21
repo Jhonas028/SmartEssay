@@ -452,7 +452,8 @@ public class HomePage_Student extends Fragment {
                         holder.textStatus.setTextColor(Color.RED);    // 🔴 Pending
                         break;
                     case "posted":
-                        holder.textStatus.setTextColor(Color.GREEN);  // 🟢 Posted
+                        holder.textStatus.setTextColor(Color.parseColor("#00C853"));
+                        // 🟢 Posted
                         break;
                     default:
                         holder.textStatus.setTextColor(Color.BLACK);  // ⚫ Default

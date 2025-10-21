@@ -323,7 +323,7 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                         holder.text_status.setTextColor(Color.RED);
                         break;
                     case "posted":
-                        holder.text_status.setTextColor(Color.GREEN);
+                        holder.text_status.setTextColor(Color.parseColor("#00C853"));
                         break;
                     default:
                         holder.text_status.setTextColor(Color.BLACK);

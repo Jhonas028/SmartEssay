@@ -46,15 +46,7 @@
                 android:adjustViewBounds="true" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/addPageBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Page"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/text_title_yellow"
-            android:textColor="@color/back_blue"
-            android:textStyle="bold"/>
+
 
         <!-- ================= OCR RESULT ================= -->
         <TextView
@@ -74,11 +66,14 @@
             android:padding="8dp"
             android:layout_marginBottom="16dp">
 
-            <ScrollView
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fillViewport="true"
-                android:scrollbars="vertical">
+                android:background="@drawable/yellow_border"
+                android:padding="8dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
 
                 <EditText
                     android:id="@+id/ocr_result"
@@ -92,14 +87,25 @@
                     android:inputType="textMultiLine|textCapSentences"
                     android:gravity="top"
                     android:minLines="6"
-                    android:maxLines="20"
+                    android:maxLines="25"
                     android:lineSpacingExtra="6dp"
-                    android:overScrollMode="always"
                     android:scrollbars="vertical"
                     android:importantForAutofill="no"
                     android:imeOptions="flagNoExtractUi"
                     android:longClickable="false" />
-            </ScrollView>
+
+                <Button
+                    android:id="@+id/addPageBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Page"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/text_title_yellow"
+                    android:textColor="@color/back_blue"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+
 
         </LinearLayout>
 

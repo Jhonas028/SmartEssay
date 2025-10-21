@@ -42,7 +42,8 @@ import java.io.OutputStream;
 public class CameraFragment_Teacher extends Fragment {
 
     private ImageView imageView;
-    private TextView ocrResultTextView,scoresTV;
+    private TextView scoresTV;
+    private EditText ocrResultTextView;
     EditText contentPercentage,organizationPercentage,grammarPercentage,languageStyle,otherTV,etRubricOtherScore;
 
     Button submitBtn,addPageBtn;
@@ -64,6 +65,20 @@ public class CameraFragment_Teacher extends Fragment {
         languageStyle = view.findViewById(R.id.languageStyle);
         otherTV = view.findViewById(R.id.otherTV);
         etRubricOtherScore = view.findViewById(R.id.etRubricOtherScore);
+
+        //++>> this method allows this field scrollable
+        ocrResultTextView.setMovementMethod(new android.text.method.ScrollingMovementMethod());
+        ocrResultTextView.setVerticalScrollBarEnabled(true);
+        ocrResultTextView.setOnTouchListener((v, event) -> {
+            // Allow the EditText to handle its own scroll
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
+
+        //disable copy paste
+        disableCopyPaste(ocrResultTextView);
+        //Allows double clicking to highlight and edit it.
+        secureEssayEditText(ocrResultTextView);
 
         setupOtherFieldVisibility();
 
@@ -277,4 +292,92 @@ public class CameraFragment_Teacher extends Fragment {
             public void afterTextChanged(android.text.Editable s) { }
         });
     }
+
+    private void disableCopyPaste(EditText editText) {
+        // Allow word selection (for editing)
+        editText.setLongClickable(true);
+        editText.setTextIsSelectable(true);
+
+        // Disable copy/paste/cut actions
+        editText.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) {
+                menu.clear(); // Remove copy/paste options
+                return false;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) {
+                menu.clear();
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(android.view.ActionMode mode, android.view.MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(android.view.ActionMode mode) {}
+        });
+
+        // Disable insertion (the little clipboard popup)
+        editText.setCustomInsertionActionModeCallback(new android.view.ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
+            @Override
+            public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
+            @Override
+            public boolean onActionItemClicked(android.view.ActionMode mode, android.view.MenuItem item) { return false; }
+            @Override
+            public void onDestroyActionMode(android.view.ActionMode mode) {}
+        });
+
+
+    }
+
+    private void secureEssayEditText(EditText editText) {
+        // ✅ Allow editing and selection
+        editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.setCursorVisible(true);
+        editText.setTextIsSelectable(true);
+
+        // ✅ Keep highlight visible but remove copy/paste menu
+        editText.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) {
+                // Remove all menu options (Copy, Cut, Paste)
+                menu.clear();
+                return true; // ✅ Keep selection highlight visible
+            }
+
+            @Override
+            public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) {
+                menu.clear();
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(android.view.ActionMode mode, android.view.MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(android.view.ActionMode mode) {}
+        });
+
+        // ✅ Block long-press context menu (safety)
+        editText.setLongClickable(false);
+        editText.setOnCreateContextMenuListener((menu, v, menuInfo) -> menu.clear());
+
+        // ✅ (Optional) Block hardware keyboard paste (Ctrl + V)
+        editText.setOnKeyListener((v, keyCode, event) -> {
+            if ((event.isCtrlPressed() && keyCode == android.view.KeyEvent.KEYCODE_V)) {
+                return true; // Block paste shortcut
+            }
+            return false;
+        });
+    }
+
 }

@@ -57,19 +57,24 @@ public class Teacher_OpenAiAPI {
 
         // ✅ Dynamically include sections based on provided rubrics
         if (!content.isEmpty()) {
-            prompt += "Content / Ideas, [score]\n\t→ [feedback]\n\n";
+            prompt += "Content / Ideas\n\t→ [feedback]\n\n";
+            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
         if (!organization.isEmpty()) {
-            prompt += "Organization / Structure, [score]\n\t→ [feedback]\n\n";
+            prompt += "Organization / Structure\n\t→ [feedback]\n\n";
+            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
         if (!grammar.isEmpty()) {
-            prompt += "Grammar, Mechanics, and Formatting, [score]\n\t→ [feedback]\n\n";
+            prompt += "Grammar, Mechanics, and Formatting\n\t→ [feedback]\n\n";
+            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
         if (!critical.isEmpty()) {
-            prompt += "Critical Thinking, [score]\n\t→ [feedback]\n\n";
+            prompt += "Critical Thinking\n\t→ [feedback]\n\n";
+            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
         if (!otherCriteria.isEmpty()) {
-            prompt += "Other Criteria, [score]\n\t→ [feedback]\n\n";
+            prompt += "Other Criteria\n\t→ [feedback]\n\n";
+            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
         if (!others.isEmpty()) {
             prompt += "Teacher Notes: " + others + "\n\n";
