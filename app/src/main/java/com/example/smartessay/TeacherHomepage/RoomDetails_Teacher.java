@@ -314,7 +314,24 @@ public class RoomDetails_Teacher extends AppCompatActivity {
 
             holder.tvDateCreated.setText("Submitted: " + dateFormat.format(date));
             holder.tvTimeCreated.setText("Time: " + timeFormat.format(date));
-            holder.text_status.setText("Status: " + essay.getStatus());
+            holder.text_status.setText(essay.getStatus());
+
+            // 🎨 Change color depending on status
+            if (essay.getStatus() != null) {
+                switch (essay.getStatus().toLowerCase()) {
+                    case "pending":
+                        holder.text_status.setTextColor(Color.RED);
+                        break;
+                    case "posted":
+                        holder.text_status.setTextColor(Color.GREEN);
+                        break;
+                    default:
+                        holder.text_status.setTextColor(Color.BLACK);
+                        break;
+                }
+            } else {
+                holder.text_status.setTextColor(Color.BLACK);
+            }
 
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), EssayDetails_Teacher.class);

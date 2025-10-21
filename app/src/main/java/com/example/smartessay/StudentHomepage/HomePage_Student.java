@@ -442,6 +442,26 @@ public class HomePage_Student extends Fragment {
 
             holder.textStatus.setText("status: " + essay.getStatus());
 
+            // 🟢 Set and color the status text
+            String status = essay.getStatus();
+            holder.textStatus.setText(status);
+
+            if (status != null) {
+                switch (status.toLowerCase()) {
+                    case "pending":
+                        holder.textStatus.setTextColor(Color.RED);    // 🔴 Pending
+                        break;
+                    case "posted":
+                        holder.textStatus.setTextColor(Color.GREEN);  // 🟢 Posted
+                        break;
+                    default:
+                        holder.textStatus.setTextColor(Color.BLACK);  // ⚫ Default
+                        break;
+                }
+            } else {
+                holder.textStatus.setTextColor(Color.BLACK);
+            }
+
             holder.itemView.setOnClickListener(v -> {
                 if ("pending".equalsIgnoreCase(essay.getStatus())) {
                     Toast.makeText(v.getContext(),

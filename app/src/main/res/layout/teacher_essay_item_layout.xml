@@ -69,14 +69,34 @@
             android:textColor="@color/black"
             android:hint="Time Submitted" />
 
-        <TextView
-            android:id="@+id/text_status"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Status: "
-            android:textSize="12sp"
             android:textColor="@color/black"
-        />
+            android:textSize="12sp"
+            android:text="Status: "
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status: "
+                android:textSize="12sp"
+                android:textColor="@color/black"/>
+
+
+            <TextView
+                android:id="@+id/text_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                />
+
+
+        </LinearLayout>
+
+
 
 
     </LinearLayout>

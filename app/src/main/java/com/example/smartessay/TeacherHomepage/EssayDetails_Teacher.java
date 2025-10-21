@@ -76,7 +76,7 @@ public class EssayDetails_Teacher extends AppCompatActivity {
 
                                     tvConvertedText.setText(convertedText != null ? convertedText : "No text");
                                     tvEssayFeedback.setText(essayFeedback != null ? essayFeedback : "No feedback");
-                                    tvScore.setText(score != null ? "Score: " + score : "No score");
+                                    tvScore.setText(score != null ? score : "No score");
                                     tvStatus.setText(status != null ? "Status: " + status : "No status");
 
                                     break; // stop after finding the essay for this room
