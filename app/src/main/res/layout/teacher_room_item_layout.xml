@@ -3,31 +3,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp"
+    android:layout_margin="6dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="5dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:strokeColor="@android:color/holo_blue_bright"
-    app:strokeWidth="2dp">
+    app:strokeColor="#0033A0"
+    android:background="@drawable/round_blue_border"
+    app:strokeWidth="2dp"
+>
 
-
+    <!-- Main content area -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
-
+        android:padding="10dp"
+        android:layout_alignParentStart="true"
+        >
 
         <TextView
             android:id="@+id/text_room_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="16dp"
             android:text="Room 101"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black" />
+            android:gravity="center_vertical"
+            android:background="@drawable/header_round_top" />
 
         <TextView
             android:id="@+id/text_room_code"
@@ -36,9 +43,7 @@
             android:layout_marginTop="4dp"
             android:text="Code: ABC123"
             android:textSize="14sp"
-            android:textColor="@color/black"
-            android:hint="Room Code" />
-
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/text_date_created"
@@ -46,10 +51,7 @@
             android:layout_height="wrap_content"
             android:text="Created: March 15, 2024"
             android:textSize="14sp"
-            android:textColor="@android:color/black"
-            android:hint="Date Created" />
-
-
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/text_uploads"
@@ -57,30 +59,43 @@
             android:layout_height="wrap_content"
             android:text="Essays Uploaded:"
             android:textSize="14sp"
-            android:textColor="@android:color/black"/>
+            android:textColor="#000000" />
 
+        <LinearLayout
+            android:id="@+id/layout_rubrics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:visibility="gone"
+            android:background="@drawable/round_blue_border"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/text_rubrics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="These are the criteria"
+                android:visibility="gone"
+                android:textColor="#555555"
+                android:textSize="14sp" />
+        </LinearLayout>
 
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_show_rubrics"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/footer_round_bottom"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
             android:text="Show Rubrics"
-            android:textSize="14sp"
-            android:background="@color/back_blue"
-            android:textColor="@color/white"
-            android:layout_marginTop="8dp"/>
-
-        <TextView
-            android:id="@+id/text_rubrics"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="these are the criteria"
-            android:textColor="#555555"
-            android:visibility="gone"
-            android:layout_marginTop="12sp"
-            android:textSize="14sp"/>
-
+            android:textAllCaps="false"
+            android:textColor="#0033A0"
+            android:textSize="12sp"/>
     </LinearLayout>
+
+    <!-- Vertical Swipe-to-Delete Text -->
 
 </androidx.cardview.widget.CardView>

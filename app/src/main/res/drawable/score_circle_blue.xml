@@ -1,6 +1,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-    <solid android:color="#003399" /> <!-- Blue circle -->
+    <solid android:color="#FFFFFF" /> <!-- Blue circle -->
     <stroke android:width="2dp" android:color="#1976D2" /> <!-- Slightly darker border -->
     <size android:width="70dp" android:height="70dp" />
 </shape>

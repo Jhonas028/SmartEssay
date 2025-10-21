@@ -1,5 +1,6 @@
 package com.example.smartessay.TeacherHomepage;
 
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -24,6 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,8 +49,11 @@ public class HomePage_Teacher extends Fragment {
     private List<Room> roomList;       // Local list of rooms for adapter
     private DatabaseReference classroomsRef; // Firebase reference to "classrooms" node
     private Button btnAddRoom;         // Button to add a new classroom
-    private EditText editSearch;       // Search input field
+    private EditText editSearch;
+// Search input field
 
+    LinearLayout layoutRubrics;
+    ImageView arrow;
     String teacherEmail; // Teacher's email passed from previous fragment/activity
 
     @Override
@@ -70,6 +76,15 @@ public class HomePage_Teacher extends Fragment {
 
         // Button to add a new room
         btnAddRoom = view.findViewById(R.id.btn_add_room);
+
+        layoutRubrics = view.findViewById(R.id.layout_rubrics);
+
+
+
+        /*ImageView arrow = view.findViewById(R.id.iv_swipe_arrow);
+        //call animation method for swipeup
+        animateSwipeArrow(arrow);*/
+
 
 
         // Search input
@@ -350,10 +365,13 @@ public class HomePage_Teacher extends Fragment {
             // Toggle rubrics visibility when button clicked
             holder.btnShowRubrics.setOnClickListener(v -> {
                 if (holder.textRubrics.getVisibility() == View.GONE) { // If hidden
-                    holder.textRubrics.setVisibility(View.VISIBLE); // show
+                    holder.textRubrics.setVisibility(View.VISIBLE);
+                    holder.layoutRubrics.setVisibility(View.VISIBLE);
+                    // show
                     holder.btnShowRubrics.setText("Hide Rubrics");
                 } else { // If visible
-                    holder.textRubrics.setVisibility(View.GONE); // hide
+                    holder.textRubrics.setVisibility(View.GONE);
+                    holder.layoutRubrics.setVisibility(View.GONE);// hide
                     holder.btnShowRubrics.setText("Show Rubrics");
                 }
             });
@@ -417,6 +435,8 @@ public class HomePage_Teacher extends Fragment {
             TextView textRoomName, textRoomCode, textCreatedAt, textUpdatedAt, textRubrics, textUploads;
             Button btnShowRubrics;
 
+            LinearLayout layoutRubrics;
+
             public RoomViewHolder(@NonNull View itemView) {
                 super(itemView);
                 textRoomName = itemView.findViewById(R.id.text_room_name);
@@ -426,7 +446,25 @@ public class HomePage_Teacher extends Fragment {
                 textRubrics = itemView.findViewById(R.id.text_rubrics);
                 textUploads = itemView.findViewById(R.id.text_uploads);
                 btnShowRubrics = itemView.findViewById(R.id.btn_show_rubrics);
+                layoutRubrics = itemView.findViewById(R.id.layout_rubrics);
             }
         }
     }
+
+    /*private void animateSwipeArrow(View view) {
+        ImageView arrow = view.findViewById(R.id.iv_swipe_arrow);
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0, -20, 0);
+        animator.setDuration(1000);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.setRepeatMode(ValueAnimator.RESTART);
+
+        animator.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            arrow.setTranslationY(value);
+        });
+
+        animator.start();
+    }*/
+
 }
