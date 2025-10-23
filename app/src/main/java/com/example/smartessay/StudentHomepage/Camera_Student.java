@@ -63,6 +63,8 @@ public class Camera_Student extends AppCompatActivity {
         submitBtn = findViewById(R.id.submitBtn);
         cancelBtn = findViewById(R.id.cancelBtn);
 
+
+
         // ✅ Get student and classroom info passed from previous screen
         studentId = getIntent().getStringExtra("studentId");
         classroomId = getIntent().getStringExtra("classroomId");
@@ -109,64 +111,9 @@ public class Camera_Student extends AppCompatActivity {
                 return;
             }
 
-            // Connect to Firebase Realtime Database
-            DatabaseReference db = FirebaseDatabase.getInstance(
-                    "https://smartessay-79d91-default-rtdb.firebaseio.com/"
-            ).getReference();
 
-            // 🔎 Check if student already submitted an essay in this classroom
-            db.child("essay")
-                    .orderByChild("student_id")
-                    .equalTo(studentId) // look for essays by this student
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            boolean alreadySubmitted = false;
-
-                            // Loop through essays found for this student
-                            for (DataSnapshot essaySnap : snapshot.getChildren()) {
-                                String cid = essaySnap.child("classroom_id").getValue(String.class);
-
-                                // If essay classroomId == current classroomId → student already submitted
-                                if (cid != null && cid.equals(classroomId)) {
-                                    alreadySubmitted = true;
-                                    break;
-                                }
-                            }
-
-                            // ✅ If already submitted → block submission
-                            if (alreadySubmitted) {
-                                Toast.makeText(Camera_Student.this,
-                                        "You already submitted an essay for this classroom!",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                            // ✅ Else → show confirmation dialog before submitting
-                            else {
-                                showYesNoDialog(
-                                        "Submit Essay",
-                                        "Are you sure you want to submit this essay? You can only submit once.",
-                                        () -> {
-                                            // ✅ User pressed Yes
-                                            showLoadingDialog("Submitting essay...");
-                                            getRubricsFromTeacherAndGradeEssay(classroomId, essayText);
-                                        },
-                                        () -> {
-                                            // ❌ User pressed No / canceled → just dismiss
-                                            Toast.makeText(Camera_Student.this, "Submission canceled", Toast.LENGTH_SHORT).show();
-                                        }
-                                );
-
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError error) {
-                            // If Firebase query fails
-                            Toast.makeText(Camera_Student.this,
-                                    "Firebase error: " + error.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
+            //call this method
+            checkifSubmitted(essayText);
         });
 
         // ✅ Cancel button clears image + essay text
@@ -174,6 +121,69 @@ public class Camera_Student extends AppCompatActivity {
             imageView.setImageDrawable(null);
             ocrResultTextView.setText("");
         });
+    }
+
+    // 🔎 Check if student already submitted an essay in this classroom
+    private void checkifSubmitted(String essayText){
+
+        // Connect to Firebase Realtime Database
+        DatabaseReference db = FirebaseDatabase.getInstance(
+                "https://smartessay-79d91-default-rtdb.firebaseio.com/"
+        ).getReference();
+
+        // 🔎 Check if student already submitted an essay in this classroom
+        db.child("essay")
+                .orderByChild("student_id")
+                .equalTo(studentId) // look for essays by this student
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        boolean alreadySubmitted = false;
+
+                        // Loop through essays found for this student
+                        for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                            String cid = essaySnap.child("classroom_id").getValue(String.class);
+
+                            // If essay classroomId == current classroomId → student already submitted
+                            if (cid != null && cid.equals(classroomId)) {
+                                alreadySubmitted = true;
+                                break;
+                            }
+                        }
+
+                        // ✅ If already submitted → block submission
+                        if (alreadySubmitted) {
+                            Toast.makeText(Camera_Student.this,
+                                    "You already submitted an essay for this classroom!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        // ✅ Else → show confirmation dialog before submitting
+                        else {
+                            showYesNoDialog(
+                                    "Submit Essay",
+                                    "Are you sure you want to submit this essay? You can only submit once.",
+                                    () -> {
+                                        // ✅ User pressed Yes
+                                        showLoadingDialog("Submitting essay...");
+                                        getRubricsFromTeacherAndGradeEssay(classroomId,essayText);
+                                    },
+                                    () -> {
+                                        // ❌ User pressed No / canceled → just dismiss
+                                        Toast.makeText(Camera_Student.this, "Submission canceled", Toast.LENGTH_SHORT).show();
+                                    }
+                            );
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // If Firebase query fails
+                        Toast.makeText(Camera_Student.this,
+                                "Firebase error: " + error.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     private void showYesNoDialog(String title, String message, Runnable onYes, Runnable onCancel) {
@@ -436,9 +446,9 @@ public class Camera_Student extends AppCompatActivity {
                 .addOnSuccessListener(snapshot -> {
                     if (snapshot.exists()) {
                         // Get each rubric criteria from Firebase
+                        String topic = snapshot.child("topic").getValue(String.class);
                         String contentIdeas = snapshot.child("Content and Ideas").getValue(String.class);
-                        String developmentSupport = snapshot.child("Development and Support").getValue(String.class);
-                        String grammarMechanics = snapshot.child("Grammar, Mechanics, and Formatting").getValue(String.class);
+                        String subjectRelevance = snapshot.child("Subject Relevance").getValue(String.class);
                         String languageStyle = snapshot.child("Language Use and Style").getValue(String.class);
                         String organizationStructure = snapshot.child("Organization and Structure").getValue(String.class);
                         String notes = snapshot.child("Notes").getValue(String.class);
@@ -446,10 +456,11 @@ public class Camera_Student extends AppCompatActivity {
 
                         // Send essay + rubrics to dummy AI API for grading
                         Student_OpenAiAPI.gradeEssay(
+                                topic,
                                 essay,
                                 contentIdeas,
                                 organizationStructure,
-                                grammarMechanics,
+                                subjectRelevance,
                                 languageStyle,
                                 otherCriteria,
                                 notes,

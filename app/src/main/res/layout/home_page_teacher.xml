@@ -4,82 +4,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@drawable/bg"
+
     tools:context=".TeacherHomepage.HomePage_Teacher">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@drawable/bg">
-
-        <!-- Header Section with Title and Button -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/yellow_border"
-            android:padding="8dp">
+        android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="16dp"
+                android:padding="10dp"
                 android:gravity="center_vertical">
 
-                <TextView
-                    android:layout_width="250dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="248dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Smart Essay"
-                    android:textColor="@color/back_blue"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-                <androidx.appcompat.widget.AppCompatButton
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_search_prompt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Search activity..."
+                         />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <ImageButton
                     android:id="@+id/btn_add_room"
-                    android:layout_width="100dp"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:text="Add Activity"
-                    android:textColor="@color/back_blue"
+                    android:layout_marginLeft="10dp"
                     android:background="@drawable/round_all_yellow_button"
-                    android:textSize="12sp" />
+                    android:src="@drawable/outline_add_2_24"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:padding="10dp"
+                    android:contentDescription="Add Room" />
+
             </LinearLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_search_prompt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Search prompts..."
-                    android:drawablePadding="8dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-
-        <!-- Swipe Up Hint above Bottom Navigation , This is for animation
-        <LinearLayout
-            android:id="@+id/swipe_hint_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="right"
-        >
-            <TextView
-                android:id="@+id/tv_swipe_hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#AAFFFFFF"
-                android:textSize="14sp"
-                android:padding="4dp" />
-
-        </LinearLayout>-->
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView

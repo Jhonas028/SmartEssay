@@ -44,9 +44,9 @@ public class Student_OpenAiAPI {
 
     private static final MediaType JSON = MediaType.parse("application/json");
 
-    public static void gradeEssay(String essayText,
+    public static void gradeEssay(String topic,String essayText,
                                   String content, String organization,
-                                  String grammar, String critical, String otherCriteria, String others,
+                                  String grammar, String relevance, String otherCriteria, String others,
                                   GradeCallback callback) {
 
         String prompt = "Grade the following essay ONLY on the rubrics provided by the teacher. " +
@@ -67,24 +67,26 @@ public class Student_OpenAiAPI {
             prompt += "Grammar, Mechanics, and Formatting\n\t→ [feedback]\n\n ";
             prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
-        if (!critical.isEmpty()) {
-            prompt += "Critical Thinking\n\t→ [feedback]\n\n ";
+        if (!relevance.isEmpty()) {
+            prompt += "Subject Relevance\n\t→ [feedback]\n\n ";
             prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
         }
-        if (!otherCriteria.isEmpty()) {
+        /*if (!otherCriteria.isEmpty()) {
             prompt += "Other Criteria\n\t→ [feedback]\n\n ";
 
-        }
+        }*/
+
         if (!others.isEmpty()) {
             prompt += "Teacher Notes: " + others + "\n\n";
         }
 
-        prompt += "\nEssay:\n" + essayText + "\n\n" +
+        prompt += "\nEssay Topic: " + topic + "\n\nEssay:\n" + essayText + "\n\n" +
                 "Rubric Percentages:\n" +
                 "Content: " + content + "%\n" +
                 "Organization: " + organization + "%\n" +
                 "Grammar: " + grammar + "%\n" +
-                "Critical Thinking: " + critical + "%\n";
+                "Subject Relevance: " + relevance + "%\n";
+
 
         if (!otherCriteria.isEmpty()) {
             prompt += "Other Criteria: " + otherCriteria + "%\n";

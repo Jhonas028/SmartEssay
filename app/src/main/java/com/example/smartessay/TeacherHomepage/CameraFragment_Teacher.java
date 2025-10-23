@@ -45,7 +45,6 @@ public class CameraFragment_Teacher extends Fragment {
     private TextView scoresTV;
     private EditText ocrResultTextView;
     EditText contentPercentage,organizationPercentage,grammarPercentage,languageStyle,otherTV,etRubricOtherScore;
-
     Button submitBtn,addPageBtn;
     private AlertDialog loadingDialog;
 

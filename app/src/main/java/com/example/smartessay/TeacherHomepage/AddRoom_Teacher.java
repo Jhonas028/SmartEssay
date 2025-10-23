@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -30,12 +32,13 @@ public class AddRoom_Teacher extends AppCompatActivity {
 
     // Input fields for room name and rubric criteria
     EditText etRoomName, etRubricContent, etRubricOrganization, etRubricGrammar,
-            etRubricCritical, etRubricOther,etRubricOtherScore;
+            etRubricRelevance, etRubricOther,etRubricOtherScore,etTopic;
 
-    Button btnCreate, btnCancel; // Create and Cancel buttons
+    Button btnCreate, btnCancel,btnAddCriteria; // Create and Cancel buttons
     DatabaseReference classroomsRef; // Firebase reference to "classrooms"
 
-    private AlertDialog loadingDialog; // loading spinner dialog
+    private AlertDialog loadingDialog;
+    LinearLayout layoutOtherRubrics;// loading spinner dialog
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,19 +53,23 @@ public class AddRoom_Teacher extends AppCompatActivity {
         etRubricContent = findViewById(R.id.etRubricContent);
         etRubricOrganization = findViewById(R.id.etRubricOrganization);
         etRubricGrammar = findViewById(R.id.etRubricGrammar);
-        etRubricCritical = findViewById(R.id.etRubricCritical);
+        etRubricRelevance = findViewById(R.id.etRelevance);
         etRubricOther = findViewById(R.id.etRubricOther);
-
         etRubricOtherScore = findViewById(R.id.etRubricOtherScore);
+        etTopic = findViewById(R.id.etTopic);
 
         btnCreate = findViewById(R.id.btnCreate);
         btnCancel = findViewById(R.id.btnCancel);
+        btnAddCriteria = findViewById(R.id.btnAddCriteria);
+        layoutOtherRubrics = findViewById(R.id.layout_otherRubrics);
+
+        // Hide by default
+        layoutOtherRubrics.setVisibility(View.GONE);
 
         // Cancel button simply closes activity
         btnCancel.setOnClickListener(v -> finish());
 
-        //Hides the etRubricOther field if there is no  value in input in etRubricOtherScore
-        setupOtherFieldVisibility();
+
 
         // Create button logic
         btnCreate.setOnClickListener(v -> {
@@ -83,7 +90,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
             int content = parseEditText(etRubricContent);
             int organization = parseEditText(etRubricOrganization);
             int grammar = parseEditText(etRubricGrammar);
-            int critical = parseEditText(etRubricCritical);
+            int critical = parseEditText(etRubricRelevance);
             int other = parseEditText(etRubricOtherScore);
 
             int total = content + organization + grammar + critical + other;
@@ -111,12 +118,14 @@ public class AddRoom_Teacher extends AppCompatActivity {
                 String roomId = classroomsRef.push().getKey(); // generate unique Firebase key
 
                 // 🔹 Prepare Rubrics map (Firebase-safe keys) // pass this to firebase
-                Map<String, Object> rubrics = new HashMap<>();
+                Map<String, Object> rubrics = new LinkedHashMap<>();
+
+                rubrics.put("topic", etTopic.getText().toString().trim());
                 rubrics.put("Content and Ideas", etRubricContent.getText().toString().trim() + "%");
-                rubrics.put("Organization and Structure", etRubricOrganization.getText().toString().trim()+ "%");
-                rubrics.put("Language Use and Style", etRubricGrammar.getText().toString().trim()+ "%");
-                rubrics.put("Grammar, Mechanics, and Formatting", etRubricCritical.getText().toString().trim()+ "%");
-                rubrics.put("Other Criteria", String.valueOf(other)+ "%");
+                rubrics.put("Organization and Structure", etRubricOrganization.getText().toString().trim() + "%");
+                rubrics.put("Language Use and Style", etRubricGrammar.getText().toString().trim() + "%");
+                rubrics.put("Subject Relevance", etRubricRelevance.getText().toString().trim() + "%");
+                rubrics.put("Other Criteria", String.valueOf(other) + "%");
                 rubrics.put("Notes", etRubricOther.getText().toString().trim());
 
 
@@ -142,6 +151,16 @@ public class AddRoom_Teacher extends AppCompatActivity {
                             btnCreate.setEnabled(true); // allow retry
                         });
             });
+        });
+
+        btnAddCriteria.setOnClickListener(v -> {
+            if (layoutOtherRubrics.getVisibility() == View.GONE) {
+                layoutOtherRubrics.setVisibility(View.VISIBLE);
+                btnAddCriteria.setText("Remove Criteria"); // Optional toggle text
+            } else {
+                layoutOtherRubrics.setVisibility(View.GONE);
+                btnAddCriteria.setText("Add Criteria"); // Optional toggle text
+            }
         });
     }
 

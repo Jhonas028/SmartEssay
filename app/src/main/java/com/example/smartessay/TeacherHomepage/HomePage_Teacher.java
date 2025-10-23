@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -48,7 +49,7 @@ public class HomePage_Teacher extends Fragment {
     private RoomAdapter roomAdapter;   // Adapter for RecyclerView
     private List<Room> roomList;       // Local list of rooms for adapter
     private DatabaseReference classroomsRef; // Firebase reference to "classrooms" node
-    private Button btnAddRoom;         // Button to add a new classroom
+    private ImageButton btnAddRoom;         // Button to add a new classroom
     private EditText editSearch;
 // Search input field
 
