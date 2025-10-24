@@ -15,5 +15,13 @@
     <color name="green_posted">#4CAF50</color>
 
 
+    <color name="blue_primary">#0033A0</color>
+    <color name="yellow_accent">#FFD54F</color>
+    <color name="green_success">#4CAF50</color>
+    <color name="red_pending">#F44336</color>
+    <color name="off_white">#F8F9FB</color>
+    <color name="dark_gray">#2C2C2C</color>
+
+
 
 </resources>

@@ -3,102 +3,126 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp"
+    android:layout_margin="6dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="5dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:strokeColor="@android:color/holo_blue_bright"
+    app:strokeColor="@color/blue_primary"
     app:strokeWidth="2dp">
 
-
+    <!-- Main content container -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        >
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txt_name_teachere"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/text_studnum"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Student no.: "
-            android:textSize="12sp"
-            android:textColor="@android:color/black"
-            android:hint="Score" />
-
-        <!--
-        <TextView
-            android:id="@+id/text_score"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Score:"
-            android:textSize="12sp"
-            android:textColor="@android:color/black"
-            android:hint="Score" />Score -->
-
-
-
-        <TextView
-            android:id="@+id/text_date_created"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Submitted: March 15, 2024"
-            android:textSize="12sp"
-            android:textColor="@android:color/black"
-            android:hint="Date Submitted" />
-
-        <TextView
-            android:id="@+id/text_time_created"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Time: 10:30 AM"
-            android:textSize="12sp"
-            android:textColor="@color/black"
-            android:hint="Time Submitted" />
-
+        <!-- Blue Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:text="Status: "
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@color/blue_primary"
+            android:padding="10dp"
+            android:gravity="center_vertical">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/txt_name_teachere"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Status: "
-                android:textSize="12sp"
-                android:textColor="@color/black"/>
-
-
-            <TextView
-                android:id="@+id/text_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/black"
-                />
-
-
+                android:layout_weight="1"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="16dp"
+                android:text="Juan Dela Cruz"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical" />
         </LinearLayout>
 
+        <!-- White Content Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/text_studnum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Student No.: 2023-00123"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/text_date_created"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Submitted: March 15, 2024"
+                android:textSize="14sp"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/text_time_created"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Time: 10:30 AM"
+                android:textSize="14sp"
+                android:textColor="#000000" />
+
+            <!-- Status Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status:"
+                    android:textSize="14sp"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:id="@+id/text_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pending"
+                    android:textSize="14sp"
+                    android:textColor="@color/red_pending"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Swipe Hints (Optional) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
 
+                <TextView
+                    android:id="@+id/text_swipe_delete_hint"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="&lt;&lt;v"
+                    android:textSize="11sp"
+                    android:textColor="#666666"
+                    android:textStyle="italic"
+                    android:gravity="end" />
+            </LinearLayout>
 
+        </LinearLayout>
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

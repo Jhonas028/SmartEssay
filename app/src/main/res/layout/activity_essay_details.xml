@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:background="@drawable/bg"
-    android:padding="10dp">
+    android:padding="5dp">
 
 
 
@@ -16,73 +15,106 @@
         android:layout_height="match_parent"
         android:padding="10dp"
         android:layout_marginTop="15dp">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Student Info -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/roundall_white_blueside"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:orientation="vertical">
 
-                <!-- Name and Status -->
+                <!-- Student Info -->
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/pill_shape">
 
-                    <TextView
-                        android:id="@+id/fullname"
-                        android:layout_width="wrap_content"
+
+                    <!-- Name and Status (Blue Section) -->
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Juan Dela Cruz"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="#003399" />
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:background="@drawable/pill_left_blue"
+                        android:padding="15dp">
 
-                    <TextView
-                        android:id="@+id/tvStatus"
+                        <!-- Student Name -->
+                        <TextView
+                            android:id="@+id/fullname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Juan Dela Cruz"
+                            android:textSize="25sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/blue_primary" />
+
+                        <!-- Status Row -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="4dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Status: "
+                                android:textSize="16sp"
+                                android:textColor="@color/dark_gray"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:id="@+id/tvStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Pending"
+                                android:textSize="16sp"
+                                android:textColor="@color/red_pending" />
+                        </LinearLayout>
+
+                        <!-- Edit Score Button -->
+
+                    </LinearLayout>
+
+                    <!-- Score Section (Yellow Section) -->
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Pending"
-                        android:textSize="16sp"
-                        android:textColor="#F44336" /> <!-- Red for Pending -->
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/tvScore"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
+                        android:layout_height="match_parent"
                         android:gravity="center"
-                        android:inputType="number"
-                        android:textColor="#000000"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
-                        android:background="@drawable/score_circle_blue" />
+                        android:orientation="horizontal"
+                        android:background="@drawable/pill_right_yellow"
+                        android:paddingHorizontal="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="%"
-                        android:textSize="22sp"
-                        android:textColor="#000000"
-                        android:paddingStart="4dp"/>
+                        <EditText
+                            android:id="@+id/tvScore"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:gravity="center"
+                            android:inputType="number"
+                            android:text="90"
+                            android:textColor="@color/off_white"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:background="@android:color/transparent"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="%"
+                            android:textSize="22sp"
+                            android:textColor="@color/off_white"
+                            android:paddingStart="4dp"/>
+
+
+                    </LinearLayout>
+
                 </LinearLayout>
-
             </LinearLayout>
 
             <!-- Feedback Section -->
@@ -90,95 +122,141 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/roundall_white_blueside"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:padding="1dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/blue_filled_round_corners">
 
+                <!-- Header -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/roundall_blue_filled"
                     android:gravity="center"
                     android:paddingVertical="10dp"
                     android:text="Feedback"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/yellow_accent"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    />
 
-                <TextView
-                    android:id="@+id/tvEssayFeedback"
+                <!-- Inner White Layout for Feedback Text -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/blue_border_round_edittext"
+                    android:padding="10dp"
+                    android:elevation="2dp"
                     android:layout_marginTop="5dp"
-                    android:text="Feedack: "
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:justificationMode="inter_word"
-                    />
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginHorizontal="4dp"
+                    android:backgroundTintMode="src_over">
+
+                    <TextView
+                        android:id="@+id/tvEssayFeedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Feedback:"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:justificationMode="inter_word" />
+                </LinearLayout>
 
             </LinearLayout>
 
-            <!-- Student Essay Section -->
+            <!-- ================= STUDENT ESSAY SECTION ================= -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/roundall_white_blueside"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/blue_filled_round_corners">
 
+                <!-- Section Header -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/roundall_blue_filled"
                     android:gravity="center"
                     android:paddingVertical="10dp"
                     android:text="Student Essay"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/yellow_accent"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvConvertedText"
+                <!-- Inner White Layout for Essay Text -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Students Essay..."
-                    android:textSize="16sp"
-                    android:textColor="@color/black"
-                    android:justificationMode="inter_word"
-                    android:paddingTop="5dp" />
+                    android:orientation="vertical"
+                    android:background="@drawable/blue_border_round_edittext"
+                    android:padding="10dp"
+                    android:elevation="2dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginHorizontal="4dp"
+                    android:backgroundTintMode="src_over">
+
+                    <TextView
+                        android:id="@+id/tvConvertedText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Student's Essay..."
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:justificationMode="inter_word"
+                        android:paddingTop="5dp" />
+                </LinearLayout>
+
             </LinearLayout>
 
-            <!-- Buttons -->
+            <!-- ================= BUTTON SECTION ================= -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp"
-                >
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp">
 
-                <!-- Save Button -->
-                <Button
-                    android:id="@+id/btnSave"
-                    android:layout_width="300dp"
+               />
+
+                <!-- Row for Save and Cancel -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Save"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                  >
 
-                    android:backgroundTint="@color/text_title_yellow"
-                    android:textColor="#003399"
-                    android:textStyle="bold"
-                    android:padding="12dp"
-                    android:layout_marginStart="8dp"
-                     />
+                    <!-- Cancel Button -->
+                    <Button
+                        android:id="@+id/btnCancel"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Cancel"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:backgroundTint="@color/yellow_accent"
+                        android:textColor="#003399"
+                        android:paddingVertical="12dp"
+                        android:layout_marginEnd="16dp" />
 
-
+                    <!-- Save Button -->
+                    <Button
+                        android:id="@+id/btnSave"
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:text="Save &amp; Post"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:backgroundTint="@color/blue_primary"
+                        android:textColor="@color/off_white"
+                        android:paddingVertical="12dp" />
+                </LinearLayout>
 
             </LinearLayout>
+
+
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

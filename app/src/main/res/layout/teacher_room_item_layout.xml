@@ -10,92 +10,123 @@
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     app:strokeColor="#0033A0"
-    android:background="@drawable/round_blue_border"
-    app:strokeWidth="2dp"
->
+    app:strokeWidth="2dp">
 
     <!-- Main content area -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:layout_alignParentStart="true"
-        >
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/text_room_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="10dp"
-            android:paddingHorizontal="16dp"
-            android:text="Room 101"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center_vertical"
-            android:background="@drawable/header_round_top" />
-
-        <TextView
-            android:id="@+id/text_room_code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Code: ABC123"
-            android:textSize="14sp"
-            android:textColor="#000000" />
-
-        <TextView
-            android:id="@+id/text_date_created"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Created: March 15, 2024"
-            android:textSize="14sp"
-            android:textColor="#000000" />
-
-        <TextView
-            android:id="@+id/text_uploads"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Essays Uploaded:"
-            android:textSize="14sp"
-            android:textColor="#000000" />
-
+        <!-- Blue header section -->
         <LinearLayout
-            android:id="@+id/layout_rubrics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/blue_primary"
+            android:padding="5dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/text_room_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="16dp"
+                android:text="Room 101"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- White content section -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp"
-            android:visibility="gone"
-            android:background="@drawable/round_blue_border"
-            android:layout_marginTop="12dp">
+            android:background="@android:color/white"
+            android:padding="16dp">
 
             <TextView
-                android:id="@+id/text_rubrics"
-                android:layout_width="wrap_content"
+                android:id="@+id/text_room_code"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="These are the criteria"
+                android:text="Code: ABC123"
+                android:textSize="14sp"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/text_date_created"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Created: March 15, 2024"
+                android:textSize="14sp"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/text_uploads"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Essays Uploaded:"
+                android:textSize="14sp"
+                android:textColor="#000000" />
+
+            <LinearLayout
+                android:id="@+id/layout_rubrics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:visibility="gone"
-                android:textColor="#555555"
-                android:textSize="14sp" />
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/text_rubrics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="These are the criteria"
+                    android:visibility="gone"
+                    android:textColor="#555555"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Swipe hints -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+              >
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_show_rubrics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="Show Rubrics"
+                    android:padding="10dp"
+                    android:textAllCaps="false"
+                    android:textColor="#0033A0"
+                    android:textSize="12sp"
+                    android:background="@drawable/rounded_button" />
+
+                <!-- Swipe left to delete -->
+                <TextView
+                    android:id="@+id/text_swipe_delete_hint"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="&lt;&lt; "
+                    android:textSize="11sp"
+                    android:textColor="#666666"
+                    android:textStyle="italic"
+                    android:gravity="end"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
         </LinearLayout>
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_show_rubrics"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/footer_round_bottom"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="4dp"
-            android:text="Show Rubrics"
-            android:textAllCaps="false"
-            android:textColor="#0033A0"
-            android:textSize="12sp"/>
     </LinearLayout>
-
-    <!-- Vertical Swipe-to-Delete Text -->
-
 </androidx.cardview.widget.CardView>
