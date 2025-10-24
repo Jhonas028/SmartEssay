@@ -203,7 +203,7 @@ public class HomePage_Teacher extends Fragment {
                 // Show confirmation dialog
                 showYesNoDialog(
                         "Delete Room",
-                        "Are you sure you want to delete this room?",
+                        "Confirming will permanently delete the selected room. This action cannot be undone.",
                         () -> {
                             // Yes → remove room from Firebase
                             classroomsRef.child(roomToDelete.getRoomId()).removeValue()

@@ -63,7 +63,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Submitted: March 15, 2024"
+                android:text="Date Submitted: March 15, 2024"
                 android:textSize="14sp"
                 android:textColor="#000000" />
 
@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Time: 10:30 AM"
+                android:text="Time Submitted: 10:30 AM"
                 android:textSize="14sp"
                 android:textColor="#000000" />
 

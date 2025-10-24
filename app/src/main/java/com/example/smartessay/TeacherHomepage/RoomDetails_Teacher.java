@@ -98,7 +98,7 @@ public class RoomDetails_Teacher extends AppCompatActivity {
 
                 showYesNoDialog(
                         "Delete Student",
-                        "Are you sure you want to remove this student and their essay?",
+                        "Confirming will permanently delete the essay. This action cannot be undone.",
                         () -> deleteStudentEssay(essay, position)
                 );
 
@@ -312,8 +312,8 @@ public class RoomDetails_Teacher extends AppCompatActivity {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
             SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
 
-            holder.tvDateCreated.setText("Submitted: " + dateFormat.format(date));
-            holder.tvTimeCreated.setText("Time: " + timeFormat.format(date));
+            holder.tvDateCreated.setText("Date Submitted: " + dateFormat.format(date));
+            holder.tvTimeCreated.setText("Time Submitted: " + timeFormat.format(date));
             holder.text_status.setText(essay.getStatus());
 
             // 🎨 Change color depending on status
