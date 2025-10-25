@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- ScrollView for long content -->
+    <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -19,160 +19,165 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="12dp">
+            android:padding="12dp"
+            android:background="@color/off_white">
 
             <!-- Header -->
             <LinearLayout
-                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@color/blue"
-                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:background="@color/blue_primary"
+                android:padding="10dp"
                 android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:paddingHorizontal="16dp"
+                android:layout_marginBottom="10dp">
 
-
-
-                <!-- Title -->
                 <TextView
-                    android:id="@+id/header_title"
-                    android:layout_width="match_parent"
+                    android:id="@+id/tvEssayTitle"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
                     android:text="Smart Essay"
-                    android:textColor="@color/yellow"
-                    android:textSize="25sp"
+                    android:textColor="@color/yellow_accent"
+                    android:textSize="26sp"
                     android:textStyle="bold" />
-
             </LinearLayout>
 
-            <!-- Profile Section -->
+            <!-- Student Info Section (Pill-Shaped Blue-Yellow Design) -->
             <LinearLayout
-                android:id="@+id/profile"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="12dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/round_border_bg">
+                android:background="@drawable/blue_border_round_edittext"
+                android:layout_marginBottom="12dp">
 
-                <!-- Left side: Name + Date + Status -->
+                <!-- Left Blue Part -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <TextView
-                        android:id="@+id/tvEssayTitle"
+                        android:id="@+id/fullname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Title"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:text="Juan Dela Cruz"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/blue_primary" />
 
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="4dp">
+
+                        <TextView
+                            android:id="@+id/tvStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="GRADED"
+                            android:textColor="@color/green_posted"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
                 </LinearLayout>
 
-                <!-- Right side: Score Circle -->
-                <TextView
-                    android:id="@+id/tvScore"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:background="@drawable/circle_blue_border"
+                <!-- Right Yellow Part (Score Display) -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="95"
-                    android:textColor="@color/blue"
-                    android:textSize="30sp"
-                    android:textStyle="bold" />
+                    android:background="@drawable/pill_right_yellow"
+                    android:paddingHorizontal="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvScore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="90%"
+                        android:textColor="@color/off_white"
+                        android:textSize="26sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Feedback & Criteria Section -->
+            <!-- Feedback Section -->
             <LinearLayout
-                android:id="@+id/feedback_criteria_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_margin="10dp"
-                android:background="@drawable/round_corner_bg">
+                android:background="@drawable/blue_filled_round_corners"
+                android:layout_marginBottom="12dp"
+                android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/FeedBack_Criteria_Header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Feedback and Criteria"
-                    android:textColor="@color/yellow"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
+                    android:paddingVertical="10dp"
+                    android:text="Feedback"
+                    android:textColor="@color/yellow_accent"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
-                <!-- Criteria Container -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="12dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/round_border_bg">
+                    android:background="@drawable/blue_border_round_edittext"
+                    android:padding="10dp"
+                    >
 
                     <TextView
                         android:id="@+id/tvFeedback"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Feedback: Strong arguments and well-developed points. A little more detail would make it flawless."
+                        android:text="Strong arguments and well-developed points. A little more detail would make it flawless."
                         android:textColor="@color/black"
-                        android:textSize="14sp"
-                        android:justificationMode="inter_word"
-                        android:layout_marginBottom="8dp" />
-
-
-
+                        android:textSize="16sp"
+                        android:justificationMode="inter_word" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Essay Section -->
+            <!-- Student Essay Section -->
             <LinearLayout
-                android:id="@+id/essay_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_margin="10dp"
-                android:background="@drawable/round_corner_bg">
+                android:background="@drawable/blue_filled_round_corners"
+                android:layout_marginBottom="12dp"
+                android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/essay_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Essay"
-                    android:textColor="@color/yellow"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
+                    android:paddingVertical="10dp"
+                    android:text="Your Essay"
+                    android:textColor="@color/yellow_accent"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="12dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/round_border_bg">
+                    android:background="@drawable/blue_border_round_edittext"
+                    android:padding="10dp">
 
                     <TextView
                         android:id="@+id/tvEssayText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="This is a sample essay content. The student presents clear and well-structured arguments, demonstrates critical thinking, and uses examples effectively to support their ideas."
+                        android:text="This is a sample essay text. The student presents clear and well-structured arguments, demonstrates critical thinking, and uses examples effectively."
                         android:textColor="@color/black"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:justificationMode="inter_word"
                         android:lineSpacingExtra="4dp" />
                 </LinearLayout>
             </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 

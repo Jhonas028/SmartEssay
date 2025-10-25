@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,7 @@ public class HomePage_Student extends Fragment {
     private RecyclerView recyclerView;       // RecyclerView showing essays
     private RoomAdapter roomAdapter;         // Adapter for RecyclerView
     private List<EssayInfo> roomList;        // List holding essay data
-    private Button btnJoinRoom;              // Button to join new classroom
+    private ImageButton btnJoinRoom;              // Button to join new classroom
 
     private EditText editSearch;             // 🔹 Search input
     private List<EssayInfo> fullRoomList;    // 🔹 Full copy for search filtering
@@ -438,7 +439,7 @@ public class HomePage_Student extends Fragment {
 
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM dd, yyyy hh:mm a");
             String created = (essay.getCreatedAt() > 0) ? sdf.format(new java.util.Date(essay.getCreatedAt())) : "N/A";
-            holder.textDateCreated.setText("created: " + created);
+            holder.textDateCreated.setText("Date submitted: " + created);
 
             holder.textStatus.setText("status: " + essay.getStatus());
 
@@ -450,9 +451,11 @@ public class HomePage_Student extends Fragment {
                 switch (status.toLowerCase()) {
                     case "pending":
                         holder.textStatus.setTextColor(Color.RED);    // 🔴 Pending
+                        holder.textStatus.setText("PENDING");
                         break;
                     case "posted":
                         holder.textStatus.setTextColor(Color.parseColor("#00C853"));
+                        holder.textStatus.setText("GRADED");
                         // 🟢 Posted
                         break;
                     default:

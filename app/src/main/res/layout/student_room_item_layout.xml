@@ -3,70 +3,69 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:strokeColor="@android:color/holo_blue_bright"
-    app:strokeWidth="2dp">
+    app:strokeColor="@color/blue_primary"
+    app:strokeWidth="2dp"
+    android:backgroundTint="@color/off_white">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        >
+        android:padding="16dp">
 
+        <!-- Room Name -->
         <TextView
             android:id="@+id/text_room_name"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Room 101"
-            android:textSize="18sp"
+            android:text="ROOM 101"
+            android:textSize="25sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black" />
+            android:textColor="@color/blue_primary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/status_group"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="8dp" />
 
-
+        <!-- Date Created (below room name) -->
         <TextView
             android:id="@+id/text_date_created"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Created: March 15, 2024"
+            android:text="Mar 15, 2024"
+            android:textColor="#757575"
             android:textSize="12sp"
-            android:textColor="@android:color/black"
-            android:hint="Date Created" />
+            app:layout_constraintStart_toStartOf="@+id/text_room_name"
+            app:layout_constraintTop_toBottomOf="@+id/text_room_name"
+            android:layout_marginTop="4dp" />
 
-
-
+        <!-- Status Group (aligned right to room name) -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/status_group"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_room_name">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="status: "
-                android:textSize="12sp"
-                android:textColor="@color/black"/>
-
-
+            <!-- Status -->
             <TextView
                 android:id="@+id/text_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/black"
-                />
-
-
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:text="Posted"
+                android:textColor="#4CAF50"
+                android:textSize="15sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
