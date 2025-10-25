@@ -189,7 +189,6 @@ public class HomePage_Teacher extends Fragment {
                 // Drag & drop not used
                 return false;
             }
-
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
@@ -198,9 +197,7 @@ public class HomePage_Teacher extends Fragment {
                     roomAdapter.notifyDataSetChanged();
                     return;
                 }
-
                 Room roomToDelete = roomList.get(position);
-
                 // Show confirmation dialog
                 showYesNoDialog(
                         "Delete Room",
