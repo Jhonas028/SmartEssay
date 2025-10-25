@@ -224,10 +224,20 @@ public class CreateTeacherAcc extends AppCompatActivity {
         boolean isValid = true;
 
         // Validate each field
-        isValid &= setError(emailTV, email.isEmpty() || !email.matches("^[a-z]+\\.[a-z]+@sanpablo\\.sti\\.edu\\.ph$"), "Enter a valid STI San Pablo email.");
+        isValid &= setError(emailTV, email.isEmpty() || !email.matches("^[a-z]+\\.[a-z]+@sanpablo\\.sti\\.edu\\.ph$"), "Enter your STI San Pablo teacher email address.");
         isValid &= setError(fnameTV, fname.isEmpty(), "First name is required.");
         isValid &= setError(lnameTV, lname.isEmpty(), "Last name is required.");
-        isValid &= setError(passTV, pass.isEmpty() || !isValidPassword(pass), "Password must be 8–15 characters long, and include letters, numbers, and special characters.");
+
+        String passwordError = getPasswordError(pass);
+        if (pass.isEmpty()) {
+            passTV.setHelperText("Password is required.");
+            isValid = false;
+        } else if (!passwordError.isEmpty()) {
+            passTV.setHelperText(passwordError);
+            isValid = false;
+        } else {
+            passTV.setHelperText(null);
+        }
 
         // Confirm password check
         if (confPass.isEmpty()) {
@@ -265,8 +275,23 @@ public class CreateTeacherAcc extends AppCompatActivity {
     }
 
     // Check if password meets requirements
-    public boolean isValidPassword(String password) {
-        // Must contain: at least 1 letter, 1 number, 1 special char, length 8–15
-        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&.*])[A-Za-z\\d!@#$%^&.*]{8,15}$");
+// ✅ NEW: Improved password feedback system
+    public String getPasswordError(String password) {
+        StringBuilder error = new StringBuilder();
+
+        if (password.length() < 8 || password.length() > 15) {
+            error.append("• Password must be 8–15 characters long.\n");
+        }
+        if (!password.matches(".*[A-Za-z].*")) {
+            error.append("• Password must include at least one letter.\n");
+        }
+        if (!password.matches(".*\\d.*")) {
+            error.append("• Password must include at least one number.\n");
+        }
+        if (!password.matches(".*[!@#$%^&.*].*")) {
+            error.append("• Password must include at least one special character (!@#$%^&.*).\n");
+        }
+
+        return error.toString().trim();
     }
 }

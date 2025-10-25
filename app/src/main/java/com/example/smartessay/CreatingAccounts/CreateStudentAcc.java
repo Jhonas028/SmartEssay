@@ -220,7 +220,7 @@ public class CreateStudentAcc extends AppCompatActivity {
         boolean isValid = true;
 
         // Check each field and set error if invalid
-        isValid &= setError(emailTV, email.isEmpty() || !email.matches("^[a-z]+\\.\\d{1,10}@sanpablo\\.sti\\.edu\\.ph$"), "Enter a valid STI San Pablo email.");
+        isValid &= setError(emailTV, email.isEmpty() || !email.matches("^[a-z]+\\.\\d{1,10}@sanpablo\\.sti\\.edu\\.ph$"), "Enter your STI San Pablo student email address.");
         isValid &= setError(fnameTV, fname.isEmpty(), "First name is required.");
         isValid &= setError(lnameTV, lname.isEmpty(), "Last name is required.");
         isValid &= setError(snumTV, stuNum.isEmpty() || !stuNum.matches("^\\d{10}$"), "Must be exactly 10 digits.");

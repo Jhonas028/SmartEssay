@@ -80,7 +80,7 @@ public class OTPverifyStudent extends AppCompatActivity {
         code5.addTextChangedListener(new OTPTextWatcher(code5, code6, code4));
         code6.addTextChangedListener(new OTPTextWatcher(code6, null, code5));
 
-        startOTPTimer(60000);
+        startOTPTimer(180000);
 
         // Resend OTP
         testResendOTP.setOnClickListener(v -> {
@@ -88,7 +88,7 @@ public class OTPverifyStudent extends AppCompatActivity {
             currentOtp = otpGenerator.generateOTP();
             Log.i("new_student_otp", currentOtp);
             isOtpValid = true;
-            startOTPTimer(60000);
+            startOTPTimer(180000);
 
             // Update Firebase pending_verification
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -253,9 +253,10 @@ public class OTPverifyStudent extends AppCompatActivity {
 
         new CountDownTimer(durationInMillis, 1000) {
             public void onTick(long millisUntilFinished) {
-                String time = String.format(Locale.getDefault(), "%02d:%02d",
-                        millisUntilFinished / 60000,
-                        (millisUntilFinished % 60000) / 1000);
+                long minutes = (millisUntilFinished / 1000) / 60;
+                long seconds = (millisUntilFinished / 1000) % 60;
+
+                String time = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
                 textTimer.setText(time);
             }
 
@@ -267,4 +268,5 @@ public class OTPverifyStudent extends AppCompatActivity {
             }
         }.start();
     }
+
 }

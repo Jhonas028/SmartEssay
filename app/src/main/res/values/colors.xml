@@ -22,6 +22,8 @@
     <color name="off_white">#F8F9FB</color>
     <color name="dark_gray">#2C2C2C</color>
 
+    <color name="my_soft_red">#FF8A80</color> <!-- soft red for handling errors-->
+
 
 
 </resources>

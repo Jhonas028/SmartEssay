@@ -40,6 +40,8 @@
                 android:textColor="@color/back_blue"
                 android:background="@drawable/round_all_yellow_button"
                 android:textSize="12sp"/>
+
+
         </LinearLayout>
 
         <!-- Room Info Section -->
@@ -58,10 +60,9 @@
                 android:textStyle="bold"
                 android:textSize="16sp"/>
 
-
         </LinearLayout>
 
-        <!-- Search Bar -->
+          <!-- Search Bar -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -65,7 +65,7 @@
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:hint="First name"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:hint="Last name"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
@@ -134,7 +134,7 @@
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -155,7 +155,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:hint="Password"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
@@ -183,7 +183,7 @@
                     android:hint="Confirm password"
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     app:boxStrokeColor="@color/white_hint_selector"
                     app:hintTextColor="@color/white_hint_selector"
                     app:endIconMode="password_toggle"

@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         signinBTN = findViewById(R.id.signinBTN);
         signUpTextView = findViewById(R.id.signupTV);
 
+
         // When the "Sign Up" text is clicked, go to ChoosingAccounts activity
         signUpTextView.setOnClickListener(v -> {
             startActivity(new Intent(this, ChoosingAccounts.class));
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
             // Authenticate user with Firebase
             authenticateUser(email, password);
         });
+
+
     }
 
     // Method to authenticate user against Firebase Realtime Database

@@ -62,7 +62,7 @@
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -85,7 +85,7 @@
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -108,7 +108,7 @@
                     android:textColorHint="@color/white"
                     app:boxBackgroundMode="outline"
                     app:boxStrokeColor="@color/white_hint_selector"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -133,7 +133,7 @@
                     app:boxStrokeColor="@color/white_hint_selector"
                     app:endIconMode="password_toggle"
                     app:endIconTint="@android:color/white"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -158,7 +158,7 @@
                     app:boxStrokeColor="@color/white_hint_selector"
                     app:endIconMode="password_toggle"
                     app:endIconTint="@android:color/white"
-                    app:helperTextTextColor="#FF0000"
+                    app:helperTextTextColor="@color/my_soft_red"
                     app:hintTextColor="@color/white_hint_selector">
 
                     <com.google.android.material.textfield.TextInputEditText

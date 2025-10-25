@@ -66,14 +66,14 @@ public class OTPverifyTeacher extends AppCompatActivity {
         code5.addTextChangedListener(new OTPTextWatcher(code5, code6, code4));
         code6.addTextChangedListener(new OTPTextWatcher(code6, null, code5));
 
-        startOTPTimer(60000);
+        startOTPTimer(180000);
 
         testResendOTP.setOnClickListener(v -> {
             clearInputs();
             currentOtp = otpGenerator.generateOTP();
             isOtpValid = true;
 
-            startOTPTimer(60000);
+            startOTPTimer(180000);
 
             Intent intent = getIntent();
             String email = intent.getStringExtra("email_teacher");
@@ -232,13 +232,16 @@ public class OTPverifyTeacher extends AppCompatActivity {
 
     private void startOTPTimer(long durationInMillis) {
         testResendOTP.setEnabled(false);
+
         new CountDownTimer(durationInMillis, 1000) {
             public void onTick(long millisUntilFinished) {
-                String time = String.format(Locale.getDefault(), "%02d:%02d",
-                        millisUntilFinished / 60000,
-                        (millisUntilFinished % 60000) / 1000);
+                long minutes = (millisUntilFinished / 1000) / 60;
+                long seconds = (millisUntilFinished / 1000) % 60;
+
+                String time = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
                 textTimer.setText(time);
             }
+
             public void onFinish() {
                 textTimer.setText("00:00");
                 testResendOTP.setEnabled(true);
