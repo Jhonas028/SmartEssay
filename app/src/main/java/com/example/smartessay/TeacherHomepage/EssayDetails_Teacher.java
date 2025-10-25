@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -116,16 +117,15 @@ public class EssayDetails_Teacher extends AppCompatActivity {
         tvScore.setFocusable(false);
         tvScore.setFocusableInTouchMode(false);
 
+        //when clicked the score is now editable
         editIcon.setOnClickListener(v -> {
             tvScore.setEnabled(true);            // allow typing
             tvScore.setFocusable(true);          // make focusable
             tvScore.setFocusableInTouchMode(true);
-            tvScore.requestFocus();              // bring up keyboard
+            tvScore.requestFocus();
 
-            // Optional: change icon to "save" or indicate editable
-            editIcon.setImageResource(R.drawable.ic_save); // if you have a save icon
+            tvScore.setSelection(tvScore.getText().length());// bring up keyboard
         });
-
 
         saveChanges(studentId,roomId);
     }
@@ -138,11 +138,12 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                 // This code runs only if user clicks YES
                 String newScore = tvScore.getText().toString().replace("Score: ", "").trim();
 
+                //for editing the score
                 tvScore.setEnabled(false);
                 tvScore.setFocusable(false);
                 tvScore.setFocusableInTouchMode(false);
-                // Optional: revert edit icon
-                editIcon.setImageResource(R.drawable.edit_icon2);
+
+
 
                 if (!newScore.isEmpty()) {
                     try {

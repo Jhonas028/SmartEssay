@@ -7,8 +7,6 @@
     android:fitsSystemWindows="true"
     android:padding="5dp">
 
-
-
     <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="match_parent"
@@ -87,8 +85,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:orientation="horizontal"
-                        android:background="@drawable/pill_right_yellow"
-                     >
+                        android:background="@drawable/pill_right_yellow">
 
                         <EditText
                             android:id="@+id/tvScore"
@@ -98,7 +95,7 @@
                             android:inputType="number"
                             android:text="90"
                             android:textColor="@color/off_white"
-                            android:textSize="50sp"
+                            android:textSize="40sp"
                             android:textStyle="bold"
                             android:background="@android:color/transparent"/>
 
@@ -106,9 +103,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:orientation="vertical"
-
-                            >
+                            android:orientation="vertical">
                             <ImageView
                                 android:id="@+id/editIcon"
                                 android:layout_width="15dp"
@@ -117,19 +112,16 @@
                                 android:contentDescription="Edit"
                                 android:clickable="true"
                                 android:layout_marginTop="5dp"
-                                android:focusable="true"
-
-                                />
-
+                                android:focusable="true"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="%"
                                 android:paddingRight="20dp"
                                 android:layout_marginTop="10dp"
-                                android:paddingBottom="10dp"
+                                android:paddingBottom="15dp"
                                 android:textColor="@color/off_white"
-                                android:textSize="30sp" />
+                                android:textSize="20sp" />
                         </LinearLayout>
 
                     </LinearLayout>
