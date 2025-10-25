@@ -87,9 +87,11 @@ public class EssayDetails_Teacher extends AppCompatActivity {
 
                                     // ✅ Change color based on status
                                     if ("pending".equalsIgnoreCase(status)) {
-                                        tvStatus.setTextColor(Color.parseColor("#D32F2F")); // 🔴 Red for pending
+                                        tvStatus.setTextColor(Color.parseColor("#D32F2F"));
+                                        tvStatus.setText("PENDING");// 🔴 Red for pending
                                     } else if ("posted".equalsIgnoreCase(status)) {
-                                        tvStatus.setTextColor(Color.parseColor("#00C853")); // 🟢 Green for posted
+                                        tvStatus.setTextColor(Color.parseColor("#00C853"));
+                                        tvStatus.setText("GRADED");// 🟢 Green for posted
                                     } else {
                                         tvStatus.setTextColor(Color.parseColor("#000000")); // ⚫ Default black
                                     }

@@ -324,6 +324,7 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                         break;
                     case "posted":
                         holder.text_status.setTextColor(Color.parseColor("#00C853"));
+                        holder.text_status.setText("GRADED");
                         break;
                     default:
                         holder.text_status.setTextColor(Color.BLACK);

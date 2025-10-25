@@ -103,8 +103,8 @@
                     android:layout_height="wrap_content"
                     android:text="Add Page"
                     android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/text_title_yellow"
-                    android:textColor="@color/back_blue"
+                    android:backgroundTint="@color/back_blue"
+                    android:textColor="@color/white"
                     android:textStyle="bold"/>
             </LinearLayout>
 
@@ -121,16 +121,7 @@
             android:layout_marginTop="16dp"
             android:weightSum="2">
 
-            <Button
-                android:id="@+id/submitBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Submit"
-                android:backgroundTint="@color/button_yellow"
-                android:textColor="@color/back_blue"
-                android:textStyle="bold"
-                android:layout_marginEnd="8dp" />
+
 
             <Button
                 android:id="@+id/cancelBtn"
@@ -138,10 +129,22 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cancel"
+                android:backgroundTint="@color/button_yellow"
+                android:textColor="@color/back_blue"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp" />
+
+            <Button
+                android:id="@+id/submitBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Submit"
                 android:backgroundTint="@color/back_blue"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:layout_marginStart="8dp" />
+                 />
         </LinearLayout>
 
     </LinearLayout>
