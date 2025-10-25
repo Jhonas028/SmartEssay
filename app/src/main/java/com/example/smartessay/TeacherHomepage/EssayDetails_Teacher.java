@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +31,7 @@ public class EssayDetails_Teacher extends AppCompatActivity {
 
     Button btnSave;
     DatabaseReference dbRef;
-
+    ImageView editIcon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +44,7 @@ public class EssayDetails_Teacher extends AppCompatActivity {
         tvScore = findViewById(R.id.tvScore);
         tvStatus = findViewById(R.id.tvStatus);
         fullname = findViewById(R.id.fullname);
+        editIcon = findViewById(R.id.editIcon);
 
         btnSave = findViewById(R.id.btnSave);
 
@@ -110,6 +112,21 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                     }
                 });
 
+        tvScore.setEnabled(false); // disables editing by default
+        tvScore.setFocusable(false);
+        tvScore.setFocusableInTouchMode(false);
+
+        editIcon.setOnClickListener(v -> {
+            tvScore.setEnabled(true);            // allow typing
+            tvScore.setFocusable(true);          // make focusable
+            tvScore.setFocusableInTouchMode(true);
+            tvScore.requestFocus();              // bring up keyboard
+
+            // Optional: change icon to "save" or indicate editable
+            editIcon.setImageResource(R.drawable.ic_save); // if you have a save icon
+        });
+
+
         saveChanges(studentId,roomId);
     }
 
@@ -120,6 +137,12 @@ public class EssayDetails_Teacher extends AppCompatActivity {
             showYesNoDialog("Confirm Save", "Are you sure you want to save and post this essay?", () -> {
                 // This code runs only if user clicks YES
                 String newScore = tvScore.getText().toString().replace("Score: ", "").trim();
+
+                tvScore.setEnabled(false);
+                tvScore.setFocusable(false);
+                tvScore.setFocusableInTouchMode(false);
+                // Optional: revert edit icon
+                editIcon.setImageResource(R.drawable.edit_icon2);
 
                 if (!newScore.isEmpty()) {
                     try {
