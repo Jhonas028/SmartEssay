@@ -76,9 +76,8 @@ public class AddRoom_Teacher extends AppCompatActivity {
         btnCancel.setOnClickListener(v -> finish());
 
 
-        // 🔹 Attach watcher to all rubric fields
+        // 🔹 Attach watcher to all rubric fields, every after the user input score in rubrics, the tvSubtotal will adjust
         TextWatcher subtotalWatcher = createSubtotalWatcher();
-
         etRubricContent.addTextChangedListener(subtotalWatcher);
         etRubricOrganization.addTextChangedListener(subtotalWatcher);
         etRubricGrammar.addTextChangedListener(subtotalWatcher);
@@ -100,24 +99,18 @@ public class AddRoom_Teacher extends AppCompatActivity {
                 return; // stop execution
             }
 
-            // 🔹 RUBRIC VALIDATION
+            // 🔹 RUBRIC VALIDATION, MUST SUM TO 100%
             int content = parseEditText(etRubricContent);
             int organization = parseEditText(etRubricOrganization);
             int grammar = parseEditText(etRubricGrammar);
             int critical = parseEditText(etRubricRelevance);
             int other = parseEditText(etRubricOtherScore);
-
             int total = content + organization + grammar + critical + other;
-            //display the total of all rubrics
-
-            // 🔹 Rubrics must sum exactly to 100
-            if (total != 100) {
+            if (total != 100) { // 🔹 Rubrics must sum exactly to 100
                 Toast.makeText(this, "Rubrics must sum exactly to 100%", Toast.LENGTH_SHORT).show();
                 btnCreate.setEnabled(true);
                 return;
             }
-
-
 
             // 🔹 Show loading dialog while saving to Firebase
             showLoadingDialog();
@@ -250,7 +243,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
     }
 
 
-// 🔹 Method that returns a reusable TextWatcher for subtotal updates
+// 🔹 Method that returns a reusable TextWatcher for subtotal updates, use to automatically update the total
 
     private TextWatcher createSubtotalWatcher() {
         return new TextWatcher() {

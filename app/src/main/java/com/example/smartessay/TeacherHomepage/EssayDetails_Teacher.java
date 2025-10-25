@@ -126,29 +126,74 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Score must be between 0 and 100", Toast.LENGTH_SHORT).show();
                         return; // stop saving
                     }
-                    dbRef.orderByChild("student_id").equalTo(studentId)
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    for (DataSnapshot essaySnap : snapshot.getChildren()) {
-                                        String essayRoomId = essaySnap.child("classroom_id").getValue(String.class);
-                                        if (roomId.equals(essayRoomId)) {
-                                            essaySnap.getRef().child("score").setValue(scoreValue); // store as Long
-                                            Toast.makeText(getApplicationContext(), "Save Successfully", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        }
-                                    }
-                                }
 
-                                @Override
-                                public void onCancelled(DatabaseError error) { }
-                            });
+                    // Call new method to update Firebase
+                    updateEssayScore(studentId, roomId, scoreValue);
+
+                    postIndividualScore(studentId, roomId, scoreValue);
+
                 } catch (NumberFormatException e) {
                     Toast.makeText(getApplicationContext(), "Invalid score format", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
+    // ✅ New method for updating the individual essay score in Firebase
+    private void updateEssayScore(String studentId, String roomId, long scoreValue) {
+        dbRef.orderByChild("student_id").equalTo(studentId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                            String essayRoomId = essaySnap.child("classroom_id").getValue(String.class);
+                            if (roomId.equals(essayRoomId)) {
+                                essaySnap.getRef().child("score").setValue(scoreValue); // store as Long
+                                Toast.makeText(getApplicationContext(), "Score successfully saved and posted", Toast.LENGTH_SHORT).show();
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) { }
+                });
+    }
+
+    private void postIndividualScore(String studentId, String roomId, long scoreValue) {
+        // Validate score range
+        if (scoreValue < 0 || scoreValue > 100) {
+            Toast.makeText(this, "Score must be between 0 and 100", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        dbRef.orderByChild("student_id").equalTo(studentId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        for (DataSnapshot essaySnap : snapshot.getChildren()) {
+                            String essayRoomId = essaySnap.child("classroom_id").getValue(String.class);
+                            if (roomId.equals(essayRoomId)) {
+                                // Update score and status
+                                essaySnap.getRef().child("score").setValue(scoreValue);
+                                essaySnap.getRef().child("status").setValue("posted");
+
+                                // Update UI
+                                tvStatus.setText("GRADED");
+                                tvStatus.setTextColor(Color.parseColor("#00C853"));
+
+                                Toast.makeText(EssayDetails_Teacher.this,
+                                        "Score posted successfully", Toast.LENGTH_SHORT).show();
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) { }
+                });
+    }
+
 
 
 
