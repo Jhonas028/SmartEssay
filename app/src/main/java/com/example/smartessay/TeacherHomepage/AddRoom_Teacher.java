@@ -2,10 +2,12 @@ package com.example.smartessay.TeacherHomepage;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+
 // Activity for adding a new classroom (teacher side)
 public class AddRoom_Teacher extends AppCompatActivity {
 
@@ -36,7 +41,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
 
     Button btnCreate, btnCancel,btnAddCriteria; // Create and Cancel buttons
     DatabaseReference classroomsRef; // Firebase reference to "classrooms"
-
+    TextView tvSubtotal;
     private AlertDialog loadingDialog;
     LinearLayout layoutOtherRubrics;// loading spinner dialog
 
@@ -62,6 +67,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
         btnCancel = findViewById(R.id.btnCancel);
         btnAddCriteria = findViewById(R.id.btnAddCriteria);
         layoutOtherRubrics = findViewById(R.id.layout_otherRubrics);
+        tvSubtotal =findViewById(R.id.tvSubtotal);
 
         // Hide by default
         layoutOtherRubrics.setVisibility(View.GONE);
@@ -70,6 +76,14 @@ public class AddRoom_Teacher extends AppCompatActivity {
         btnCancel.setOnClickListener(v -> finish());
 
 
+        // 🔹 Attach watcher to all rubric fields
+        TextWatcher subtotalWatcher = createSubtotalWatcher();
+
+        etRubricContent.addTextChangedListener(subtotalWatcher);
+        etRubricOrganization.addTextChangedListener(subtotalWatcher);
+        etRubricGrammar.addTextChangedListener(subtotalWatcher);
+        etRubricRelevance.addTextChangedListener(subtotalWatcher);
+        etRubricOtherScore.addTextChangedListener(subtotalWatcher);
 
         // Create button logic
         btnCreate.setOnClickListener(v -> {
@@ -94,6 +108,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
             int other = parseEditText(etRubricOtherScore);
 
             int total = content + organization + grammar + critical + other;
+            //display the total of all rubrics
 
             // 🔹 Rubrics must sum exactly to 100
             if (total != 100) {
@@ -101,6 +116,8 @@ public class AddRoom_Teacher extends AppCompatActivity {
                 btnCreate.setEnabled(true);
                 return;
             }
+
+
 
             // 🔹 Show loading dialog while saving to Firebase
             showLoadingDialog();
@@ -232,27 +249,35 @@ public class AddRoom_Teacher extends AppCompatActivity {
         }
     }
 
-    //hides the other criteria if theres no value
-    private void setupOtherFieldVisibility() {
-        // Initially hide "Other" EditText
-        etRubricOther.setVisibility(View.GONE);
 
-        // Listen for changes in "OtherScore"
-        etRubricOtherScore.addTextChangedListener(new android.text.TextWatcher() {
+// 🔹 Method that returns a reusable TextWatcher for subtotal updates
+
+    private TextWatcher createSubtotalWatcher() {
+        return new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().trim().isEmpty()) {
-                    etRubricOther.setVisibility(View.GONE);
-                } else {
-                    etRubricOther.setVisibility(View.VISIBLE);
-                }
+                updateSubtotal(); // recalculate whenever user edits
             }
 
-            @Override
-            public void afterTextChanged(android.text.Editable s) { }
-        });
+            public void afterTextChanged(Editable s) {}
+        };
     }
+
+    // 🔹 Automatically calculate and display subtotal
+    private void updateSubtotal() {
+        int content = parseEditText(etRubricContent);
+        int organization = parseEditText(etRubricOrganization);
+        int grammar = parseEditText(etRubricGrammar);
+        int critical = parseEditText(etRubricRelevance);
+        int other = parseEditText(etRubricOtherScore);
+
+        int total = content + organization + grammar + critical + other;
+        tvSubtotal.setText(String.valueOf(total));
+    }
+
+
+
 }
