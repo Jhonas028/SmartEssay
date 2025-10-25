@@ -368,8 +368,8 @@ public class RoomDetails_Teacher extends AppCompatActivity {
 
         DatabaseReference essayRef = FirebaseDatabase.getInstance().getReference("essay");
         Query query = essayRef.orderByChild("classroom_id").equalTo(classroomId2);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        //addListenerForSingleValueEvent, this is the original, the data will change once at a time
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {

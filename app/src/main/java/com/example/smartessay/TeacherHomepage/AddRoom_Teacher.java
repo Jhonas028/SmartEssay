@@ -86,9 +86,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
 
         // Create button logic
         btnCreate.setOnClickListener(v -> {
-
             btnCreate.setEnabled(false); // disable immediately to prevent double clicks
-
             // 🔹 Get room name from input
             String roomName = etRoomName.getText().toString().trim();
 
@@ -137,7 +135,6 @@ public class AddRoom_Teacher extends AppCompatActivity {
                 rubrics.put("Subject Relevance", etRubricRelevance.getText().toString().trim() + "%");
                 rubrics.put("Other Criteria", String.valueOf(other) + "%");
                 rubrics.put("Notes", etRubricOther.getText().toString().trim());
-
 
                 // 🔹 Prepare Classroom map for Firebase
                 Map<String, Object> classroomMap = new HashMap<>();

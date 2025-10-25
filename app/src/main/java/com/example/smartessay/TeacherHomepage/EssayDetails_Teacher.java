@@ -161,12 +161,7 @@ public class EssayDetails_Teacher extends AppCompatActivity {
     }
 
     private void postIndividualScore(String studentId, String roomId, long scoreValue) {
-        // Validate score range
-        if (scoreValue < 0 || scoreValue > 100) {
-            Toast.makeText(this, "Score must be between 0 and 100", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        // Update the essay
         dbRef.orderByChild("student_id").equalTo(studentId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -174,16 +169,25 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                         for (DataSnapshot essaySnap : snapshot.getChildren()) {
                             String essayRoomId = essaySnap.child("classroom_id").getValue(String.class);
                             if (roomId.equals(essayRoomId)) {
-                                // Update score and status
+                                // Update score and essay status
                                 essaySnap.getRef().child("score").setValue(scoreValue);
                                 essaySnap.getRef().child("status").setValue("posted");
+
+                                // Also update the classroom_members status
+                                DatabaseReference memberRef = FirebaseDatabase.getInstance()
+                                        .getReference("classrooms")
+                                        .child(roomId)
+                                        .child("classroom_members")
+                                        .child(studentId)
+                                        .child("status");
+                                memberRef.setValue("posted");
 
                                 // Update UI
                                 tvStatus.setText("GRADED");
                                 tvStatus.setTextColor(Color.parseColor("#00C853"));
 
                                 Toast.makeText(EssayDetails_Teacher.this,
-                                        "Score posted successfully", Toast.LENGTH_SHORT).show();
+                                        "Essay score has been saved and posted", Toast.LENGTH_SHORT).show();
                                 break;
                             }
                         }
