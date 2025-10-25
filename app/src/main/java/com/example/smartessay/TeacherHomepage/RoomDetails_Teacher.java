@@ -384,7 +384,7 @@ public class RoomDetails_Teacher extends AppCompatActivity {
 
         // Add a listener to the query to react whenever data changes
         //addListenerForSingleValueEvent, this is the original, the data will change once at a time
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // Loop through each essay that matches the query

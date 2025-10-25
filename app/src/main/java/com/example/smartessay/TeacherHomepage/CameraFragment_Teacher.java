@@ -78,24 +78,17 @@ public class CameraFragment_Teacher extends Fragment {
         disableCopyPaste(ocrResultTextView);
         //Allows double clicking to highlight and edit it.
         secureEssayEditText(ocrResultTextView);
-
         setupOtherFieldVisibility();
-
         // AI output
         scoresTV = view.findViewById(R.id.scoresTV);
         submitBtn = view.findViewById(R.id.submitBtn);
-
         addPageBtn = view.findViewById(R.id.addPageBtn);
-
         // Click to add page → check camera permission
         addPageBtn.setOnClickListener(v -> checkPermissionAndLaunch());
-
         // Click anywhere in view → also open camera
         view.setOnClickListener(v -> checkPermissionAndLaunch());
-
         // Auto-launch when fragment starts
         checkPermissionAndLaunch();
-
         // Submit essay for grading
         submitBtn.setOnClickListener(v -> {
             String essay = ocrResultTextView.getText().toString();
@@ -103,27 +96,21 @@ public class CameraFragment_Teacher extends Fragment {
                 Toast.makeText(getContext(), "No essay detected!", Toast.LENGTH_SHORT).show();
                 return; // stop execution
             }
-
             // Parse rubric values from EditText
             int content = parseEditText(contentPercentage);
             int organization = parseEditText(organizationPercentage);
             int grammar = parseEditText(grammarPercentage);
             int language = parseEditText(languageStyle);
             int other = parseEditText(etRubricOtherScore);
-
             int total = content + organization + grammar + language + other;
-
             // IF rubrics don’t add up to 100 → show error
             if (total != 100) {
                 Toast.makeText(getContext(), "Rubrics must sum exactly to 100%", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             // Show loading screen while grading
             showLoadingDialog("Grading essay...");
-
             // Call the OpenAI grading API
-
             Teacher_OpenAiAPI.gradeEssay(
                     essay,
                     contentPercentage.getText().toString(),         // Content %
@@ -144,7 +131,6 @@ public class CameraFragment_Teacher extends Fragment {
                                         .replace("\\n", "\n")
                                         .replace("\\t", "\t")
                                         .trim();
-
                                 scoresTV.setText(formatted);
                                 Log.i("resultOpenAI", formatted);
 
@@ -153,7 +139,6 @@ public class CameraFragment_Teacher extends Fragment {
                                 scoresTV.setText("Connection error. Please try again.");
                             }
                         }
-
                         @Override
                         public void onError(String error) {
                             hideLoadingDialog();
@@ -163,10 +148,8 @@ public class CameraFragment_Teacher extends Fragment {
             );
 
         });
-
         return view;
     }
-
     // Converts EditText input into an integer (if empty/invalid → 0)
     private int parseEditText(EditText et) {
         String text = et.getText().toString().trim();
@@ -177,7 +160,6 @@ public class CameraFragment_Teacher extends Fragment {
             return 0; // IF not a number → return 0
         }
     }
-
     // Request camera permission
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -187,7 +169,6 @@ public class CameraFragment_Teacher extends Fragment {
                     Toast.makeText(getContext(), "Camera permission is required.", Toast.LENGTH_SHORT).show();
                 }
             });
-
     // Handle cropped image result
     private final ActivityResultLauncher<CropImageContractOptions> cropImageLauncher =
             registerForActivityResult(new CropImageContract(), result -> {
@@ -208,7 +189,6 @@ public class CameraFragment_Teacher extends Fragment {
                         Toast.makeText(getContext(), "Error saving cropped image", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
                     // Send image to OCR API → convert handwriting to text
                     showLoadingDialog("Analyzing handwriting...");
 
@@ -217,7 +197,6 @@ public class CameraFragment_Teacher extends Fragment {
                     Toast.makeText(getContext(), "Image cropping failed", Toast.LENGTH_SHORT).show();
                 }
             });
-
     // Check camera permission before launching cropper
     private void checkPermissionAndLaunch() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
@@ -227,7 +206,6 @@ public class CameraFragment_Teacher extends Fragment {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
     }
-
     // Launch the camera cropper tool
     private void launchCameraCropper() {
         CropImageOptions options = new CropImageOptions();
@@ -245,7 +223,6 @@ public class CameraFragment_Teacher extends Fragment {
         CropImageContractOptions contractOptions = new CropImageContractOptions(null, options);
         cropImageLauncher.launch(contractOptions);
     }
-
     // Show a loading dialog with a message
     private void showLoadingDialog(String message) {
         if (loadingDialog != null && loadingDialog.isShowing()) return;
@@ -254,10 +231,8 @@ public class CameraFragment_Teacher extends Fragment {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_creating_room_loading, null);
         ((TextView) dialogView.findViewById(R.id.tvLoadingMessage)).setText(message);
-
         builder.setView(dialogView);
         builder.setCancelable(false);
-
         loadingDialog = builder.create();
         loadingDialog.show();
     }
