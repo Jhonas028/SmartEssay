@@ -128,7 +128,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
                 // 🔹 Prepare Rubrics map (Firebase-safe keys) // pass this to firebase
                 Map<String, Object> rubrics = new LinkedHashMap<>();
 
-                rubrics.put("topic", etTopic.getText().toString().trim());
+                rubrics.put("Topic", etTopic.getText().toString().trim());
                 rubrics.put("Content and Ideas", etRubricContent.getText().toString().trim() + "%");
                 rubrics.put("Organization and Structure", etRubricOrganization.getText().toString().trim() + "%");
                 rubrics.put("Language Use and Style", etRubricGrammar.getText().toString().trim() + "%");

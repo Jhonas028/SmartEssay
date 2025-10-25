@@ -16,7 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class EssayResult_Student extends AppCompatActivity {
 
-    private TextView tvEssayTitle, tvEssayText, tvScore, tvFeedback;
+    private TextView tvEssayTitle, tvEssayText, tvScore, tvFeedback,tvFullname;
     private String essayId;
 
     @Override
@@ -29,7 +29,7 @@ public class EssayResult_Student extends AppCompatActivity {
         tvEssayText = findViewById(R.id.tvEssayText);
         tvScore = findViewById(R.id.tvScore);
         tvFeedback = findViewById(R.id.tvFeedback);
-
+        tvFullname = findViewById(R.id.tvFullname);
         // Get essayId from the Intent (this is passed from the previous activity)
         essayId = getIntent().getStringExtra("essayId");
 
@@ -68,9 +68,11 @@ public class EssayResult_Student extends AppCompatActivity {
                             Long score = snapshot.child("score").getValue(Long.class);
                             String feedback = snapshot.child("essay_feedback").getValue(String.class);
                             String classroomName = snapshot.child("classroom_name").getValue(String.class);
+                            String fullname = snapshot.child("fullname").getValue(String.class);
 
                             // Update the UI with the data from Firebase
                             // (Use default text if the value is missing)
+                            tvFullname.setText(fullname);
                             tvEssayTitle.setText((classroomName != null ? classroomName : ""));
                             tvEssayText.setText(essayText != null ? essayText : "No essay text");
                             tvScore.setText("" + (score != null ? score : 0) + "%");

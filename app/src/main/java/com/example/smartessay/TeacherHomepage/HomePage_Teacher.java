@@ -39,6 +39,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -280,9 +281,19 @@ public class HomePage_Teacher extends Fragment {
                             String createdAt = ds.child("created_at").getValue(String.class); // get created date
                             String updatedAt = ds.child("updated_at").getValue(String.class); // get updated date
 
-                            Map<String, String> rubrics = null;
-                            if (ds.child("rubrics").exists()) { // Check if rubrics exist
-                                rubrics = (Map<String, String>) ds.child("rubrics").getValue();
+                            Map<String, String> rubrics = new LinkedHashMap<>();
+                            if (ds.child("rubrics").exists()) {
+                                Map<String, Object> rawRubrics = (Map<String, Object>) ds.child("rubrics").getValue();
+
+                                // Add in the correct order manually
+                                String[] keys = {"Topic", "Content and Ideas", "Organization and Structure",
+                                        "Language Use and Style", "Subject Relevance", "Other Criteria", "Notes"};
+
+                                for (String key : keys) {
+                                    if (rawRubrics.containsKey(key)) {
+                                        rubrics.put(key, String.valueOf(rawRubrics.get(key)));
+                                    }
+                                }
                             }
 
                             // Add room to local list
@@ -377,13 +388,18 @@ public class HomePage_Teacher extends Fragment {
                 }
             });
 
-            if (room.getRubrics() != null) { // If rubrics exist
+            if (room.getRubrics() != null) {
                 StringBuilder summary = new StringBuilder();
-                for (Map.Entry<String, String> e : room.getRubrics().entrySet()) {
-                    summary.append(e.getKey()).append(": ").append(e.getValue()).append("\n");
+                String[] order = {"Topic", "Content and Ideas", "Organization and Structure",
+                        "Language Use and Style", "Subject Relevance", "Other Criteria", "Notes"};
+
+                for (String key : order) {
+                    if (room.getRubrics().containsKey(key)) {
+                        summary.append(key).append(": ").append(room.getRubrics().get(key)).append("\n");
+                    }
                 }
                 holder.textRubrics.setText(summary.toString().trim());
-            } else { // No rubrics
+            } else {
                 holder.textRubrics.setText("No Rubrics");
             }
 
@@ -418,14 +434,14 @@ public class HomePage_Teacher extends Fragment {
         // Filter method for search
         public void filter(String query) {
             roomList.clear();
-            if (query.isEmpty()) { // If search is empty
-                roomList.addAll(fullRoomList); // show all rooms
+            if (query.isEmpty()) { //If search is empty
+                roomList.addAll(fullRoomList); //show all rooms
             } else {
                 query = query.toLowerCase();
                 for (Room room : fullRoomList) {
                     // Check if roomName contains query (ignore case)
                     if (room.getRoomName() != null && room.getRoomName().toLowerCase().contains(query)) {
-                        roomList.add(room); // add matching room
+                        roomList.add(room); //add matching room
                     }
                 }
             }
@@ -435,7 +451,6 @@ public class HomePage_Teacher extends Fragment {
         public static class RoomViewHolder extends RecyclerView.ViewHolder {
             TextView textRoomName, textRoomCode, textCreatedAt, textUpdatedAt, textRubrics, textUploads;
             Button btnShowRubrics;
-
             LinearLayout layoutRubrics;
 
             public RoomViewHolder(@NonNull View itemView) {
@@ -451,21 +466,5 @@ public class HomePage_Teacher extends Fragment {
             }
         }
     }
-
-    /*private void animateSwipeArrow(View view) {
-        ImageView arrow = view.findViewById(R.id.iv_swipe_arrow);
-
-        ValueAnimator animator = ValueAnimator.ofFloat(0, -20, 0);
-        animator.setDuration(1000);
-        animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.setRepeatMode(ValueAnimator.RESTART);
-
-        animator.addUpdateListener(animation -> {
-            float value = (float) animation.getAnimatedValue();
-            arrow.setTranslationY(value);
-        });
-
-        animator.start();
-    }*/
 
 }

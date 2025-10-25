@@ -1,6 +1,7 @@
 package com.example.smartessay.TeacherHomepage;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,12 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -63,27 +67,29 @@ public class RoomDetails_Teacher extends AppCompatActivity {
         btn_post_scoree = findViewById(R.id.btn_post_scoree);
         editSearchStudent = findViewById(R.id.edit_search_student);
 
+        //get room name and code from previous activity
         String roomName = getIntent().getStringExtra("roomName");
         String roomCode = getIntent().getStringExtra("roomCode");
         classroomId = getIntent().getStringExtra("roomId");
 
+        //set room name and code to textviews
         tvRoomName.setText(roomName);
         tvRoomCode.setText("Room Code: " + roomCode);
 
-        rvStudents.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new StudentAdapter(filteredList, classroomId);
-        rvStudents.setAdapter(adapter);
+        // 🔽 RecyclerView
+        rvStudents.setLayoutManager(new LinearLayoutManager(this)); // Set layout manager
+        adapter = new StudentAdapter(filteredList, classroomId); // Set adapter
+        rvStudents.setAdapter(adapter); // Set adapter to RecyclerView
 
-        btn_post_scoree.setOnClickListener(v -> {
+        btn_post_scoree.setOnClickListener(v -> { // Post scores to Firebase
             showYesNoDialog(
                     "Confirm Post",
                     "Are you sure you want to post the scores of students?",
-                    this::postScoresToFirebase
+                    this::postScoresToFirebase // Lambda expression, call postScoresToFirebase()
             );
         });
-
         // Swipe to delete
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) { // Left swipe
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,
@@ -96,17 +102,16 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                 int position = viewHolder.getAdapterPosition();
                 EssayTeacher essay = filteredList.get(position);
 
-                showYesNoDialog(
+                showYesNoDialog( // Show dialog, confirm delete
                         "Delete Student",
                         "Confirming will permanently delete the essay. This action cannot be undone.",
-                        () -> deleteStudentEssay(essay, position)
+                        () -> deleteStudentEssay(essay, position) // Lambda expression, call deleteStudentEssay()
                 );
-
-                adapter.notifyItemChanged(position);
+                adapter.notifyItemChanged(position); // Update adapter, notify of change
             }
 
             @Override
-            public void onChildDraw(@NonNull Canvas c,
+            public void onChildDraw(@NonNull Canvas c, //show ui for , swipe, delete, icon etc...
                                     @NonNull RecyclerView recyclerView,
                                     @NonNull RecyclerView.ViewHolder viewHolder,
                                     float dX, float dY,
@@ -149,7 +154,7 @@ public class RoomDetails_Teacher extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterList(s.toString());
+                filterList(s.toString()); // Call filterList()
             }
             @Override
             public void afterTextChanged(Editable s) { }
@@ -285,8 +290,8 @@ public class RoomDetails_Teacher extends AppCompatActivity {
     // 🔽 Adapter Class
     public static class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentViewHolder> {
 
-        private List<EssayTeacher> essays;
-        private String classroomId;
+        private List<EssayTeacher> essays; // List of essays to display in RecyclerView
+        private String classroomId;     // Classroom ID to pass along when opening essay details
 
         public StudentAdapter(List<EssayTeacher> essays, String classroomId) {
             this.essays = essays;
@@ -296,24 +301,27 @@ public class RoomDetails_Teacher extends AppCompatActivity {
         @NonNull
         @Override
         public StudentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
+            View view = LayoutInflater.from(parent.getContext())      // Inflate layout for each item in the RecyclerView
                     .inflate(R.layout.teacher_essay_item_layout, parent, false);
-            return new StudentViewHolder(view);
+            return new StudentViewHolder(view);   // Return a new ViewHolder instance with this vi
         }
 
         @Override
         public void onBindViewHolder(@NonNull StudentViewHolder holder, int position) {
+            // Get the essay data for the current position
             EssayTeacher essay = essays.get(position);
-
+            // Set student number and full name in the TextViews
             holder.tvStudentName.setText("Student no.: " + essay.getStudentId());
             holder.tvFullname.setText(essay.getFullname());
-
+            // Convert timestamp to Date object
             Date date = new Date(essay.getCreatedAt());
+            // Format date and time for display
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
             SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-
+            // Set formatted date and time in the respective TextViews
             holder.tvDateCreated.setText("Date Submitted: " + dateFormat.format(date));
             holder.tvTimeCreated.setText("Time Submitted: " + timeFormat.format(date));
+            // Display the status of the essay
             holder.text_status.setText(essay.getStatus());
 
             // 🎨 Change color depending on status
@@ -331,28 +339,31 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                         break;
                 }
             } else {
-                holder.text_status.setTextColor(Color.BLACK);
+                holder.text_status.setTextColor(Color.BLACK); // If status is null, set text color to black
             }
-
+            // Set click listener for the entire item
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), EssayDetails_Teacher.class);
-                intent.putExtra("roomId", classroomId);
-                intent.putExtra("studentId", essay.getStudentId());
-                intent.putExtra("essayId", essay.getEssayId());
-                v.getContext().startActivity(intent);
+                intent.putExtra("roomId", classroomId); // Pass classroom ID
+                intent.putExtra("studentId", essay.getStudentId()); // Pass student ID
+                intent.putExtra("essayId", essay.getEssayId()); // Pass essay ID
+                v.getContext().startActivity(intent); // Start the activity
             });
         }
 
         @Override
         public int getItemCount() {
+            // Return the total number of essays in the list
             return essays.size();
         }
 
+        // ViewHolder class to hold references to item views
         static class StudentViewHolder extends RecyclerView.ViewHolder {
             TextView tvStudentName, tvDateCreated, tvTimeCreated, text_status, tvFullname;
 
             public StudentViewHolder(@NonNull View itemView) {
                 super(itemView);
+                // Bind TextViews from layout
                 tvStudentName = itemView.findViewById(R.id.text_studnum);
                 tvDateCreated = itemView.findViewById(R.id.text_date_created);
                 tvTimeCreated = itemView.findViewById(R.id.text_time_created);
@@ -364,32 +375,42 @@ public class RoomDetails_Teacher extends AppCompatActivity {
     }
 
     private void postScoresToFirebase() {
+        // Get the classroom ID passed from the previous activity via Intent
         String classroomId2 = getIntent().getStringExtra("roomId");
-
+        // Get a reference to the "essay" node in Firebase Realtime Database
         DatabaseReference essayRef = FirebaseDatabase.getInstance().getReference("essay");
+        // Create a query to find all essays where "classroom_id" equals the current classroomId2
         Query query = essayRef.orderByChild("classroom_id").equalTo(classroomId2);
+
+        // Add a listener to the query to react whenever data changes
         //addListenerForSingleValueEvent, this is the original, the data will change once at a time
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Loop through each essay that matches the query
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Update the "status" field of each essay to "posted"
                     snapshot.getRef().child("status").setValue("posted");
                 }
-
+                // Now update all classroom members for this classroom
                 DatabaseReference membersRef = FirebaseDatabase.getInstance()
-                        .getReference("classrooms")
-                        .child(classroomId2)
-                        .child("classroom_members");
+                        .getReference("classrooms")// Navigate to "classrooms" node
+                        .child(classroomId2) // Specific classroom
+                        .child("classroom_members");// All members of this classroom
 
+                // Use addListenerForSingleValueEvent here because we just need to update once
                 membersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        // Loop through each member in the classroom
                         for (DataSnapshot memberSnap : snapshot.getChildren()) {
-                            String studentId = memberSnap.getKey();
+                            String studentId = memberSnap.getKey();// Get student ID
                             if (studentId != null) {
+                                // Set the status of each student to "posted"
                                 membersRef.child(studentId).child("status").setValue("posted");
                             }
                         }
+                        // Show a confirmation message
                         Toast.makeText(getApplicationContext(), "All essays and classroom members updated to posted!", Toast.LENGTH_SHORT).show();
                         loadEssaysFromFirebase();
                     }

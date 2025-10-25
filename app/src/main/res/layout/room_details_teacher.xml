@@ -5,16 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:paddingBottom="300dp"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="true">
 
-    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/yellow_border"
-        >
+        android:padding="16dp">
+
         <!-- Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,10 +46,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_vertical">
-
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:id="@+id/tvRoomCode"
@@ -59,6 +57,8 @@
                 android:text="Room Code: "
                 android:textStyle="bold"
                 android:textSize="16sp"/>
+
+
         </LinearLayout>
 
         <!-- Search Bar -->
@@ -75,8 +75,8 @@
                 android:hint="Search..."
                 android:drawablePadding="8dp"/>
         </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
 
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_rooms"
@@ -87,6 +87,5 @@
         android:padding="8dp"
         android:layout_marginBottom="40dp"
         tools:listitem="@layout/teacher_essay_item_layout" />
-
 
 </LinearLayout>

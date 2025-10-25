@@ -116,7 +116,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="&lt;&lt;v"
+                    android:text="&lt;&lt;"
                     android:textSize="11sp"
                     android:textColor="#666666"
                     android:textStyle="italic"

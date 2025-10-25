@@ -116,28 +116,32 @@ public class EssayDetails_Teacher extends AppCompatActivity {
     // Inside EssayResult_Student.java
     private void saveChanges(String studentId, String roomId) {
         btnSave.setOnClickListener(v -> {
-            String newScore = tvScore.getText().toString().replace("Score: ", "").trim();
+            // Show Yes/No confirmation dialog before saving
+            showYesNoDialog("Confirm Save", "Are you sure you want to save and post this essay?", () -> {
+                // This code runs only if user clicks YES
+                String newScore = tvScore.getText().toString().replace("Score: ", "").trim();
 
-            if (!newScore.isEmpty()) {
-                try {
-                    long scoreValue = Long.parseLong(newScore); // convert to number
+                if (!newScore.isEmpty()) {
+                    try {
+                        long scoreValue = Long.parseLong(newScore); // convert to number
 
-                    if (scoreValue < 0 || scoreValue > 100) {
-                        Toast.makeText(getApplicationContext(), "Score must be between 0 and 100", Toast.LENGTH_SHORT).show();
-                        return; // stop saving
+                        if (scoreValue < 0 || scoreValue > 100) {
+                            Toast.makeText(getApplicationContext(), "Score must be between 0 and 100", Toast.LENGTH_SHORT).show();
+                            return; // stop saving
+                        }
+
+                        // Call existing methods to update Firebase
+                        updateEssayScore(studentId, roomId, scoreValue);
+                        postIndividualScore(studentId, roomId, scoreValue);
+
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(getApplicationContext(), "Invalid score format", Toast.LENGTH_SHORT).show();
                     }
-
-                    // Call new method to update Firebase
-                    updateEssayScore(studentId, roomId, scoreValue);
-
-                    postIndividualScore(studentId, roomId, scoreValue);
-
-                } catch (NumberFormatException e) {
-                    Toast.makeText(getApplicationContext(), "Invalid score format", Toast.LENGTH_SHORT).show();
                 }
-            }
+            });
         });
     }
+
 
     // ✅ New method for updating the individual essay score in Firebase
     private void updateEssayScore(String studentId, String roomId, long scoreValue) {
@@ -198,7 +202,30 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                 });
     }
 
+    private void showYesNoDialog(String title, String message, Runnable onYes) {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_yes_no, null);
 
+        TextView tvTitle = dialogView.findViewById(R.id.tvDialogTitle);
+        TextView tvMessage = dialogView.findViewById(R.id.tvDialogMessage);
+        Button btnYes = dialogView.findViewById(R.id.btnYes);
+        Button btnNo = dialogView.findViewById(R.id.btnNo);
+
+        tvTitle.setText(title);
+        tvMessage.setText(message);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create();
+
+        btnNo.setOnClickListener(v -> dialog.dismiss());
+        btnYes.setOnClickListener(v -> {
+            onYes.run();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
 
 
 
