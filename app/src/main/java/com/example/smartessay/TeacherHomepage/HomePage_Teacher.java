@@ -128,6 +128,7 @@ public class HomePage_Teacher extends Fragment {
 
         // Enable swipe-to-delete feature
         swipeDelete();
+        swipeArchive();
 
         return view;
     }
@@ -262,6 +263,96 @@ public class HomePage_Teacher extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
+
+    public void swipeArchive() {
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.RIGHT // 👈 swipe from left to right
+        ) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                return false; // no drag-and-drop
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (position < 0 || position >= roomList.size()) {
+                    roomAdapter.notifyDataSetChanged();
+                    return;
+                }
+
+                Room room = roomList.get(position);
+
+                // 📦 Confirm archive
+                showYesNoDialog(
+                        "Archive Room",
+                        "Are you sure you want to archive this room? You can restore it later if needed.",
+                        () -> {
+                            DatabaseReference archivedRef = FirebaseDatabase.getInstance()
+                                    .getReference("archived_classrooms")
+                                    .child(room.getRoomId());
+
+                            archivedRef.setValue(room)
+                                    .addOnSuccessListener(aVoid -> {
+                                        classroomsRef.child(room.getRoomId()).removeValue()
+                                                .addOnSuccessListener(aVoid2 -> {
+                                                    roomList.remove(position);
+                                                    roomAdapter.notifyItemRemoved(position);
+                                                    Toast.makeText(requireContext(), "Room archived", Toast.LENGTH_SHORT).show();
+                                                });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        roomAdapter.notifyItemChanged(position);
+                                        Toast.makeText(requireContext(), "Failed to archive room", Toast.LENGTH_SHORT).show();
+                                    });
+                        },
+                        () -> roomAdapter.notifyItemChanged(position)
+                );
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c,
+                                    @NonNull RecyclerView recyclerView,
+                                    @NonNull RecyclerView.ViewHolder viewHolder,
+                                    float dX, float dY,
+                                    int actionState, boolean isCurrentlyActive) {
+
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && dX > 0) {
+                    // ✅ Draw blue background + archive icon when swiping RIGHT
+                    View itemView = viewHolder.itemView;
+                    Paint paint = new Paint();
+                    paint.setColor(Color.parseColor("#2196F3")); // blue
+                    c.drawRect(itemView.getLeft(), itemView.getTop(),
+                            itemView.getLeft() + dX, itemView.getBottom(), paint);
+
+                    Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.outline_archive_26);
+                    if (icon != null) {
+                        int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                        int iconTop = itemView.getTop() + iconMargin;
+                        int iconBottom = iconTop + icon.getIntrinsicHeight();
+                        int iconLeft = itemView.getLeft() + iconMargin;
+                        int iconRight = iconLeft + icon.getIntrinsicWidth();
+                        icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                        icon.draw(c);
+                    }
+                }
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+
+            @Override
+            public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
+                return 0.7f; // 70% swipe to confirm
+            }
+        };
+
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
+    }
+
+
 
     // Load classrooms from Firebase where classroom_owner equals teacherEmail
     private void loadRoomsFromFirebase() {
