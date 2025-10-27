@@ -25,21 +25,28 @@ public class Student_OpenAiAPI {
         void onSuccess(String result);
         void onError(String error);
     }
-    /*JhonasGmail
-    private static final String API_URL = "https://open-ai21.p.rapidapi.com/conversationllama";
-    private static final String API_KEY = "5d6b0c84c3msh8935cfeb2995b5fp15496djsnac76059af8ce";
-    private static final String API_HOST = "open-ai21.p.rapidapi.com"; */
+
+    //JhonasGmail
+    //private static final String API_KEY = "5d6b0c84c3msh8935cfeb2995b5fp15496djsnac76059af8ce"; expired oct
 
     // Ana Gmail
-    //    private static final String API_KEY = "f44f1619fcmsh442a09b23a4c5fcp1950b5jsn98559570e89b";
+    //private static final String API_KEY = "f44f1619fcmsh442a09b23a4c5fcp1950b5jsn98559570e89b"; expired oct
+
+    //Ana 2nd acc API
+    //private static final String API_KEY = "ca29bc40c9msh4b5fbd1dfc9ce8ep13e8b2jsn3a058ed87723"
+
+    //Lara API
+    //private static final String API_KEY = "   925259b1aemsh069010bcb58ea7fp174bf0jsn5bd93aaebf49"
+
+
     private static final String API_URL = "https://open-ai21.p.rapidapi.com/conversationllama";
-    private static final String API_KEY = "f44f1619fcmsh442a09b23a4c5fcp1950b5jsn98559570e89b";
+    private static final String API_KEY = "ca29bc40c9msh4b5fbd1dfc9ce8ep13e8b2jsn3a058ed87723";
     private static final String API_HOST = "open-ai21.p.rapidapi.com";
 
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)  // wait up to 60s for connection
             .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)   // up to 60s to send body
-            .readTimeout(80, java.util.concurrent.TimeUnit.SECONDS)   // up to 80 for server to respond
+            .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)   // up to 80 for server to respond
             .build();
 
     private static final MediaType JSON = MediaType.parse("application/json");
@@ -57,23 +64,23 @@ public class Student_OpenAiAPI {
         // Dynamically build sections
         if (!content.isEmpty()) {
             prompt += "Content / Ideas\n\t→ [feedback]\n";
-            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
-            prompt += "------------------------------------------------------------\n\n";
+            prompt += "\nPoints for Improvement \n\t→ [feedback]\n\n";
+            prompt += "--------------------------------------------------------------------\n\n";
         }
         if (!organization.isEmpty()) {
             prompt += "Organization / Structure\n\t→ [feedback]\n\n ";
-            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
-            prompt += "------------------------------------------------------------\n\n";
+            prompt += "\nPoints for Improvement \n\t→ [feedback]\n\n";
+            prompt += "--------------------------------------------------------------------\n\n";
         }
         if (!grammar.isEmpty()) {
             prompt += "Grammar, Mechanics, and Formatting\n\t→ [feedback]\n\n ";
-            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
-            prompt += "------------------------------------------------------------\n\n";
+            prompt += "\nPoints for Improvement \n\t→ [feedback]\n\n";
+            prompt += "--------------------------------------------------------------------\n\n";
         }
         if (!relevance.isEmpty()) {
             prompt += "Subject Relevance\n\t→ [feedback]\n\n ";
-            prompt += "\n\tPoints for Improvement \n\t→ [feedback]\n\n";
-            prompt += "------------------------------------------------------------\n\n";
+            prompt += "\nPoints for Improvement \n\t→ [feedback]\n\n";
+            prompt += "--------------------------------------------------------------------\n\n";
         }
         /*if (!otherCriteria.isEmpty()) {
             prompt += "Other Criteria\n\t→ [feedback]\n\n ";

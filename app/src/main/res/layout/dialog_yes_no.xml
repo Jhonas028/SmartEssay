@@ -34,16 +34,16 @@
         <Button
             android:id="@+id/btnNo"
             android:text="No"
-            android:backgroundTint="@color/back_blue"
-            android:textColor="@color/white"
+            android:backgroundTint="@color/button_yellow"
+            android:textColor="@color/back_blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/btnYes"
             android:text="Yes"
-            android:backgroundTint="@color/button_yellow"
-            android:textColor="@color/back_blue"
+            android:backgroundTint="@color/back_blue"
+            android:textColor="@color/white"
             android:layout_marginStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

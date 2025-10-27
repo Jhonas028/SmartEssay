@@ -301,7 +301,9 @@ public class HomePage_Teacher extends Fragment {
                                                 .addOnSuccessListener(aVoid2 -> {
                                                     roomList.remove(position);
                                                     roomAdapter.notifyItemRemoved(position);
-                                                    Toast.makeText(requireContext(), "Room archived", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(requireContext(), "Activity archived", Toast.LENGTH_SHORT).show();
+
+
                                                 });
                                     })
                                     .addOnFailureListener(e -> {
