@@ -1,7 +1,7 @@
 package com.example.smartessay.Archive;
 
 public class Room {
-
+    private String roomId;
     private String classroom_name;
     private String classroom_owner;
     private String created_at;
@@ -12,6 +12,13 @@ public class Room {
     public Room() {}
 
     // ✅ Getters
+
+    public String getRoomId() {
+        return roomId;
+    }
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
+    }
     public String getClassroom_name() {
         return classroom_name;
     }
