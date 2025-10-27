@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".Archive.FragmentArchive_Teacher">
 
     <LinearLayout
@@ -11,18 +12,9 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/no_archived_rooms_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No archived rooms yet"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:visibility="gone" />
-
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerArchivedClasses"
+            android:id="@+id/recycler_view_rooms"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -32,4 +24,7 @@
             tools:listitem="@layout/item_archived_room" />
 
     </LinearLayout>
+
+
+
 </FrameLayout>

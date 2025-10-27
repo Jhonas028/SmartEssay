@@ -1,18 +1,14 @@
 package com.example.smartessay.Archive;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,130 +22,86 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
-
 public class FragmentArchive_Teacher extends Fragment {
 
     private RecyclerView recyclerView;
-    private TextView noArchivedText;
-    private ArchivedClassAdapter adapter;
-    private List<ArchivedClass> archivedClassList;
-    private DatabaseReference databaseReference;
+    private RoomAdapter roomAdapter;
+    private List<Room> roomList;
+    private DatabaseReference classroomsRef;
     private String teacherEmail;
+
+    public FragmentArchive_Teacher() {
+        // Required empty constructor
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_archive__teacher, container, false);
 
-        // Initialize
-        recyclerView = view.findViewById(R.id.recyclerArchivedClasses);
-        noArchivedText = view.findViewById(R.id.no_archived_rooms_text);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView = view.findViewById(R.id.recycler_view_rooms);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        archivedClassList = new ArrayList<>();
-        adapter = new ArchivedClassAdapter(getContext(), archivedClassList);
-        recyclerView.setAdapter(adapter);
+        roomList = new ArrayList<>();
+        roomAdapter = new RoomAdapter(requireContext(), roomList);
+        recyclerView.setAdapter(roomAdapter);
 
+        // ✅ Get the teacher email from arguments
         if (getArguments() != null) {
             teacherEmail = getArguments().getString("teacherEmail");
+            Log.d("ArchiveDebug", "Teacher email received: " + teacherEmail);
+        } else {
+            Log.d("ArchiveDebug", "No teacherEmail argument received!");
         }
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("archived_classrooms");
+        classroomsRef = FirebaseDatabase.getInstance().getReference("classrooms");
+        loadArchivedRooms();
 
-        loadArchivedClasses();
-        enableSwipeToUnarchive(); // 👈 enable swipe feature
+
 
         return view;
     }
 
-    private void loadArchivedClasses() {
-        databaseReference.addValueEventListener(new ValueEventListener() {
+    private void loadArchivedRooms() {
+        classroomsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                archivedClassList.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    ArchivedClass archivedClass = dataSnapshot.getValue(ArchivedClass.class);
-                    if (archivedClass != null && archivedClass.getClassroom_owner().equals(teacherEmail)) {
-                        archivedClass.setKey(dataSnapshot.getKey()); // store Firebase key
-                        archivedClassList.add(archivedClass);
+                roomList.clear();
+
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    // 🔍 Raw snapshot for debugging
+                    Log.d("ArchiveDebug", "Raw data: " + data.getValue());
+
+                    Room room = data.getValue(Room.class);
+
+                    if (room != null) {
+                        Log.d("ArchiveDebug", "Room found: "
+                                + room.getClassroom_name() + " | status=" + room.getStatus()
+                                + " | owner=" + room.getClassroom_owner());
+                    } else {
+                        Log.d("ArchiveDebug", "⚠️ Room object is null for key: " + data.getKey());
+                    }
+
+                    // ✅ Safe and case-insensitive comparison
+                    if (room != null
+                            && "archived".equalsIgnoreCase(room.getStatus())
+                            && teacherEmail != null
+                            && teacherEmail.equalsIgnoreCase(room.getClassroom_owner())) {
+
+                        roomList.add(room);
                     }
                 }
 
-                if (archivedClassList.isEmpty()) {
-                    noArchivedText.setVisibility(View.VISIBLE);
-                } else {
-                    noArchivedText.setVisibility(View.GONE);
-                }
-
-                adapter.notifyDataSetChanged();
+                roomAdapter.notifyDataSetChanged();
+                Log.d("ArchiveDebug", "✅ Total archive rooms loaded: " + roomList.size());
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "Failed to load data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(),
+                        "Failed to load archives: " + error.getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-    private void enableSwipeToUnarchive() {
-        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView,
-                                  @NonNull RecyclerView.ViewHolder viewHolder,
-                                  @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
-                ArchivedClass archivedClass = archivedClassList.get(position);
-
-                DatabaseReference archivedRef = FirebaseDatabase.getInstance()
-                        .getReference("archived_classrooms")
-                        .child(archivedClass.getKey());
-
-                DatabaseReference activeRef = FirebaseDatabase.getInstance()
-                        .getReference("classrooms")
-                        .push(); // new classroom entry
-
-                activeRef.setValue(archivedClass)
-                        .addOnSuccessListener(aVoid -> {
-                            archivedRef.removeValue();
-                            Toast.makeText(getContext(), "Room unarchived successfully!", Toast.LENGTH_SHORT).show();
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(getContext(), "Failed to unarchive: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        });
-
-                archivedClassList.remove(position);
-                adapter.notifyItemRemoved(position);
-            }
-
-            @Override
-            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView,
-                                    @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY,
-                                    int actionState, boolean isCurrentlyActive) {
-
-                new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                        .addSwipeLeftBackgroundColor(ContextCompat.getColor(getContext(), R.color.archived))
-                        .addSwipeLeftActionIcon(R.drawable.outline_archive_25)
-                        .addSwipeLeftLabel("Unarchive")
-                        .setSwipeLeftLabelColor(Color.WHITE)
-                        .create()
-                        .decorate();
-
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }
-
-            @Override
-            public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
-                return 0.7f; // Optional: require 70% swipe
-            }
-        };
-
-        new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
-    }
-
 }

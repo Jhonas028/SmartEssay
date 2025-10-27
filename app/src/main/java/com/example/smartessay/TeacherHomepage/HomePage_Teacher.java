@@ -264,6 +264,56 @@ public class HomePage_Teacher extends Fragment {
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
+    // Load classrooms from Firebase where classroom_owner equals teacherEmail AND status = "active"
+    private void loadRoomsFromFirebase() {
+        classroomsRef.orderByChild("classroom_owner").equalTo(teacherEmail)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        roomList.clear(); // Clear current list
+
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            // ✅ Check if status == active
+                            String status = ds.child("status").getValue(String.class);
+                            if (status == null || !status.equalsIgnoreCase("active")) {
+                                continue; // skip non-active rooms
+                            }
+
+                            String roomId = ds.getKey();
+                            String roomName = ds.child("classroom_name").getValue(String.class);
+                            String roomCode = ds.child("room_code").getValue(String.class);
+                            String createdAt = ds.child("created_at").getValue(String.class);
+                            String updatedAt = ds.child("updated_at").getValue(String.class);
+
+                            Map<String, String> rubrics = new LinkedHashMap<>();
+                            if (ds.child("rubrics").exists()) {
+                                Map<String, Object> rawRubrics = (Map<String, Object>) ds.child("rubrics").getValue();
+
+                                String[] keys = {"Topic", "Content and Ideas", "Organization and Structure",
+                                        "Language Use and Style", "Subject Relevance", "Other Criteria", "Notes"};
+
+                                for (String key : keys) {
+                                    if (rawRubrics.containsKey(key)) {
+                                        rubrics.put(key, String.valueOf(rawRubrics.get(key)));
+                                    }
+                                }
+                            }
+
+                            roomList.add(new Room(roomId, roomName, roomCode, createdAt, updatedAt, rubrics));
+                        }
+
+                        roomAdapter.fullRoomList.clear();
+                        roomAdapter.fullRoomList.addAll(roomList);
+                        roomAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(requireContext(), "Failed to load rooms", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     public void swipeArchive() {
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
@@ -326,111 +376,39 @@ public class HomePage_Teacher extends Fragment {
     }
 
 
-
-
-
-    // Load classrooms from Firebase where classroom_owner equals teacherEmail
-    private void loadRoomsFromFirebase() {
-        classroomsRef.orderByChild("classroom_owner").equalTo(teacherEmail)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        roomList.clear(); // Clear current list
-
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            String roomId = ds.getKey(); // Firebase key
-                            String roomName = ds.child("classroom_name").getValue(String.class); // get name
-                            String roomCode = ds.child("room_code").getValue(String.class); // get code
-                            String createdAt = ds.child("created_at").getValue(String.class); // get created date
-                            String updatedAt = ds.child("updated_at").getValue(String.class); // get updated date
-
-                            Map<String, String> rubrics = new LinkedHashMap<>();
-                            if (ds.child("rubrics").exists()) {
-                                Map<String, Object> rawRubrics = (Map<String, Object>) ds.child("rubrics").getValue();
-
-                                // Add in the correct order manually
-                                String[] keys = {"Topic", "Content and Ideas", "Organization and Structure",
-                                        "Language Use and Style", "Subject Relevance", "Other Criteria", "Notes"};
-
-                                for (String key : keys) {
-                                    if (rawRubrics.containsKey(key)) {
-                                        rubrics.put(key, String.valueOf(rawRubrics.get(key)));
-                                    }
-                                }
-                            }
-
-                            // Add room to local list
-                            roomList.add(new Room(roomId, roomName, roomCode, createdAt, updatedAt, rubrics));
-                        }
-
-                        // Update fullRoomList in adapter for search functionality
-                        roomAdapter.fullRoomList.clear();
-                        roomAdapter.fullRoomList.addAll(roomList);
-
-                        roomAdapter.notifyDataSetChanged(); // refresh UI
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(requireContext(), "Failed to load rooms", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    // Function to archive a specific room and remove it from classrooms
-// Function to archive a specific room and remove it from classrooms
+// ✅ Updated archiveRoom(): change status from "active" → "archived"
     private void archiveRoom(Room room, int position) {
         showYesNoDialog(
                 "Archive",
                 "Are you sure you want to archive this activity?",
                 () -> {
-                    DatabaseReference archivedRef = FirebaseDatabase.getInstance()
-                            .getReference("archived_classrooms")
-                            .child(room.getRoomId());
-
-                    // 1️⃣ Optimistically remove from UI FIRST
+                    // 🔹 Optimistically remove from UI first
                     roomList.remove(position);
                     roomAdapter.notifyItemRemoved(position);
 
-                    // 2️⃣ Build data map with classroom_owner included
-                    Map<String, Object> archiveData = new LinkedHashMap<>();
-                    archiveData.put("classroom_owner", teacherEmail); // ✅ crucial for filtering
-                    archiveData.put("classroom_name", room.getRoomName());
-                    archiveData.put("room_code", room.getRoomCode());
-                    archiveData.put("created_at", room.getCreatedAt());
-                    archiveData.put("updated_at", room.getUpdatedAt());
-                    archiveData.put("rubrics", room.getRubrics());
+                    // 🔹 Update the "status" field in Firebase instead of moving it
+                    DatabaseReference roomRef = FirebaseDatabase.getInstance()
+                            .getReference("classrooms")
+                            .child(room.getRoomId());
 
-                    // 3️⃣ Save to archived_classrooms
-                    archivedRef.setValue(archiveData)
+                    roomRef.child("status").setValue("archived")
                             .addOnSuccessListener(aVoid -> {
-                                // 4️⃣ Then remove from active classrooms
-                                classroomsRef.child(room.getRoomId()).removeValue()
-                                        .addOnSuccessListener(aVoid2 -> {
-                                            Toast.makeText(requireContext(),
-                                                    "Activity archived successfully",
-                                                    Toast.LENGTH_SHORT).show();
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            // rollback UI if Firebase fails
-                                            roomList.add(position, room);
-                                            roomAdapter.notifyItemInserted(position);
-                                            Toast.makeText(requireContext(),
-                                                    "Failed to remove from classrooms",
-                                                    Toast.LENGTH_SHORT).show();
-                                        });
+                                Toast.makeText(requireContext(),
+                                        "Classroom archived successfully",
+                                        Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
-                                // rollback UI if archiving fails
+                                // rollback UI if update fails
                                 roomList.add(position, room);
                                 roomAdapter.notifyItemInserted(position);
                                 Toast.makeText(requireContext(),
-                                        "Failed to archive room", Toast.LENGTH_SHORT).show();
+                                        "Failed to archive classroom", Toast.LENGTH_SHORT).show();
                             });
                 },
-                () -> roomAdapter.notifyItemChanged(position) // cancel → restore item
+                () -> roomAdapter.notifyItemChanged(position) // Cancel → restore item visually
         );
     }
+
 
 
 
