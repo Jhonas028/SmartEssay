@@ -26,6 +26,12 @@
         android:theme="@style/Theme.SmartEssay"
         tools:targetApi="31">
         <activity
+            android:name=".Archive.ArchiveAdapter"
+            android:exported="false" />
+        <activity
+            android:name=".TeacherHomepage.Archived_Teacher"
+            android:exported="false" />
+        <activity
             android:name=".CreatingAccounts.ForgotPasswordActivity"
             android:exported="false" />
         <activity

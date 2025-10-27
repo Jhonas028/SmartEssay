@@ -15,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.smartessay.Archive.FragmentArchive_Teacher;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -99,7 +100,26 @@ public class FragmentHP_Teacher extends AppCompatActivity {
                 Bundle b = new Bundle();
                 b.putString("teacherEmail", teacherEmail);
                 selectedFragment.setArguments(bundle);
-            } else if (itemId == R.id.logout) {
+            }
+            else if (itemId == R.id.archive) {
+                Fragment fragment = new FragmentArchive_Teacher();
+                Bundle bundles = new Bundle();
+                bundles.putString("teacherEmail", teacherEmail);
+                fragment.setArguments(bundles);
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.framelays, fragment)
+                        .addToBackStack(null)
+                        .commit();
+
+                drawerLayout.closeDrawers(); // Close navigation drawer
+                return true;
+            }
+
+
+
+            else if (itemId == R.id.logout) {
                 // ✅ Clear saved session
                 SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
                 prefs.edit().clear().apply();

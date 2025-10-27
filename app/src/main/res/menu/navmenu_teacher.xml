@@ -5,8 +5,14 @@
         android:title="Home"
         android:icon="@drawable/baseline_home_filled_24"/>
 
+    <item android:id="@+id/archive"
+        android:title="Archive"
+        android:icon="@drawable/outline_archive_25"/>
+
     <item android:id="@+id/logout"
         android:title="Logout"
         android:icon="@drawable/logout_icon"/>
+
+
 
 </menu>

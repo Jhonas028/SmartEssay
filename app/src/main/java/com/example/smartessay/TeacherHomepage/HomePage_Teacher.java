@@ -265,15 +265,12 @@ public class HomePage_Teacher extends Fragment {
     }
 
     public void swipeArchive() {
-        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(
-                0,
-                ItemTouchHelper.RIGHT // 👈 swipe from left to right
-        ) {
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,
                                   @NonNull RecyclerView.ViewHolder target) {
-                return false; // no drag-and-drop
+                return false;
             }
 
             @Override
@@ -284,35 +281,10 @@ public class HomePage_Teacher extends Fragment {
                     return;
                 }
 
-                Room room = roomList.get(position);
+                Room roomToArchive = roomList.get(position);
 
-                // 📦 Confirm archive
-                showYesNoDialog(
-                        "Archive Room",
-                        "Are you sure you want to archive this room? You can restore it later if needed.",
-                        () -> {
-                            DatabaseReference archivedRef = FirebaseDatabase.getInstance()
-                                    .getReference("archived_classrooms")
-                                    .child(room.getRoomId());
-
-                            archivedRef.setValue(room)
-                                    .addOnSuccessListener(aVoid -> {
-                                        classroomsRef.child(room.getRoomId()).removeValue()
-                                                .addOnSuccessListener(aVoid2 -> {
-                                                    roomList.remove(position);
-                                                    roomAdapter.notifyItemRemoved(position);
-                                                    Toast.makeText(requireContext(), "Activity archived", Toast.LENGTH_SHORT).show();
-
-
-                                                });
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        roomAdapter.notifyItemChanged(position);
-                                        Toast.makeText(requireContext(), "Failed to archive room", Toast.LENGTH_SHORT).show();
-                                    });
-                        },
-                        () -> roomAdapter.notifyItemChanged(position)
-                );
+                // call archive method
+                archiveRoom(roomToArchive, position); // 👈 call helper function
             }
 
             @Override
@@ -323,10 +295,9 @@ public class HomePage_Teacher extends Fragment {
                                     int actionState, boolean isCurrentlyActive) {
 
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && dX > 0) {
-                    // ✅ Draw blue background + archive icon when swiping RIGHT
                     View itemView = viewHolder.itemView;
                     Paint paint = new Paint();
-                    paint.setColor(Color.parseColor("#2196F3")); // blue
+                    paint.setColor(Color.parseColor("#2196F3")); // Blue background
                     c.drawRect(itemView.getLeft(), itemView.getTop(),
                             itemView.getLeft() + dX, itemView.getBottom(), paint);
 
@@ -347,12 +318,14 @@ public class HomePage_Teacher extends Fragment {
 
             @Override
             public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
-                return 0.7f; // 70% swipe to confirm
+                return 0.7f;
             }
         };
 
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
     }
+
+
 
 
 
@@ -403,6 +376,64 @@ public class HomePage_Teacher extends Fragment {
                     }
                 });
     }
+
+    // Function to archive a specific room and remove it from classrooms
+// Function to archive a specific room and remove it from classrooms
+    private void archiveRoom(Room room, int position) {
+        showYesNoDialog(
+                "Archive",
+                "Are you sure you want to archive this activity?",
+                () -> {
+                    DatabaseReference archivedRef = FirebaseDatabase.getInstance()
+                            .getReference("archived_classrooms")
+                            .child(room.getRoomId());
+
+                    // 1️⃣ Optimistically remove from UI FIRST
+                    roomList.remove(position);
+                    roomAdapter.notifyItemRemoved(position);
+
+                    // 2️⃣ Build data map with classroom_owner included
+                    Map<String, Object> archiveData = new LinkedHashMap<>();
+                    archiveData.put("classroom_owner", teacherEmail); // ✅ crucial for filtering
+                    archiveData.put("classroom_name", room.getRoomName());
+                    archiveData.put("room_code", room.getRoomCode());
+                    archiveData.put("created_at", room.getCreatedAt());
+                    archiveData.put("updated_at", room.getUpdatedAt());
+                    archiveData.put("rubrics", room.getRubrics());
+
+                    // 3️⃣ Save to archived_classrooms
+                    archivedRef.setValue(archiveData)
+                            .addOnSuccessListener(aVoid -> {
+                                // 4️⃣ Then remove from active classrooms
+                                classroomsRef.child(room.getRoomId()).removeValue()
+                                        .addOnSuccessListener(aVoid2 -> {
+                                            Toast.makeText(requireContext(),
+                                                    "Activity archived successfully",
+                                                    Toast.LENGTH_SHORT).show();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            // rollback UI if Firebase fails
+                                            roomList.add(position, room);
+                                            roomAdapter.notifyItemInserted(position);
+                                            Toast.makeText(requireContext(),
+                                                    "Failed to remove from classrooms",
+                                                    Toast.LENGTH_SHORT).show();
+                                        });
+                            })
+                            .addOnFailureListener(e -> {
+                                // rollback UI if archiving fails
+                                roomList.add(position, room);
+                                roomAdapter.notifyItemInserted(position);
+                                Toast.makeText(requireContext(),
+                                        "Failed to archive room", Toast.LENGTH_SHORT).show();
+                            });
+                },
+                () -> roomAdapter.notifyItemChanged(position) // cancel → restore item
+        );
+    }
+
+
+
 
     // Room model class
     public static class Room {
@@ -520,6 +551,17 @@ public class HomePage_Teacher extends Fragment {
 
         @Override
         public int getItemCount() { return roomList.size(); }
+
+        public void updateFullList(List<Room> newList) {
+            fullRoomList.clear();
+            fullRoomList.addAll(newList);
+
+            roomList.clear();
+            roomList.addAll(newList);
+
+            notifyDataSetChanged();
+        }
+
 
         // Filter method for search
         public void filter(String query) {
