@@ -105,7 +105,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
             int other = parseEditText(etRubricOtherScore);
             int total = content + organization + grammar + critical + other;
             if (total != 100) { // 🔹 Rubrics must sum exactly to 100
-                Toast.makeText(this, "Rubrics must sum exactly to 100%", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Total rubric points must be exactly 100%", Toast.LENGTH_SHORT).show();
                 btnCreate.setEnabled(true);
                 return;
             }
@@ -163,7 +163,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
         btnAddCriteria.setOnClickListener(v -> {
             if (layoutOtherRubrics.getVisibility() == View.GONE) {
                 layoutOtherRubrics.setVisibility(View.VISIBLE);
-                btnAddCriteria.setText("Remove Criteria"); // Optional toggle text
+                btnAddCriteria.setText("Hide Criteria"); // Optional toggle text
             } else {
                 layoutOtherRubrics.setVisibility(View.GONE);
                 btnAddCriteria.setText("Add Criteria"); // Optional toggle text

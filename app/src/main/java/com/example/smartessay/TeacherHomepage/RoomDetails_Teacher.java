@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +56,8 @@ public class RoomDetails_Teacher extends AppCompatActivity {
 
     String classroomId;
     Button btn_post_scoree;
-    TextInputEditText editSearchStudent;
+    EditText editSearchStudent;
+    ImageButton back_image_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +68,8 @@ public class RoomDetails_Teacher extends AppCompatActivity {
         tvRoomCode = findViewById(R.id.tvRoomCode);
         rvStudents = findViewById(R.id.recycler_view_rooms);
         btn_post_scoree = findViewById(R.id.btn_post_scoree);
-        editSearchStudent = findViewById(R.id.edit_search_student);
+        editSearchStudent = findViewById(R.id.edit_search_prompt);
+        back_image_btn = findViewById(R.id.back_image_btn);
 
         //get room name and code from previous activity
         String roomName = getIntent().getStringExtra("roomName");
@@ -80,6 +84,14 @@ public class RoomDetails_Teacher extends AppCompatActivity {
         rvStudents.setLayoutManager(new LinearLayoutManager(this)); // Set layout manager
         adapter = new StudentAdapter(filteredList, classroomId); // Set adapter
         rvStudents.setAdapter(adapter); // Set adapter to RecyclerView
+
+        back_image_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Finish the current activity and go back to the previous one
+                finish();
+            }
+        });
 
         btn_post_scoree.setOnClickListener(v -> { // Post scores to Firebase
             showYesNoDialog(

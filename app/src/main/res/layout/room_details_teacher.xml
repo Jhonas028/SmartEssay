@@ -3,16 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp"
     android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:background="#004179"
+        >
+
+        <ImageButton
+            android:id="@+id/back_image_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/ic_arrow_back_24"
+            android:background="@color/blue_new"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/yellow_border"
-        android:padding="16dp">
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/blue_border_new"
+        >
 
         <!-- Header Section -->
         <LinearLayout
@@ -32,19 +51,11 @@
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_post_scoree"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Post"
-                android:textColor="@color/blue_new"
-                android:background="@drawable/round_all_yellow_button"
-                android:textSize="12sp"/>
+
 
 
         </LinearLayout>
 
-        <!-- Room Info Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,30 +65,43 @@
 
             <TextView
                 android:id="@+id/tvRoomCode"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Room Code: "
                 android:textStyle="bold"
                 android:textSize="16sp"/>
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_post_scoree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Post"
+                android:textColor="@color/blue_new"
+                android:background="@drawable/round_all_yellow_button"
+                android:textSize="12sp"/>
         </LinearLayout>
 
-          <!-- Search Bar -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_search_student"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Search..."
-                android:drawablePadding="8dp"/>
-        </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/edit_search_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="5dp"
+        android:hint="Search activity..."
+        android:paddingEnd="10dp"
+        android:paddingStart="15dp"
+        android:background="@drawable/search_edittext_bg"
+        android:drawableStart="@drawable/outline_search_24"
+        android:drawablePadding="10dp"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:textColor="@color/black"
+        android:textSize="14sp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_rooms"

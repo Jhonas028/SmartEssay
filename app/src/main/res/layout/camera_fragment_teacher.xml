@@ -95,7 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/yellow_border"
+            android:background="@drawable/blue_border_new"
             android:layout_marginTop="16dp"
             android:padding="12dp">
 
