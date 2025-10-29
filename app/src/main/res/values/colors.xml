@@ -6,10 +6,10 @@
     <color name="yellow">#FFD600</color>
     <color name="blue">#003399</color>
     <color name="orange">#F6A800</color>
-    <color name="button">#00287A</color>
+
 
     <color name="text_title_yellow">#ffd429</color>
-    <color name="button_yellow">#ffd429</color>
+
     <color name="back_blue">#2b56ab</color>
     <color name="dirty_white">#EDEDED</color>
     <color name="green_posted">#4CAF50</color>
@@ -22,9 +22,18 @@
     <color name="off_white">#F8F9FB</color>
     <color name="dark_gray">#2C2C2C</color>
 
-    <color name="my_soft_red">#FF8A80</color>
-    <color name="archived">#2196F3</color><!-- soft red for handling errors-->
 
+    <!-- New combination of colors-->
+
+    <color name="my_soft_red">#FF8A80</color> <!-- soft red for handling errors-->
+    <color name="archived">#2196F3</color>
+
+    <color name="editext_color">#8f8e8e</color>
+
+    <color name="button_blue">#00287A</color>
+
+    <color name="green_new">#33B827</color>
+    <color name="yellow_new">#ffd429</color>
 
 
 </resources>

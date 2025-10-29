@@ -129,7 +129,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cancel"
-                android:backgroundTint="@color/button_yellow"
+                android:backgroundTint="@color/yellow_new"
                 android:textColor="@color/back_blue"
                 android:textStyle="bold"
                 android:layout_marginEnd="8dp"

@@ -41,7 +41,7 @@
         <Button
             android:id="@+id/btnCreate"
             android:text="Create"
-            android:backgroundTint="@color/button_yellow"
+            android:backgroundTint="@color/yellow_new"
             android:textColor="@color/back_blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
