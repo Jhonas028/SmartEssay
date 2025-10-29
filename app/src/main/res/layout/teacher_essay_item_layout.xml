@@ -9,7 +9,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:strokeColor="@color/blue_primary"
+    app:strokeColor="#004179"
     app:strokeWidth="2dp">
 
     <!-- Main content container -->
@@ -22,24 +22,32 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/blue_primary"
+            android:orientation="vertical"
+            android:background="#004179"
             android:padding="10dp"
-            android:gravity="center_vertical">
+            >
 
             <TextView
                 android:id="@+id/txt_name_teachere"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingVertical="10dp"
-                android:paddingHorizontal="16dp"
+                android:fontFamily="@font/montserrat_alternates_extrabold"
+                android:paddingVertical="4dp"
                 android:text="Juan Dela Cruz"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:gravity="center_vertical" />
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_studnum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Student No.: 2023-00123"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
         </LinearLayout>
+
 
         <!-- White Content Section -->
         <LinearLayout
@@ -47,34 +55,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@android:color/white"
-            android:padding="16dp">
+            android:padding="10dp">
 
-            <TextView
-                android:id="@+id/text_studnum"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Student No.: 2023-00123"
-                android:textSize="18sp"
-                android:textColor="#000000"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/text_date_created"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Date Submitted: March 15, 2024"
-                android:textSize="14sp"
-                android:textColor="#000000" />
-
-            <TextView
-                android:id="@+id/text_time_created"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Time Submitted: 10:30 AM"
-                android:textSize="14sp"
-                android:textColor="#000000" />
 
             <!-- Status Row -->
             <LinearLayout
@@ -86,21 +68,45 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:fontFamily="@font/poppins"
                     android:text="Status:"
-                    android:textSize="14sp"
                     android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="4dp" />
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/text_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
                     android:text="Pending"
-                    android:textSize="14sp"
                     android:textColor="@color/red_pending"
+                    android:textSize="18dp"
                     android:textStyle="bold" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_date_created"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/poppins"
+                android:text="Date Submitted: March 15, 2024"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/text_time_created"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/poppins"
+                android:text="Time Submitted: 10:30 AM"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+
+
 
             <!-- Swipe Hints (Optional) -->
             <LinearLayout
