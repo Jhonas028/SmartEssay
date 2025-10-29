@@ -2,6 +2,7 @@ package com.example.smartessay.TeacherHomepage;
 
 import static java.security.AccessController.getContext;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -157,6 +158,15 @@ public class EssayDetails_Teacher extends AppCompatActivity {
                         // Call existing methods to update Firebase
                         updateEssayScore(studentId, roomId, scoreValue);
                         postIndividualScore(studentId, roomId, scoreValue);
+
+                        // ✅ Close activity after saving
+                        Toast.makeText(getApplicationContext(), "Score saved successfully", Toast.LENGTH_SHORT).show();
+
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("scoreUpdated", true); // 🔹 Notify parent activity
+                        setResult(RESULT_OK, resultIntent); // 🔹 Set result
+                        finish();
+                        // go back to previous activity
 
                     } catch (NumberFormatException e) {
                         Toast.makeText(getApplicationContext(), "Invalid score format", Toast.LENGTH_SHORT).show();

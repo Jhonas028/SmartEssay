@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
     TextView tvSubtotal;
     private AlertDialog loadingDialog;
     LinearLayout layoutOtherRubrics;// loading spinner dialog
+    ImageButton imageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,7 @@ public class AddRoom_Teacher extends AppCompatActivity {
         etRubricOther = findViewById(R.id.etRubricOther);
         etRubricOtherScore = findViewById(R.id.etRubricOtherScore);
         etTopic = findViewById(R.id.etTopic);
+        imageButton = findViewById(R.id.imageButton);
 
         btnCreate = findViewById(R.id.btnCreate);
         btnCancel = findViewById(R.id.btnCancel);
@@ -83,6 +86,14 @@ public class AddRoom_Teacher extends AppCompatActivity {
         etRubricGrammar.addTextChangedListener(subtotalWatcher);
         etRubricRelevance.addTextChangedListener(subtotalWatcher);
         etRubricOtherScore.addTextChangedListener(subtotalWatcher);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Finish the current activity and go back to the previous one
+                finish();
+            }
+        });
 
         // Create button logic
         btnCreate.setOnClickListener(v -> {

@@ -127,9 +127,7 @@ public class Camera_Student extends AppCompatActivity {
     private void checkifSubmitted(String essayText){
 
         // Connect to Firebase Realtime Database
-        DatabaseReference db = FirebaseDatabase.getInstance(
-                "https://smartessay-79d91-default-rtdb.firebaseio.com/"
-        ).getReference();
+        DatabaseReference db = FirebaseDatabase.getInstance("https://smartessay-79d91-default-rtdb.firebaseio.com/").getReference();
 
         // 🔎 Check if student already submitted an essay in this classroom
         db.child("essay")
@@ -187,6 +185,7 @@ public class Camera_Student extends AppCompatActivity {
     }
 
     private void showYesNoDialog(String title, String message, Runnable onYes, Runnable onCancel) {
+
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_yes_no, null); // your custom layout XML
 
@@ -469,7 +468,7 @@ public class Camera_Student extends AppCompatActivity {
                                     public void onSuccess(String result) {
                                         Log.i("AI_RESULT", "Grading result: " + result);
 
-                                        int score = 0;
+                                        int score = -1; // invalid default
                                         String feedback = "";
 
                                         try {
@@ -497,7 +496,15 @@ public class Camera_Student extends AppCompatActivity {
                                             }
                                         } catch (Exception e) {
                                             Log.e("AI_PARSE", "Failed to parse grading result: " + e.getMessage());
-                                            feedback = "Parsing error: " + e.getMessage();
+                                        }
+
+                                        // ✅ Validation: check if score or feedback is valid
+                                        if (score == -1 || feedback.isEmpty()) {
+                                            Toast.makeText(Camera_Student.this,
+                                                    "AI grading failed. Please try submitting your essay again.",
+                                                    Toast.LENGTH_LONG).show();
+                                            hideLoadingDialog();
+                                            return; // stop upload → student can resubmit
                                         }
 
                                         // Upload essay with score + feedback
@@ -507,7 +514,10 @@ public class Camera_Student extends AppCompatActivity {
                                     @Override
                                     public void onError(String error) {
                                         Log.e("AI_RESULT", "Error: " + error);
-                                        uploadEssay(essay, 0, "No feedback generated (AI failed)");
+                                        Toast.makeText(Camera_Student.this,
+                                                "AI grading failed. Please try submitting your essay again.",
+                                                Toast.LENGTH_LONG).show();
+                                        hideLoadingDialog();
                                     }
                                 }
                         );

@@ -17,6 +17,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,6 +60,8 @@ public class RoomDetails_Teacher extends AppCompatActivity {
     EditText editSearchStudent;
     ImageButton back_image_btn;
 
+    private ActivityResultLauncher<Intent> essayLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,10 +83,26 @@ public class RoomDetails_Teacher extends AppCompatActivity {
         tvRoomName.setText(roomName);
         tvRoomCode.setText("Room Code: " + roomCode);
 
+        // 🔹 Insert here: Initialize ActivityResultLauncher for essay updates
+        essayLauncher = registerForActivityResult(
+                new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null && data.getBooleanExtra("scoreUpdated", false)) {
+                            loadEssaysFromFirebase(); // 🔹 Refresh list when returning from EssayDetails_Teacher
+                        }
+                    }
+                }
+        );
+
+
         // 🔽 RecyclerView
         rvStudents.setLayoutManager(new LinearLayoutManager(this)); // Set layout manager
         adapter = new StudentAdapter(filteredList, classroomId); // Set adapter
         rvStudents.setAdapter(adapter); // Set adapter to RecyclerView
+
+
 
         back_image_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,6 +194,11 @@ public class RoomDetails_Teacher extends AppCompatActivity {
         loadEssaysFromFirebase();
     }
 
+    protected void onResume() {
+        super.onResume();
+        loadEssaysFromFirebase(); // ensures latest data when returning to this activity
+    }
+
     private void filterList(String query) {
         filteredList.clear();
         if (query.isEmpty()) {
@@ -242,12 +266,17 @@ public class RoomDetails_Teacher extends AppCompatActivity {
         membersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                essayList.clear();
+                essayList.clear(); // ✅ clear list first
 
                 if (!snapshot.exists()) {
+                    filteredList.clear();
                     adapter.notifyDataSetChanged();
                     return;
                 }
+
+                List<EssayTeacher> tempList = new ArrayList<>();
+                int totalStudents = (int) snapshot.getChildrenCount();
+                final int[] loadedCount = {0};
 
                 for (DataSnapshot studentSnap : snapshot.getChildren()) {
                     String studentId = studentSnap.getKey();
@@ -266,13 +295,12 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                             if (essaySnap.exists()) {
                                 for (DataSnapshot essayEntry : essaySnap.getChildren()) {
                                     EssayTeacher essay = essayEntry.getValue(EssayTeacher.class);
-                                    String essayId = essayEntry.getKey();
                                     if (essay != null) {
-                                        essay.setEssayId(essayId);
+                                        essay.setEssayId(essayEntry.getKey());
                                         essay.setStudentId(studentId);
                                         essay.setFullname(fullname);
                                         essay.setStatus(stats);
-                                        essayList.add(essay);
+                                        tempList.add(essay);
                                     }
                                 }
                             } else {
@@ -283,9 +311,16 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                                 noEssay.setScore(0);
                                 noEssay.setCreatedAt(System.currentTimeMillis());
                                 noEssay.setStatus(stats);
-                                essayList.add(noEssay);
+                                tempList.add(noEssay);
                             }
-                            filterList(editSearchStudent.getText().toString());
+
+                            loadedCount[0]++;
+                            if (loadedCount[0] == totalStudents) {
+                                // ✅ Only update list and filter once when all students are loaded
+                                essayList.clear();
+                                essayList.addAll(tempList);
+                                filterList(editSearchStudent.getText().toString());
+                            }
                         }
 
                         @Override
@@ -298,6 +333,7 @@ public class RoomDetails_Teacher extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) { }
         });
     }
+
 
     // 🔽 Adapter Class
     public static class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentViewHolder> {
@@ -359,8 +395,12 @@ public class RoomDetails_Teacher extends AppCompatActivity {
                 intent.putExtra("roomId", classroomId); // Pass classroom ID
                 intent.putExtra("studentId", essay.getStudentId()); // Pass student ID
                 intent.putExtra("essayId", essay.getEssayId()); // Pass essay ID
-                v.getContext().startActivity(intent); // Start the activity
+                // 🔹 Launch activity for result so parent can refresh when coming back
+                if (v.getContext() instanceof RoomDetails_Teacher) {
+                    ((RoomDetails_Teacher) v.getContext()).essayLauncher.launch(intent);
+                }// Start the activity
             });
+
         }
 
         @Override
