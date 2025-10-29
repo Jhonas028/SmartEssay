@@ -4,76 +4,79 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".TeacherHomepage.HomePage_Teacher"
-    >
+    tools:context=".TeacherHomepage.HomePage_Teacher">
 
+    <!-- Main vertical layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
-        >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp"
-        >
+        android:padding="16dp">
+
         <!-- Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:gravity="center_vertical">
 
-            >
-
-            <!-- Search Bar -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="248dp"
-                android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_search_prompt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Search prompts..."
-                   />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <ImageButton
-                android:id="@+id/btn_add_room"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/round_all_yellow_button"
-                android:src="@drawable/join"
-                android:scaleType="centerInside"
-                android:adjustViewBounds="true"
-                android:padding="10dp"
-                android:contentDescription="Add Room" />
-
-
+            <!-- Search EditText -->
+            <EditText
+                android:id="@+id/edit_search_prompt"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_weight="1"
+                android:layout_margin="5dp"
+                android:hint="Search activity..."
+                android:paddingStart="15dp"
+                android:paddingEnd="10dp"
+                android:background="@drawable/search_edittext_bg"
+                android:drawableStart="@drawable/outline_search_24"
+                android:drawablePadding="10dp"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textSize="14sp"/>
         </LinearLayout>
 
-
-
-    </LinearLayout>
-
-
-        <!-- RecyclerView -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_rooms"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:padding="8dp"
-            tools:listitem="@layout/student_room_item_layout" />
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_rooms"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:padding="8dp"
+                tools:listitem="@layout/student_room_item_layout" />
+
+            <TextView
+                android:id="@+id/tv_empty_essays"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No submitted essay yet"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
 
     </LinearLayout>
+
+    <!-- Floating Add Room Button at Bottom-Right -->
+    <ImageButton
+        android:id="@+id/btn_add_room"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="40dp"
+        android:background="@drawable/round_all_yellow_button"
+        android:src="@drawable/join"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:padding="15dp"
+        android:contentDescription="Add Room" />
 
 </FrameLayout>

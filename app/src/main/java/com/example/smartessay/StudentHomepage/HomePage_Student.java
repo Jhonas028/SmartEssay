@@ -45,7 +45,7 @@ public class HomePage_Student extends Fragment {
     private RoomAdapter roomAdapter;         // Adapter for RecyclerView
     private List<EssayInfo> roomList;        // List holding essay data
     private ImageButton btnJoinRoom;              // Button to join new classroom
-
+    private TextView tvEmptyEssays;
     private EditText editSearch;             // 🔹 Search input
     private List<EssayInfo> fullRoomList;    // 🔹 Full copy for search filtering
 
@@ -64,6 +64,7 @@ public class HomePage_Student extends Fragment {
         fullRoomList = new ArrayList<>();
         roomAdapter = new RoomAdapter(roomList);
         recyclerView.setAdapter(roomAdapter);
+        tvEmptyEssays = view.findViewById(R.id.tv_empty_essays);
 
         // 🔹 Setup search input
         editSearch = view.findViewById(R.id.edit_search_prompt);
@@ -81,8 +82,10 @@ public class HomePage_Student extends Fragment {
             public void afterTextChanged(android.text.Editable s) {}
         });
 
+        toggleEmptyView();
         // 🔹 Load essays from Firebase when fragment opens
         loadStudentEssays();
+
 
         // 🔹 Join Room button opens dialog to input room code
         btnJoinRoom = view.findViewById(R.id.btn_add_room);
@@ -197,6 +200,16 @@ public class HomePage_Student extends Fragment {
         }
         roomAdapter.notifyDataSetChanged();
     }
+
+    //no submitted essay will disappear if theres an essay submitted
+    private void toggleEmptyView() {
+        if (roomList.isEmpty()) {
+            tvEmptyEssays.setVisibility(View.VISIBLE);
+        } else {
+            tvEmptyEssays.setVisibility(View.GONE);
+        }
+    }
+
 
     public void swipeDelete(){
         // 🔹 Swipe-to-delete logic (left/right)
