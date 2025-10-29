@@ -23,12 +23,15 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:title=" " />
 
+
+
         <!-- Main fragment container -->
         <FrameLayout
             android:id="@+id/framelays"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize" />
+
 
         <!-- BottomAppBar (placed before FAB so anchoring works) -->
         <com.google.android.material.bottomappbar.BottomAppBar
@@ -42,7 +45,9 @@
             app:hideOnScroll="false"
             android:layout_gravity="bottom">
 
+
         </com.google.android.material.bottomappbar.BottomAppBar>
+
 
         <!-- Floating Action Button (Center Button) -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton

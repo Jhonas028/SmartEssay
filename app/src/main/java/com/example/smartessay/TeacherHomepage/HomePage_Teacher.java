@@ -52,7 +52,7 @@ public class HomePage_Teacher extends Fragment {
     private DatabaseReference classroomsRef; // Firebase reference to "classrooms" node
     private ImageButton btnAddRoom;         // Button to add a new classroom
     private EditText editSearch;
-// Search input field
+    private TextView tvEmptyEssays;
 
     LinearLayout layoutRubrics;
     ImageView arrow;
@@ -81,7 +81,7 @@ public class HomePage_Teacher extends Fragment {
 
         layoutRubrics = view.findViewById(R.id.layout_rubrics);
 
-
+        tvEmptyEssays = view.findViewById(R.id.tv_empty_activities);
 
         /*ImageView arrow = view.findViewById(R.id.iv_swipe_arrow);
         //call animation method for swipeup
@@ -305,6 +305,8 @@ public class HomePage_Teacher extends Fragment {
                         roomAdapter.fullRoomList.clear();
                         roomAdapter.fullRoomList.addAll(roomList);
                         roomAdapter.notifyDataSetChanged();
+
+                        toggleEmptyView();
                     }
 
                     @Override
@@ -407,6 +409,14 @@ public class HomePage_Teacher extends Fragment {
                 },
                 () -> roomAdapter.notifyItemChanged(position) // Cancel → restore item visually
         );
+    }
+
+    private void toggleEmptyView() {
+        if (roomList == null || roomList.isEmpty()) {
+            tvEmptyEssays.setVisibility(View.VISIBLE);
+        } else {
+            tvEmptyEssays.setVisibility(View.GONE);
+        }
     }
 
 

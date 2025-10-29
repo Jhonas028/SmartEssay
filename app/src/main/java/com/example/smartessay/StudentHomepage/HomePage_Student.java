@@ -82,7 +82,7 @@ public class HomePage_Student extends Fragment {
             public void afterTextChanged(android.text.Editable s) {}
         });
 
-        toggleEmptyView();
+
         // 🔹 Load essays from Firebase when fragment opens
         loadStudentEssays();
 
@@ -390,6 +390,7 @@ public class HomePage_Student extends Fragment {
                         fullRoomList.addAll(roomList);
 
                         roomAdapter.notifyDataSetChanged();
+                        toggleEmptyView();
                     }
 
                     @Override

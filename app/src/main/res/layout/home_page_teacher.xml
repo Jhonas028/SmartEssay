@@ -48,6 +48,8 @@
 
             </LinearLayout>
 
+
+
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_rooms"
@@ -59,7 +61,20 @@
             android:layout_marginBottom="40dp"
             tools:listitem="@layout/teacher_room_item_layout" />
 
+
+
     </LinearLayout>
+
+    <!-- Empty view: stacked on top of RecyclerView, centered -->
+    <TextView
+        android:id="@+id/tv_empty_activities"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No activities yet"
+        android:textColor="@color/dark_gray"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:visibility="gone"/>
 
 
 
