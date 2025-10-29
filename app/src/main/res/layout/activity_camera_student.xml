@@ -1,145 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
-
-
+    <!-- ================= HEADER ================= -->
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="5dp"
-        android:paddingTop="30dp"
-        >
+        android:layout_height="50dp"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:background="#004179"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/ic_arrow_back_24"
+            android:background="@android:color/transparent" />
+    </LinearLayout>
 
-        <!-- ================= IMAGE PREVIEW ================= -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cropped Image"
-            android:textColor="@color/blue_new"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+    <!-- ================= SCROLLABLE CONTENT ================= -->
+    <ScrollView
+        android:id="@+id/contentScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingHorizontal="5dp"
+        android:paddingTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/blue_border"
-            android:padding="8dp"
-            android:layout_marginBottom="16dp">
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
+            <!-- ================= IMAGE PREVIEW ================= -->
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:contentDescription="Cropped Image Preview"
-                android:scaleType="fitCenter"
-                android:clipToOutline="true"
-                android:elevation="4dp"
-                android:adjustViewBounds="true" />
-        </LinearLayout>
-
-
-
-        <!-- ================= OCR RESULT ================= -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OCR Result"
-            android:textColor="@color/blue_new"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="10dp" />
-
-
-
-
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Cropped Image"
+                android:textColor="#004179"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/blue_border_new"
+                android:background="@drawable/blue_border"
                 android:padding="8dp"
-                android:layout_marginBottom="16dp"
-                android:orientation="vertical">
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:contentDescription="Cropped Image Preview"
+                    android:scaleType="fitCenter"
+                    android:clipToOutline="true"
+                    android:elevation="4dp"
+                    android:adjustViewBounds="true" />
+            </LinearLayout>
+
+            <!-- ================= OCR RESULT ================= -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="OCR Result"
+                android:textColor="#004179"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/blue_border"
+                android:padding="8dp"
+                android:layout_marginRight="15dp"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
 
                 <EditText
                     android:id="@+id/ocr_result"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:hint="Your essay will appear here..."
-                    android:padding="8dp"
-                    android:inputType="textMultiLine|textCapSentences"
+                    android:fontFamily="@font/poppins"
                     android:gravity="top"
-                    android:scrollbars="vertical"
-                    android:overScrollMode="always"
-                    android:scrollbarStyle="insideInset"
-                    android:lineSpacingExtra="6dp"
-                    android:importantForAutofill="no"
+                    android:hint="Your essay will appear here..."
                     android:imeOptions="flagNoExtractUi"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:lineSpacingExtra="6dp"
                     android:longClickable="false"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true" />
-
+                    android:maxLines="25"
+                    android:minLines="6"
+                    android:padding="8dp"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
 
                 <Button
                     android:id="@+id/addPageBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add Page"
                     android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/blue_new"
+                    android:backgroundTint="#004179"
+                    android:fontFamily="@font/poppins"
+                    android:text="Add Page"
                     android:textColor="@color/white"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
-
-
-        <!-- ================= BUTTONS ================= -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="16dp"
-            android:weightSum="2">
-
-
-
-            <Button
-                android:id="@+id/cancelBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Cancel"
-                android:backgroundTint="@color/yellow_new"
-                android:textColor="@color/blue_new"
-                android:textStyle="bold"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp" />
-
-            <Button
-                android:id="@+id/submitBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Submit"
-                android:backgroundTint="@color/blue_new"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                 />
         </LinearLayout>
+    </ScrollView>
 
+    <!-- ================= BUTTON BAR ================= -->
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="2"
+        android:paddingVertical="8dp"
+        android:background="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/footer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/cancelBtn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="#F3C404"
+            android:fontFamily="@font/poppins_bold"
+            android:text="Cancel"
+            android:textColor="#004179"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/submitBtn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:backgroundTint="#004179"
+            android:fontFamily="@font/poppins_bold"
+            android:text="Submit"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:textStyle="bold" />
     </LinearLayout>
-</ScrollView>
+
+    <!-- ================= FOOTER ================= -->
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingVertical="12dp"
+        android:background="#004179"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="© 2025 SmartEssay App"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class Camera_Student extends AppCompatActivity {
     private String studentId;
     private String classroomId;
     private Dialog loadingDialog;
+    private ImageButton imageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +65,11 @@ public class Camera_Student extends AppCompatActivity {
         ocrResultTextView = findViewById(R.id.ocr_result);
         submitBtn = findViewById(R.id.submitBtn);
         cancelBtn = findViewById(R.id.cancelBtn);
+        imageButton = findViewById(R.id.imageButton);
 
-
+        imageButton.setOnClickListener(v -> {
+            finish();// Go back to the previous activity
+        });
 
         // ✅ Get student and classroom info passed from previous screen
         studentId = getIntent().getStringExtra("studentId");
