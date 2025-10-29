@@ -31,8 +31,9 @@ public class EssayDetails_Teacher extends AppCompatActivity {
 
     private TextView tvConvertedText, tvEssayFeedback, tvStatus,fullname;
     private EditText tvScore;
+    private String originalScore;
 
-    Button btnSave;
+    Button btnSave,btnCancel;
     DatabaseReference dbRef;
     ImageView editIcon;
     ImageButton imageButton;
@@ -50,6 +51,7 @@ public class EssayDetails_Teacher extends AppCompatActivity {
         fullname = findViewById(R.id.fullname);
         editIcon = findViewById(R.id.editIcon);
         imageButton = findViewById(R.id.imageButton);
+        btnCancel = findViewById(R.id.btnCancel);
 
         btnSave = findViewById(R.id.btnSave);
 
@@ -64,20 +66,44 @@ public class EssayDetails_Teacher extends AppCompatActivity {
             finish();// Go back to the previous activity
         });
 
+        btnCancel.setOnClickListener(v -> {
+            // Revert tvScore to the original value
+            tvScore.setText(originalScore);
+
+            // Optionally, disable editing again
+            tvScore.setEnabled(false);
+            tvScore.setFocusable(false);
+            tvScore.setFocusableInTouchMode(false);
+
+            // Optionally, close the activity if you want to just discard changes
+            finish();
+        });
+
         // ✅ Query essays by studentId + roomId
         dbRef.orderByChild("student_id").equalTo(studentId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
+
+
+
+
                         if (snapshot.exists()) {
                             for (DataSnapshot essaySnap : snapshot.getChildren()) {
                                 String essayRoomId = essaySnap.child("classroom_id").getValue(String.class);
+
+                                String score = String.valueOf(essaySnap.child("score").getValue());
+                                tvScore.setText(score != null ? score : "No score");
+
+                                // Store the original score
+                                originalScore = score != null ? score : "0"; // fallback to 0
+
 
                                 // ✅ Only show if it matches the selected classroom
                                 if (roomId.equals(essayRoomId)) {
                                     String convertedText = essaySnap.child("converted_text").getValue(String.class);
                                     String essayFeedback = essaySnap.child("essay_feedback").getValue(String.class);
-                                    String score = String.valueOf(essaySnap.child("score").getValue());
+                                     score = String.valueOf(essaySnap.child("score").getValue());
                                     String status = essaySnap.child("status").getValue(String.class);
                                     String fullName = essaySnap.child("fullname").getValue(String.class);
 
