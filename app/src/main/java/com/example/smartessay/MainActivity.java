@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         signinBTN = findViewById(R.id.signinBTN);
         signUpTextView = findViewById(R.id.signupTV);
 
-
+        //showLoadingDialog("test test test");
         // When the "Sign Up" text is clicked, go to ChoosingAccounts activity
         signUpTextView.setOnClickListener(v -> {
             startActivity(new Intent(this, ChoosingAccounts.class));

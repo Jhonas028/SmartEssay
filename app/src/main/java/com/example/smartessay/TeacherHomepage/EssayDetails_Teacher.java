@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,7 @@ public class EssayDetails_Teacher extends AppCompatActivity {
     Button btnSave;
     DatabaseReference dbRef;
     ImageView editIcon;
+    ImageButton imageButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +49,7 @@ public class EssayDetails_Teacher extends AppCompatActivity {
         tvStatus = findViewById(R.id.tvStatus);
         fullname = findViewById(R.id.fullname);
         editIcon = findViewById(R.id.editIcon);
+        imageButton = findViewById(R.id.imageButton);
 
         btnSave = findViewById(R.id.btnSave);
 
@@ -56,6 +59,10 @@ public class EssayDetails_Teacher extends AppCompatActivity {
 
         dbRef = FirebaseDatabase.getInstance()
                 .getReference("essay");
+
+        imageButton.setOnClickListener(v -> {
+            finish();// Go back to the previous activity
+        });
 
         // ✅ Query essays by studentId + roomId
         dbRef.orderByChild("student_id").equalTo(studentId)
