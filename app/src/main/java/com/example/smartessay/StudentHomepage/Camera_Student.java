@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,12 +73,15 @@ public class Camera_Student extends AppCompatActivity {
 
         //++>> this method allows this field scrollable
         ocrResultTextView.setMovementMethod(new android.text.method.ScrollingMovementMethod());
+
         ocrResultTextView.setVerticalScrollBarEnabled(true);
         ocrResultTextView.setOnTouchListener((v, event) -> {
             // Allow the EditText to handle its own scroll
             v.getParent().requestDisallowInterceptTouchEvent(true);
             return false;
         });
+
+        enableVisibleScroll();
 
 
         addPageBtn = findViewById(R.id.addPageBtn);
@@ -594,6 +598,18 @@ public class Camera_Student extends AppCompatActivity {
         });
 
 
+    }
+
+    private void enableVisibleScroll() {
+        EditText ocrResult = findViewById(R.id.ocr_result); // make sure it's initialized
+        ocrResult.setMovementMethod(new ScrollingMovementMethod());
+        ocrResult.setVerticalScrollBarEnabled(true);
+        ocrResult.setOnTouchListener((v, event) -> {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
+        ocrResult.setMovementMethod(new ScrollingMovementMethod());
+        ocrResult.setVerticalScrollBarEnabled(true);
     }
 
     /**

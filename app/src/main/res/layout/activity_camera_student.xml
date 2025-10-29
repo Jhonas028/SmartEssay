@@ -61,13 +61,6 @@
 
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/blue_border_new"
-            android:padding="8dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="16dp">
 
 
             <LinearLayout
@@ -81,7 +74,7 @@
                 <EditText
                     android:id="@+id/ocr_result"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="300dp"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:background="@android:color/transparent"
@@ -89,13 +82,16 @@
                     android:padding="8dp"
                     android:inputType="textMultiLine|textCapSentences"
                     android:gravity="top"
-                    android:minLines="6"
-                    android:maxLines="25"
-                    android:lineSpacingExtra="6dp"
                     android:scrollbars="vertical"
+                    android:overScrollMode="always"
+                    android:scrollbarStyle="insideInset"
+                    android:lineSpacingExtra="6dp"
                     android:importantForAutofill="no"
                     android:imeOptions="flagNoExtractUi"
-                    android:longClickable="false" />
+                    android:longClickable="false"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+
 
                 <Button
                     android:id="@+id/addPageBtn"
@@ -109,8 +105,6 @@
             </LinearLayout>
 
 
-
-        </LinearLayout>
 
         <!-- ================= BUTTONS ================= -->
         <LinearLayout

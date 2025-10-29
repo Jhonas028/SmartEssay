@@ -7,178 +7,214 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- Scrollable Content -->
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:background="@color/blue_new">
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_arrow_back_24"
+                android:background="#00000000" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvEssayTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:text="This is a title"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <!-- Student Info Section (Pill-Shaped Blue-Yellow Design) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="12dp"
-            android:background="@color/off_white">
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
-            <!-- Header -->
+            <!-- Left Blue Part -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/blue_primary"
-                android:padding="10dp"
-                android:orientation="horizontal"
-                android:paddingHorizontal="16dp"
-                android:layout_marginBottom="10dp">
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/pill_left_blue">
+
+
 
                 <TextView
-                    android:id="@+id/tvEssayTitle"
+                    android:id="@+id/tvFullname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Smart Essay"
-                    android:textColor="@color/yellow_accent"
-                    android:textSize="26sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Juan Dela Cruz"
+                    android:textColor="@color/blue_primary"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
-            </LinearLayout>
 
-            <!-- Student Info Section (Pill-Shaped Blue-Yellow Design) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/blue_border_round_edittext"
-                android:layout_marginBottom="12dp">
 
-                <!-- Left Blue Part -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/tvFullname"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Juan Dela Cruz"
-                        android:textSize="25sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/blue_primary" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="4dp">
-
-                        <TextView
-                            android:id="@+id/tvStatus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="GRADED"
-                            android:textColor="@color/green_posted"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Right Yellow Part (Score Display) -->
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:background="@drawable/pill_right_yellow"
-                    android:paddingHorizontal="20dp"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
 
                     <TextView
-                        android:id="@+id/tvScore"
+                        android:id="@+id/tvStatus"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="90%"
-                        android:textColor="@color/off_white"
-                        android:textSize="26sp"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="GRADED"
+                        android:textColor="@color/green_posted"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Feedback Section -->
+            <!-- Right Yellow Part (Score Display) -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/blue_filled_round_corners"
-                android:layout_marginBottom="12dp"
-                android:padding="10dp">
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="@drawable/pill_right_yellow"
+                android:paddingHorizontal="20dp"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/tvScore"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="10dp"
-                    android:text="Feedback"
-                    android:textColor="@color/yellow_accent"
-                    android:textSize="22sp"
+                    android:text="90%"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
                     android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/blue_border_round_edittext"
-                    android:padding="10dp"
-                    >
-
-                    <TextView
-                        android:id="@+id/tvFeedback"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Strong arguments and well-developed points. A little more detail would make it flawless."
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:justificationMode="inter_word" />
-                </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
 
-            <!-- Student Essay Section -->
+        <!-- Scrollable Main Content -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:paddingLeft="10dp"
+            android:paddingBottom="50dp"
+            android:paddingTop="20dp"
+            android:paddingRight="10dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/blue_filled_round_corners"
-                android:layout_marginBottom="12dp"
-                android:padding="10dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="10dp"
-                    android:text="Your Essay"
-                    android:textColor="@color/yellow_accent"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-
+                <!-- Feedback Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@drawable/blue_border_round_edittext"
                     android:padding="10dp">
 
                     <TextView
-                        android:id="@+id/tvEssayText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="This is a sample essay text. The student presents clear and well-structured arguments, demonstrates critical thinking, and uses examples effectively."
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Feedback"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:justificationMode="inter_word"
-                        android:lineSpacingExtra="4dp" />
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:background="@drawable/blue_border_round_edittext">
+
+                        <TextView
+                            android:id="@+id/tvFeedback"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:justificationMode="inter_word"
+                            android:text="Strong arguments and well-developed points. A little more detail would make it flawless. Strong arguments and well-developed points. A little more detail would make it flawless. Strong arguments and well-developed points. A little more detail would make it flawless."
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Student Essay Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:paddingVertical="10dp"
+                        android:text="Your Essay"
+                        android:textColor="@color/black"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:background="@drawable/blue_border_round_edittext">
+
+                        <TextView
+                            android:id="@+id/tvEssayText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:justificationMode="inter_word"
+                            android:lineSpacingExtra="4dp"
+                            android:text="This is a sample essay text. The student presents clear and well-structured arguments, demonstrates critical thinking, and uses examples effectively. This is a sample essay text. The student presents clear and well-structured arguments, demonstrates critical thinking, and uses examples effectively. This is a sample essay text. The student presents clear and well-structured arguments, demonstrates critical thinking, and uses examples effectively."
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
-        </LinearLayout>
-    </ScrollView>
+    <!-- Footer -->
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingVertical="12dp"
+        android:background="@color/blue_new"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

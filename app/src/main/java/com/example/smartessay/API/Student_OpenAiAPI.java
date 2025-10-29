@@ -65,22 +65,22 @@ public class Student_OpenAiAPI {
         if (!content.isEmpty()) {
             prompt += "Content / Ideas\n\t→ [feedback]\n";
             prompt += "\nPoints for Improvement \n\t→ [feedback]\n\n";
-            prompt += "--------------------------------------------------------------------\n\n";
+            prompt += "--------------------------------\n\n";
         }
         if (!organization.isEmpty()) {
             prompt += "Organization / Structure\n\t→ [feedback]\n\n ";
             prompt += "\nPoints for Improvement \n\t→ [feedback]\n\n";
-            prompt += "--------------------------------------------------------------------\n\n";
+            prompt += "--------------------------------\n\n";
         }
         if (!grammar.isEmpty()) {
             prompt += "Grammar, Mechanics, and Formatting\n\t→ [feedback]\n\n ";
             prompt += "\nPoints for Improvement \n\t→ [feedback]\n\n";
-            prompt += "--------------------------------------------------------------------\n\n";
+            prompt += "--------------------------------\n\n";
         }
         if (!relevance.isEmpty()) {
             prompt += "Subject Relevance\n\t→ [feedback]\n\n ";
             prompt += "\nPoints for Improvement \n\t→ [feedback]\n\n";
-            prompt += "--------------------------------------------------------------------\n\n";
+            prompt += "--------------------------------\n\n";
         }
         /*if (!otherCriteria.isEmpty()) {
             prompt += "Other Criteria\n\t→ [feedback]\n\n ";
