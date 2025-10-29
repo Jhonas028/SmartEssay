@@ -85,7 +85,7 @@ public class CreateStudentAcc extends AppCompatActivity {
         signupBTN.setOnClickListener(v -> {
             // NOTE: This code currently uses "if (true)" → it will always run signup
             // Normally, validateInputs() should be here to check form correctness
-            if (validateInputs()) {
+            if (true) {
                 email = emailET.getText().toString().trim();
                 checkEmailExists(account, email); // check Firebase if email already exists
             } else {

@@ -102,7 +102,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/poppins_bold"
-                android:backgroundTint="@color/button_blue"
+                android:backgroundTint="@color/button_blue_new"
                 android:text="Sign in"
                 android:textColor="@color/white"
                 android:textStyle="bold" />

@@ -87,10 +87,11 @@ public class CreateTeacherAcc extends AppCompatActivity {
                 return; // exit the function
             }
 
+
             // If valid, get the email and check if it already exists in Firebase
             email = emailET.getText().toString().trim();
             checkEmailExists(account, email);*/
-            if (validateInputs()) {
+            if (true) {
                 email = emailET.getText().toString().trim();
                 checkEmailExists(account, email); // check Firebase if email already exists
             } else {

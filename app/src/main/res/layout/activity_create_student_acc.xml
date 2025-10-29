@@ -221,7 +221,7 @@
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="25dp"
-                    android:backgroundTint="@color/button_blue"
+                    android:backgroundTint="@color/button_blue_new"
                     android:text="Sign Up"
                     android:textStyle="bold"
                     android:fontFamily="@font/poppins_bold"
