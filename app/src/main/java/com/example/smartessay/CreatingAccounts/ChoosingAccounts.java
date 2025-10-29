@@ -3,6 +3,7 @@ package com.example.smartessay.CreatingAccounts;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +15,7 @@ import com.example.smartessay.R;
 
 public class ChoosingAccounts extends AppCompatActivity {
 
-    Button stuBTN,educBTN;
+    LinearLayout stuBTN,educBTN;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

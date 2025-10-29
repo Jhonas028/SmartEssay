@@ -33,7 +33,7 @@
         <Button
             android:id="@+id/btnCancel"
             android:text="Cancel"
-            android:backgroundTint="@color/back_blue"
+            android:backgroundTint="@color/blue_new"
             android:textColor="@color/white"
             android:layout_marginEnd="10dp"
             android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
             android:id="@+id/btnCreate"
             android:text="Submit"
             android:backgroundTint="@color/yellow_new"
-            android:textColor="@color/back_blue"
+            android:textColor="@color/blue_new"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>

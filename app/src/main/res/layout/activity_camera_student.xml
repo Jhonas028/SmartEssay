@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cropped Image"
-            android:textColor="@color/back_blue"
+            android:textColor="@color/blue_new"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="OCR Result"
-            android:textColor="@color/back_blue"
+            android:textColor="@color/blue_new"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_marginTop="8dp"
@@ -103,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:text="Add Page"
                     android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/back_blue"
+                    android:backgroundTint="@color/blue_new"
                     android:textColor="@color/white"
                     android:textStyle="bold"/>
             </LinearLayout>
@@ -130,7 +130,7 @@
                 android:layout_weight="1"
                 android:text="Cancel"
                 android:backgroundTint="@color/yellow_new"
-                android:textColor="@color/back_blue"
+                android:textColor="@color/blue_new"
                 android:textStyle="bold"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp" />
@@ -141,7 +141,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Submit"
-                android:backgroundTint="@color/back_blue"
+                android:backgroundTint="@color/blue_new"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                  />

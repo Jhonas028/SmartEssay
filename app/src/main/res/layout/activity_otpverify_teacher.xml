@@ -152,7 +152,7 @@
                 android:layout_margin="30dp"
                 android:background="@drawable/round_all_yellow_button"
                 android:text="verify"
-                android:textColor="@color/back_blue"
+                android:textColor="@color/blue_new"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 

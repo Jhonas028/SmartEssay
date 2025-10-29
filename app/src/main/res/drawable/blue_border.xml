@@ -8,7 +8,7 @@
     <!-- Border: blue stroke -->
     <stroke
         android:width="2dp"
-        android:color="@color/back_blue" />
+        android:color="@color/blue_new" />
 
     <!-- Rounded corners -->
     <corners android:radius="12dp" />

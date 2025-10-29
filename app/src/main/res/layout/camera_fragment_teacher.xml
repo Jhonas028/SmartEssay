@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cropped Image:"
-                android:textColor="@color/back_blue"
+                android:textColor="@color/blue_new"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="OCR Result:"
-                android:textColor="@color/back_blue"
+                android:textColor="@color/blue_new"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:text="Add Page"
                 android:backgroundTint="@color/text_title_yellow"
-                android:textColor="@color/back_blue"
+                android:textColor="@color/blue_new"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -105,7 +105,7 @@
                 android:gravity="center"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
-                android:background="@color/back_blue"
+                android:background="@color/blue_new"
                 android:orientation="vertical">
 
                 <TextView
@@ -130,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Content / Ideas"
-                    android:textColor="@color/back_blue"
+                    android:textColor="@color/blue_new"
                     android:textSize="16sp" />
 
                 <EditText
@@ -156,7 +156,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Organization / Structure"
-                    android:textColor="@color/back_blue"
+                    android:textColor="@color/blue_new"
                     android:textSize="16sp" />
 
                 <EditText
@@ -182,7 +182,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Grammar and Formatting"
-                    android:textColor="@color/back_blue"
+                    android:textColor="@color/blue_new"
                     android:textSize="16sp" />
 
                 <EditText
@@ -208,7 +208,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Language Use / Style"
-                    android:textColor="@color/back_blue"
+                    android:textColor="@color/blue_new"
                     android:textSize="16sp" />
 
                 <EditText
@@ -236,7 +236,7 @@
                     android:layout_weight="1"
                     android:text="Other Criteria (Optional)"
                     android:textSize="16sp"
-                    android:textColor="@color/back_blue" />
+                    android:textColor="@color/blue_new" />
 
                 <EditText
                     android:id="@+id/etRubricOtherScore"
@@ -269,7 +269,7 @@
             android:text="Submit"
             android:layout_marginTop="24dp"
             android:backgroundTint="@color/text_title_yellow"
-            android:textColor="@color/back_blue"
+            android:textColor="@color/blue_new"
             android:padding="12dp"
             android:textStyle="bold" />
 
@@ -279,7 +279,7 @@
             android:layout_height="wrap_content"
             android:text="Cancel"
             android:layout_marginTop="5dp"
-            android:backgroundTint="@color/back_blue"
+            android:backgroundTint="@color/blue_new"
             android:textColor="@color/white"
             android:padding="12dp"
             android:textStyle="bold" />
@@ -297,7 +297,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Score and Feedback:"
-                android:textColor="@color/back_blue"
+                android:textColor="@color/blue_new"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:padding="8dp" />

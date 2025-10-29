@@ -4,7 +4,7 @@
     <solid android:color="@android:color/white" /> <!-- inside background -->
     <stroke
         android:width="2dp"
-        android:color="@color/back_blue" /> <!-- yellow border -->
+        android:color="@color/blue_new" /> <!-- yellow border -->
     <corners android:radius="8dp" /> <!-- rounded corners -->
     <padding
         android:left="12dp"

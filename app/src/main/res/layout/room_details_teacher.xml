@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Essays"
-                android:textColor="@color/back_blue"
+                android:textColor="@color/blue_new"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Post"
-                android:textColor="@color/back_blue"
+                android:textColor="@color/blue_new"
                 android:background="@drawable/round_all_yellow_button"
                 android:textSize="12sp"/>
 

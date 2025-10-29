@@ -19,7 +19,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/back_blue"
+            android:background="@color/blue_new"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:title=" " />
 
@@ -35,7 +35,7 @@
             android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/back_blue"
+            android:backgroundTint="@color/blue_new"
             app:fabAlignmentMode="center"
             app:fabCradleMargin="10dp"
             app:fabCradleRoundedCornerRadius="20dp"

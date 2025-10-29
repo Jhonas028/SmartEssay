@@ -10,7 +10,7 @@
 
     <color name="text_title_yellow">#ffd429</color>
 
-    <color name="back_blue">#2b56ab</color>
+
     <color name="dirty_white">#EDEDED</color>
     <color name="green_posted">#4CAF50</color>
 
@@ -26,11 +26,13 @@
     <!-- New combination of colors-->
 
     <color name="my_soft_red">#FF8A80</color> <!-- soft red for handling errors-->
+
     <color name="archived">#2196F3</color>
     <color name="editext_color">#8f8e8e</color>
     <color name="button_blue_new">#00287A</color>
-    <color name="green_new">#33B827</color>
-    <color name="yellow_new">#ffd429</color>
 
+    <color name="green_new">#33B827</color>
+    <color name="yellow_new">#F3C404</color>
+    <color name="blue_new">#004179</color>
 
 </resources>
