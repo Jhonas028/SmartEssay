@@ -88,7 +88,7 @@
                         android:fontFamily="@font/poppins_bold"
                         android:text="Topic:"
                         android:textColor="@color/black"
-                        android:textSize="20sp"
+                        android:textSize="22sp"
                         android:textStyle="bold" />
 
                     <!-- Input: Essay Title -->
@@ -118,7 +118,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:text="RUBRICS"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <!-- Content / Ideas -->
@@ -238,7 +238,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:backgroundTint="#004179"
+                    android:backgroundTint="@color/blue_new"
                     android:fontFamily="@font/poppins_bold"
                     android:padding="8dp"
                     android:text="Add Criteria"
@@ -325,7 +325,7 @@
                         android:textColor="@color/black"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="5dp"
-                        android:textSize="16sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <!-- Value / score on the very right -->

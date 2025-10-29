@@ -88,7 +88,7 @@
                             android:fontFamily="@font/poppins_bold"
                             android:text="Pending"
                             android:textColor="@color/red_pending"
-                            android:textSize="16sp" />
+                            android:textSize="22sp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -175,7 +175,7 @@
                     android:paddingVertical="10dp"
                     android:text="Feedback"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -216,7 +216,7 @@
                     android:paddingVertical="10dp"
                     android:text="Student Essay"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
