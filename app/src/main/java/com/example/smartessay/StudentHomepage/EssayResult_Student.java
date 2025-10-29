@@ -1,6 +1,7 @@
 package com.example.smartessay.StudentHomepage;
 
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ public class EssayResult_Student extends AppCompatActivity {
 
     private TextView tvEssayTitle, tvEssayText, tvScore, tvFeedback,tvFullname;
     private String essayId;
+    ImageButton imageButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +34,7 @@ public class EssayResult_Student extends AppCompatActivity {
         tvFullname = findViewById(R.id.tvFullname);
         // Get essayId from the Intent (this is passed from the previous activity)
         essayId = getIntent().getStringExtra("essayId");
+        imageButton = findViewById(R.id.imageButton);
 
         // If essayId is missing, show error and close this page
         if (essayId == null) {
@@ -39,6 +42,10 @@ public class EssayResult_Student extends AppCompatActivity {
             finish(); // close activity
             return;
         }
+
+        imageButton.setOnClickListener(v -> {
+            finish();// Go back to the previous activity
+        });
 
         // If essayId is available, load the essay result from Firebase
         loadEssayResult(essayId);
