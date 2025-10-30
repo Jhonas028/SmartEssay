@@ -16,11 +16,14 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smartessay.API.RapidEmailAPI;
 import com.example.smartessay.MainActivity;
 import com.example.smartessay.R;
 import com.example.smartessay.StudentHomepage.FragmentHP_Student;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -116,6 +119,14 @@ public class OTPverifyStudent extends AppCompatActivity {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }*/
+
+            try {
+                RapidEmailAPI.sendOtpEmail(currentOtp, email);
+                Toast.makeText(getApplicationContext(), "Sending OTP to " + email, Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Failed to send OTP email.", Toast.LENGTH_SHORT).show();
+            }
 
 
             myRef.setValue(userData)
